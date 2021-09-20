@@ -90,7 +90,7 @@
 \setmonofont[Scale=MatchLowercase]{Source Code Pro}
 \RequirePackage[labelfont={bf,sf,footnotesize,singlespacing},
                 textfont={sf,footnotesize,singlespacing},
-                justification={justified,RaggedRight},
+                justification={RaggedRight},
                 singlelinecheck=false,
                 margin=0pt,
                 figurewithin=chapter,
