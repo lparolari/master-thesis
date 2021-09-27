@@ -1,4 +1,5 @@
 {
+    "rewrap.wrappingColumn": 70,
     "workbench.colorTheme": "Default Dark+",
     "latex-workshop.latex.recipes": [
         {
