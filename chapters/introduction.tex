@@ -2,4 +2,35 @@
 \chapter{Introduction}
 \label{introduction}
 
-TODO
+In the last years we have seen significant progress by the scientific
+community in the development of models for solving computer vision and
+natural language processing tasks. The reasons behind those
+outstanding advancements are manifold: the constant increase of
+commutational resources and the availability of new data. However, the
+joint understanding of both modalities is still an hard task,
+specially if we contraint the problem within deliberately simple and
+human-like environment.
+
+Both visual and language modalities are required for solving
+interesting, challenging and community worthwhile problems such us
+visual question answering, image retrieval, robotic navigation and
+visual grounding \todo{CITE PAPERS}. Among those, the visual grounding
+task is a foundamental building block which can be used to postulate
+other tasks as a variation of the latter. Visual grounding is defined
+as the task of locating the content of the image referenced by a given
+sentence.
+
+With the availability of large datasets \todo{CITE DATASET PAPERS},
+many different solution for the visual grounding task has been
+proposed in literature, but most of them relies on expensive
+annotations. We argue that this technique cannot scale and is becoming
+a critical bottlenck: it is hard and expensive to collect grounding
+information while very simple to collect images with their
+descriptions.
+
+This encourages us to investigate the visual grounding task under the
+weakly supervised setting. In weakly supervised scenario, the
+available ground truth is a shallow information which links a
+description with its own image and vice-versa. On the countraty, the
+fully supervised setting provide also the information between
+noun-phrases and objects in image.
