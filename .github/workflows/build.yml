@@ -1,0 +1,21 @@
+name: build
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Compile document
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: dissertation.tex
+          latexmk_use_xelatex: true
+
+      - name: Upload document
+        uses: actions/upload-artifact@v2
+        with:
+          name: dissertation
+          path: dissertation.pdf
