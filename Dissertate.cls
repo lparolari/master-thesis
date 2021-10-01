@@ -96,7 +96,8 @@
                 margin=0pt,
                 figurewithin=chapter,
                 tablewithin=chapter]{caption}
-\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+% numbered footnote
+%\renewcommand{\thefootnote}{\fnsymbol{footnote}}
 \RequirePackage{microtype}
 
 % Tikz
