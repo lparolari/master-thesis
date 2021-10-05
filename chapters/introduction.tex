@@ -79,18 +79,17 @@ tasks.
 \end{figure}
 
 \newthought{Referring Expression Grounding} is the task of locating
-the subject referred by an expression an given image. 
+the subject referred by an expression in given image. 
 
-More formally,
-given in input an image $\bm{I}$ and a sentence $\mathrm{S}$, REG
-consists in learning a function $\delta$ from the set $\calS$ of
-sentences to a set of bounding boxes $B$ defined on $\bm{I}$, i.e.,
-$\delta: \calI \times \calS \rightarrow 2^{\calS \times \calB}$, where
-$\calI$ is the domain of images, $\calS$ is the domain of sentences,
-$\calB$ is the domain of bounding boxes which can be defined on
-$\calI$, and $2^{\calS \times \calB}$ is the power set of the
-cartesian product between $\calS$ and $\calB$. In our example, ``the
-dog'' is the referred expression and the red bounding box is the
+More formally, given in input an image $\bm{I}$ and a sentence
+$\mathrm{S}$, REG consists in learning a function $\delta$ from the
+set $\calS$ of sentences to a set of bounding boxes $B$ defined on
+$\bm{I}$, i.e., $\delta: \calI \times \calS \rightarrow 2^{\calS
+\times \calB}$, where $\calI$ is the domain of images, $\calS$ is the
+domain of sentences, $\calB$ is the domain of bounding boxes which can
+be defined on $\calI$, and $2^{\calS \times \calB}$ is the power set
+of the cartesian product between $\calS$ and $\calB$. In our example,
+``the dog'' is the referred expression and the red bounding box is the
 correct solution.
 
 \newthought{Phrase Grounding}, instead, is the task that studies the
@@ -103,33 +102,72 @@ More formally, given in input an image $\bm{I}$ and a sentence
 $\mathrm{S}$, phrase grounding consists in learning a mapping $\gamma$
 from the set $\calQ$ of noun phrases to a set of bounding box $\calB$
 defined on $\bm{I}$, i.e., $\gamma : \calI \times \calS \rightarrow
-2^{\calQ \times \calB}$. 
+2^{\calQ \times \calB}$. So, given an image $\bm{I}$ containing $e$
+objects identified via the set of bounding boxes $B_\calI = \{ b_i
+\}^e_{i=1}$, where $b_i \in \Rset^4$ is the vector of coordinates
+identifying a bounding box in $\bm{I}$, and a sentence $\mathrm{S}$
+containing $m$ noun phrases gathered in the set $\calQ_S = \{ q_j
+\}^m_{j=1}$, where $q_j \in \Nset^2$ is a vector containing as
+coordinates the initial and final character positions in the sentence
+$\mathrm{S}$, $\gamma(\bm{I}, \mathrm{S})$ returns a set of couples
+$\{ (\bm{q}, \bm{b}) \mid \bm{q} \in \calQ_{\mathrm{S}}, \bm{b} \in
+B_{\bm{I}} \}$ where each couple $(\bm{q}, \bm{b})$ associates the
+noun phrase $\bm{q}$ to the bounding box $\bm{b}$. Please, notice that
+the same noun phrase can be associated to several different bounding
+boxes, as well as the same bounding box can be associated to many
+different noun phrases. Following the current literature, in this
+paper we assume that each noun phrase is associated to one and only
+one bounding box. Bounding boxes, however, can identify more objects,
+e.g. several persons in the case the noun phrase is ``people''.
 
-So, given an image $\bm{I}$ containing e objects identified via the
-set of bounding boxes $B_\calI = \{ b_i \}^e_{i=1}$, where $b_i \in
-\Rset^4$ is the vector of coordinates identifying a bounding box in
-$\bm{I}$, and a sentence $\mathrm{S}$ containing $m$ noun phrases
-gathered in the set $\calQ_S = \{ q_j \}^m_{j=1}$, where $q_j \in
-\Nset^2$ is a vector containing as coordinates the initial and final
-character positions in the sentence $\mathrm{S}$, $\gamma(\bm{I},
-\mathrm{S})$ returns a set of couples $\{ (\bm{q}, \bm{b}) \mid \bm{q}
-\in \calQ_{\mathrm{S}}, \bm{b} \in B_{\bm{I}} \}$ where each couple
-$(\bm{q}, \bm{b})$ associates the noun phrase $\bm{q}$ to the bounding
-box $\bm{b}$. Please, notice that the same noun phrase can be
-associated to several different bounding boxes, as well as the same
-bounding box can be associated to many different noun phrases.
-Following the current literature, in this paper we assume that each
-noun phrase is associated to one and only one bounding box. Bounding
-boxes, however, can identify more objects, e.g. several persons in the
-case the noun phrase is ``people''.
+Back to our example, the phrase grounding task consists in identifying
+the red, blue and green bounding box enclosing, respectively, the dog,
+the ball and the field of gress grass.
 
-In the rest of our work we will focus on phrase grounding, as it is considered the foundamental building block for many high-level computer vision tasks such as image retrieval, QA, video QA, etc. \todo{cite kwnowledge aided consistency}.
+\newthought In of our work we will focus on phrase
+grounding, as it is considered the foundamental building block for
+many high-level computer vision tasks such as image retrieval, QA,
+video QA, etc. \todo{cite kwnowledge aided consistency}.
 
 \cite{conser2019revisiting} \todo{FIX CITE}
 
-\section{One Stage vs Two Stage}
+\section{Two Stage vs One Stage}
 
-TODO
+Visual grounding is a challenging task, which requires the semantic
+understanding of the image content and its textual description. In
+order to lower the complexity of the whole task, visual grounding is
+generally formulated as an object detection task followed by a
+classification task in which, given an input image and sentece, the
+goal is to return only the detected object(s) that represents the best
+semantic match with the sentence. This approach was extensively used
+by many researchers in visual grounding field \todo{CITE vedere fast
+and accurate one-stage approach...} due to its simplicity. On the
+other hand, some recent works started introducing the one stage
+approach in which the object detection and the classification problem
+are solved joinly, arguing this new architecture may lead to faster
+and more accurate models.
+
+\newthought{The two stage approach} is a simple approach to the visual
+grounding task which relies on the decomposition of the main task in
+two sub-tasks, namely object detection and classification. Given an
+input image, the first step generates candidate regions using an
+object proposal extractor such us Edge Boxes and Selective Search
+\todo{CITE edge box, selective searcg} or by an object detector, such
+us Faster R-CNN, Single Shot multibox Detector (SSD), or YOLO
+\todo{CITE faster rcnn, ssd, yolo...}. The second step consists in
+ranking the candidate regions, which hopefully capture the semantic
+context, conditioned on a language query about the image. Practically,
+this means that the model predicts, for each proposal bounding box, a
+score that represents how much the content of the bounidng box is
+likely to be referred by the sentence. Sometimes, models predict also
+new coordintas for the best predicted proposal, in order to better fit
+the visual content accordingly to the sentence semantic information.
+
+\todo{Aggiungere schema che descrive l'approccio}
+
+\todo{Descrivere vantaggi e svantaggi dell'approccio}
+
+\newthought{The one stage approach} firstly introducted by \todo{CITE}, 
 
 \section{Fully/Weakly/Self/Un-Supervised Settings}
 
