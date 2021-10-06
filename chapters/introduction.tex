@@ -155,19 +155,68 @@ object proposal extractor such us Edge Boxes and Selective Search
 \todo{CITE edge box, selective searcg} or by an object detector, such
 us Faster R-CNN, Single Shot multibox Detector (SSD), or YOLO
 \todo{CITE faster rcnn, ssd, yolo...}. The second step consists in
-ranking the candidate regions, which hopefully capture the semantic
+ranking this candidate regions, which hopefully capture the semantic
 context, conditioned on a language query about the image. Practically,
 this means that the model predicts, for each proposal bounding box, a
 score that represents how much the content of the bounidng box is
 likely to be referred by the sentence. Sometimes, models predict also
 new coordintas for the best predicted proposal, in order to better fit
 the visual content accordingly to the sentence semantic information.
-
 \todo{Aggiungere schema che descrive l'approccio}
 
-\todo{Descrivere vantaggi e svantaggi dell'approccio}
+Even if the approach seems very promising, it is not exempt from some
+problems. As reported by \todo{CITE fast and acc one stage} ``the
+propose-and-rank two stage framework is flawed in at least two major
+ways''. First of all, if none of the region candidates of the first
+stage hits the ground truth region, the whole framework fails no
+matter how good the second ranking stage could perform. Note that a
+hit is considered successful if any of the proposals overlap the
+ground truth by more than fifty percent in term of intersection over
+union (IoU). Secondly, they argue that the process can be optimized by
+focusing on relevant bounding boxes which are often a small number
+(2-5), instead of waste lot of resources by computing thousands of
+proposal and then rank them down to a list.
 
-\newthought{The one stage approach} firstly introducted by \todo{CITE}, 
+However, the highlighted problems can be relaxed as we can tweak two
+parameters (above the others), namely number of fixed bounding box and
+type of proposal extractor/object detector, which highly influence
+\todo{vedere grammatica: ci va la s?} the maximum number of hits over
+total examples given a set of generated candidates. Consider, for
+example, the problem of hitting the ground truth with at least one
+bounding box. If we employee a very simple yet extremely inefficient
+proposal extractor such us the one who generates all the possible
+bounding boxes, the problem do not show up. On the countrary, we can
+also decide which proposal extractor/object detector employ for
+candidate regions generation. With the advancements of those system
+the proposals generation is becoming more and more accurate.
+
+Practically, we proved that with 100 bounding boxes and Faster-R CNN
+object detector, we obtain a coverage which is greater than 90\% on
+both two major dataset in the field of study: Flickr30k and ReferIt.
+The table \todo{REF table} shows how the upperbound accuracy changes
+by varying the number of considered bounding box.
+
+The second problem instead is partially solvable because the system,
+in order to perform its classification task, needs to consider all the
+extracted proposal. However, the first stage can be precalculated and
+cached for the second stage, drastically reducing the required
+resources. 
+
+\newthought{The one stage approach} firstly introducted by \todo{CITE
+fast and accurate one stage}, instead, relies on a single step for
+computing the solution. The model receives in input an image and a
+textual sentence, and it should learn how to extract and fuse all the
+visual and textual information in order to predict the best bounidng
+box in output, according to the input sentence. 
+
+The thight coupling provided by this approach may lead to interesting
+results \todo{CITE fast and accurate one stage}, but it raises some
+major issues: \begin{enumerate*}[label=(\roman*)] \item not all the
+visual grounding datasets are suitable for training an object
+detector, due to lack of images and/or because they are not densely
+annotated; \item the model requires an high number of parameters, and
+because of that \item the training requires significant computing
+resources. \end{enumerate*}
 
 \section{Fully/Weakly/Self/Un-Supervised Settings}
 
