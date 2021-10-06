@@ -13,6 +13,9 @@
 \ProvidesClass{Dissertate}[2014/03/25 v2.0 Dissertate Class]
 \LoadClass[12pt, twoside, openright, a4paper]{book}
 
+% Suppress hbox overfull \hbox for small lenght
+\hfuzz=2.0pt 
+
 %
 % Options
 %
