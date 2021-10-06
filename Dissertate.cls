@@ -58,6 +58,7 @@
     {\endolditemize\end{spacing}}
 
 % Enumerate with compressed spacing
+\RequirePackage[inline]{enumitem}
 \let\oldenumerate\enumerate
 \let\endoldenumerate\endenumerate
 \renewenvironment{enumerate}
