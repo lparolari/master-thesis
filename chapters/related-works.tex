@@ -1,0 +1,50 @@
+%!TEX root = ../dissertation.tex
+\begin{savequote}[75mm]
+Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin molestie tortor eu velit. Aliquam erat volutpat. Nullam ultrices, diam tempus vulputate egestas, eros pede varius leo.
+\qauthor{Quoteauthor Lastname}
+\end{savequote}
+
+\chapter{Related works}
+
+\newthought{Phrase localization} requires strong
+understanding of both visual and textual modalities, specially when
+not all ground truth is available. F. Xiao \etal{} in \todo{CITE
+Weakly-supervised Visual Grounding of Phrases with Linguistic
+Features} exploit linguistic structure arguing it can convoy rich
+semantic. By focusing on parent-sibling and sibling-sibling linguistic
+relations in a sentence, they build an attention map which can
+localize phrases in image following linguistic rules. Also S. A. Javed
+\etal{} in \todo{Learning Unsupervised Visual Grounding Through
+Semantic Self-Supervision} make use of an attention map, but in this
+case they optimize the model for concept learning proxy task, which
+require the model to jointly decode the common concept in a batch of
+examles composed by image and captions. S. Datta \textit{et al.} in
+\todo{CITE: align2g} developed three-step model in which, 
+\begin{enumerate*}[label=(\roman*)] 
+    \item bounding boxes are filtered based on caption, i.e., only a
+    box per caption is selected, then
+    \item caption conditioned bounding boxes are encoded with an
+    order-invariant deep encoder implemented as a two-layer MLP, and
+    finally
+    \item those encoded caption-conditioned bounding box are matched
+with the caption.
+\end{enumerate*}
+Tha caption is required to match the encoded features as the model is
+optimized for the caption-to-image retrieval proxy task. 
+
+In \todo{CITE Knowledge Aided Consistency for Weakly Supervised Phrase
+Grounding} K. Chen \etal{} approach the problem by learning to
+reconstruct the input. They reconstruct visual features throught a MLP
+and the textual features throught an LSTM. Both two branches rely on a
+filter/downweight network which is responsible to discard the
+unrelated proposal. The downweight network is implemented by
+considering the similarity of the visual content identified by the
+label of a bounding box and a phrase. \todo{complete}
+
+
+in which uses and attention model in order to filter (or downweight)
+unrelated proposals. Along side the visual branch they also reconstruct the language features by 
+
+
+\todo{1) phrase localization, 2) weakly supervised 3) vqa???? 4) VTKEL? 5) image retrieval ??? }
+
