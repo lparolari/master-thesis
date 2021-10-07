@@ -133,7 +133,7 @@ video QA, etc. \todo{cite kwnowledge aided consistency}.
 
 \section{Two Stage vs One Stage}
 
-Visual grounding is a challenging task, which requires the semantic
+Visual grounding is a challenging task which requires the semantic
 understanding of the image content and its textual description. In
 order to lower the complexity of the whole task, visual grounding is
 generally formulated as an object detection task followed by a
@@ -177,18 +177,20 @@ focusing on relevant bounding boxes which are often a small number
 (2-5), instead of waste lot of resources by computing thousands of
 proposal and then rank them down to a list.
 
-However, the highlighted problems can be relaxed as we can tweak two
-parameters (above the others), namely number of fixed bounding box and
-type of proposal extractor/object detector, which highly influence
-\todo{vedere grammatica: ci va la s?} the maximum number of hits over
-total examples given a set of generated candidates. Consider, for
-example, the problem of hitting the ground truth with at least one
-bounding box. If we employee a very simple yet extremely inefficient
-proposal extractor such us the one who generates all the possible
-bounding boxes, the problem do not show up. On the countrary, we can
-also decide which proposal extractor/object detector employ for
-candidate regions generation. With the advancements of those system
-the proposals generation is becoming more and more accurate.
+However, the highlighted problems highly depends on chosen
+proposal extractor/object detector. Consider, for example, the problem
+of hitting the ground truth with at least one bounding box. Given an
+image $\bm{I}$ and $b'$ the ground truth bounding box, if we employee
+a very simple (yet extremely inefficient) proposal extractor such us
+the one who generates $\bm{B}$ the set of all possible bounding boxes
+in $\bm{I}$, then, by construction we have that $b' \in \bm{B}$. So,
+by chosing the maximum number of bounding box we can tackle the
+problem. However, this solution is not feasible in practice, but
+fortunately we do not need to generate all possible solutions. In
+fact, only a small subset of all solution are required to hit the
+ground truth bounding box because thanks to the advancements in object
+detection system we can recognize relevant objects in image and focus
+only on those proposals.
 
 Practically, we proved that with 100 bounding boxes and Faster-R CNN
 object detector, we obtain a coverage which is greater than 90\% on
@@ -235,9 +237,11 @@ $q$ \todo{aggiustare matematica} in sentence $S$, and for each query
 $q$ the mapping to a bounding box $b$ in image $I$, which means to
 know also bounding boxes.\todo{aggiustare forma}. Practically
 speaking, a human annotator given an image $I$ and a sentence $S$ has
-to annotate all queries in sentence, undestand the query, identify
-the referred object in image by drowing a bounding box surrounding it
-and linking the bounding box with the query. With those insight it's straighforward to see that the fully supervised scenario for the visual grounding task is very hard to obtain. 
+to annotate all queries in sentence, undestand the query, identify the
+referred object in image by drowing a bounding box surrounding it and
+linking the bounding box with the query. With those insight it's
+straighforward to see that the fully supervised scenario for the
+visual grounding task is very hard to obtain. 
 
 More abstractly, in fully supervised settings a training example
 consists of two parts: a feature vector (or instance) describing the
