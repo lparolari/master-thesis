@@ -30,21 +30,59 @@ examles composed by image and captions. S. Datta \textit{et al.} in
 with the caption.
 \end{enumerate*}
 Tha caption is required to match the encoded features as the model is
-optimized for the caption-to-image retrieval proxy task. 
+optimized for the caption-to-image retrieval proxy task. In \todo{CITE
+Knowledge Aided Consistency for Weakly Supervised Phrase Grounding} K.
+Chen \etal{} approach the problem by learning to reconstruct the
+input. They reconstruct visual features throught a MLP and the textual
+features throught an LSTM. Both two branches rely on a
+filter/downweight network, namely Knowledge Aided Consistency (KAC)
+network, which is responsible to discard the unrelated proposal. The
+downweight network is implemented by considering the similarity of the
+visual content identified by the label of a bounding box and the
+aggregate of a phrase. In the field of weakly-supervised referring
+expression grounding, X. Liu \etal{} in \todo{CITE adaptive net}
+exploit discriminative information about subject, location and context
+wheighted by an attention network and the used to reconstruct the
+hidden features of subject, location and context, the input query and
+attribute information.
 
-In \todo{CITE Knowledge Aided Consistency for Weakly Supervised Phrase
-Grounding} K. Chen \etal{} approach the problem by learning to
-reconstruct the input. They reconstruct visual features throught a MLP
-and the textual features throught an LSTM. Both two branches rely on a
-filter/downweight network which is responsible to discard the
-unrelated proposal. The downweight network is implemented by
-considering the similarity of the visual content identified by the
-label of a bounding box and a phrase. \todo{complete}
+J. Wang in \etal{} \todo{CITE phrase loc}, instead, tried a very new
+and different approach. They developed a model able to work under
+unsupervised settings, in which no ground truth is available at
+training time. The model 
+\begin{enumerate*}[label=(\roman*)] 
+    \item detects instances by means of six heterogeneous object
+    detector, which vary in terms of accuracy, number of classes,
+    dataset trained on... then
+    \item selects the most related concept with respect to the phrase
+    by computing the similarity of detected instance labels and phrase
+    words, after this
+    \item localized the right bounding box which refers to the
+    selected concept.
+\end{enumerate*}
+The model is not trained: in fact, they leverage the information that
+object detector carry with them. A. Rohrbach \etal{} in \todo{CITE
+grounding by rec} provide their version of phrase localization in
+unsupervised settings together with semi and fully supervised settings
+by developing the model \textit{GroundeR}. The model learns to
+reconstruct the input phrase based on the boxes it attends to trought
+an attention mechanism. 
 
+In supervised settings, the scientific community devoted much effort
+solving the phrase localization problem, leading to the development of
+many solution making use of different strategies. For example, H.
+Akbari \etal{} in \todo{CITE multilevel multimodal} employed a
+multi-level multimodal common semantic space for both visual and
+textual features in order to capture semantic information among the
+two modalities. Z. Yang \etal{} in \todo{CITE a fast and acc one stage
+appr} exploit YOLOv3 object detector features joined with textual
+features in order to learn to ground wihtout requiring the proposal
+extraction stage. In \todo{CITE zero shot groudning}, A. Sadhu \etal{}
+on the same line of \todo{CITE a fast and acc one stage appr} propose
+a one-stage model focusing on the slightly different task of Zero Shot
+Grounding, which can include unseen nouns in phrases. Instead, D.
+Rigoni \etal{} in \todo{CITE a better loss} optimize the model to
+learn with a new loss involving the use of metrics like Intersection
+Over Union (IoU) and Complete IoU (CIoU).
 
-in which uses and attention model in order to filter (or downweight)
-unrelated proposals. Along side the visual branch they also reconstruct the language features by 
-
-
-\todo{1) phrase localization, 2) weakly supervised 3) vqa???? 4) VTKEL? 5) image retrieval ??? }
-
+\todo{ image retrieval ??? altro? }
