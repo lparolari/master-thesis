@@ -29,7 +29,10 @@ literature}
 The Flickr30K Entities \todo{CITE: Flickr30K Entities} is a dataset
 built on top of Flickr30K \todo{CITE: From image descriptions to
 visual denotations: New similarity metrics for semantic inference over
-event descriptions}. It is very popular and it's usually referred as Flickr30K or, simply, as Flickr. Compared to the original Flickr30K dataset, Flickr30K Entities focus on the task of grounding textual mentions of entities in image and augment data with some annotations.
+event descriptions}. Flickr30K Entities is usually referred as
+Flickr30K or, simply, as Flickr and, compared to the original
+Flickr30K dataset, it focuses on the task of grounding textual
+mentions of entities in image and augment data with some annotations.
 
 Annotations consists of cross-caption coreference chains linking
 mentions of the same entities together with bounding boxes localizing
@@ -49,6 +52,48 @@ bounding box annotation for the resulting chains. This workflow
 provides two advantages: first, identifying coreferent mentions helps
 reduce redundancy and save box-drawing effort; and second, coreference
 annotation is intrinsically valuable.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{.45\textwidth}
+    \centering
+    \includegraphics[width=.8\linewidth]{figures/flickr30k-example-coref-annotation.png}
+    \caption{Binary coreference link interface}
+    \label{fig:flickr30k-example-coref-annotation}
+  \end{subfigure}
+  \begin{subfigure}{.45\textwidth}
+    \centering
+    \includegraphics[width=.8\linewidth]{figures/flickr30k-example-coref-verification.png}
+    \caption{Coreference chain verification interface}
+    \label{fig:flickr30k-example-coref-verification}
+  \end{subfigure}
+  \begin{subfigure}{.45\textwidth}
+    \centering
+    \includegraphics[width=.8\linewidth]{figures/flickr30k-example-box-requirement.png}
+    \caption{Box requirement interface}
+    \label{fig:flickr30k-example-box-requirement}
+  \end{subfigure}
+  \begin{subfigure}{.45\textwidth}
+    \centering
+    \includegraphics[width=.8\linewidth]{figures/flickr30k-example-box-drawing.png}
+    \caption{Box drawing interface}
+    \label{fig:flickr30k-example-box-drawing}
+  \end{subfigure}
+  \begin{subfigure}{.45\textwidth}
+    \centering
+    \includegraphics[width=.8\linewidth]{figures/flickr30k-example-box-quality.png}
+    \caption{Box quality interface}
+    \label{fig:flickr30k-example-box-quality}
+  \end{subfigure}
+  \begin{subfigure}{.45\textwidth}
+    \centering
+    \includegraphics[width=.8\linewidth]{figures/flickr30k-example-box-coverage.png}
+    \caption{Box coverage interface}
+    \label{fig:flickr30k-example-box-coverage}
+  \end{subfigure}
+  \caption{Examples of the interfaces used in TODO CITE FLICKR annotation system.}
+  \label{fig:flickr30k-example}
+\end{figure}
 
 The coreference resolution problem is solved by first chunking
 information given in Flickr30K captions to identify potential entity
@@ -98,9 +143,9 @@ annotate dataset examples. Also, during the annotation process,
 workers are asked some verification questions (question with known
 answer, written by authors).
 
-Above work leads to Flicker30K Entities, taht contains 32K images,
-159K sentences, 275K bounding boxes, and 360K noun phrases where each
-image is associated with five sentences with a variable number of noun
+In the end, Flicker30K Entities is made up of 32K images, 159K
+sentences, 275K bounding boxes, and 360K noun phrases where each image
+is associated with five sentences with a variable number of noun
 phrases, and each noun phrase is associated with a set of bounding
 boxes ground truth coordinates. 
 
