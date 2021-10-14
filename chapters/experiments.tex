@@ -103,3 +103,60 @@ Above work leads to Flicker30K Entities, taht contains 32K images,
 image is associated with five sentences with a variable number of noun
 phrases, and each noun phrase is associated with a set of bounding
 boxes ground truth coordinates. 
+
+\subsection{ReferIt}
+
+ReferIt \todo{CITE: referit} is another popular dataset. The reason that led to developing this dataset is to study how people refer to objects in complex photographs of a real-world cluttered scenese. Thus, the focus is on referring expression grounding task. However, due to the heterogeneity of data, it can be employed also in phrase grounding.
+
+ReferIt contains very challenging examples from phrase groudning point
+of view, because the dataset is collected entirely in an unsupervised
+context by crowd throught a game. Authors developed the ReferItGame,
+which is a two-player online game. The game is the key point of the
+whole dataset, because it allow to collect large-scale dataset
+containing natural language expressions referring to objects in
+photographs of real world scenes in an inexpansive way.
+
+The game is a simple two player game where players alternate between
+generating expressions referring to objects in images of natural
+scenes, and clicking on the locations of described objects.
+Fig.~\ref{fig:referitgame-example}, from \todo{CITE: referit paper}
+shows an example of the game. The game play is straightforward: an
+image with an object outlined in red and a text box is show to Player
+1. Player 2 instead receives, the same image and the referring
+expression written by Player 1 and must click on the location of the
+described object (note, Player 2 does not see the object
+segmentation). If Player 2 clicks on the correct object, then both
+players receive game points and the Player 1 and Player 2 roles swap
+for the next image. If Player 2 does not click on the correct object
+then no points are received and the players remain in their current
+roles. When there are no players available for a player vs player
+match, then a canned match is started where the missing player is
+replaced by a CPU palyer. In this way, by design the referring
+expression are provided and also verificated. 
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/referitgame-example.png}
+  \caption[ReferIt Game Example.]{An example game from \todo{CITE:
+  referit}. Player 1 \textit{(left)} sees an image with an object
+  outlined in red (the man) and provides a referring expression for
+  the object (``man in red shirt on horse''). Player 2
+  \textit{(right)} sees the image and the expression from Player 1 and
+  must localize the correct object by clicking on it (click indicated
+  by the red square). Elapsed time and current scores are also
+  provided.}
+  \label{fig:referitgame-example}
+\end{figure}
+
+\section{Data analysis}
+
+ \todo{prima o dopo data preprocessing??}
+
+\section{Data preprocessing}
+
+Following all works in literature, if a noun phrase
+corresponds to multiple ground truth bounding boxes, we merge the
+boxes and use their union region as its ground truth. On the contrary,
+if a noun phrase has no associated bounding box, we remove it from the
+dataset. We use the standard split for training, validation, and test
+set as defined in  \todo{CITE: Flickr30K Entities}, consisting of 30K,
+1K, and 1K images, respectively.
