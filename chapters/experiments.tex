@@ -96,7 +96,7 @@ annotation is intrinsically valuable.
 \end{figure}
 
 The coreference resolution problem is solved by first chunking
-information given in Flickr30K captions to identify potential entity
+information given in Flickr captions to identify potential entity
 mentions. Each chunk, i.e., noun phrase (NP), is a potential entity
 mention. For example, the frase ``A man in an orange hat'' is chunked
 in two noun phrases, namely ``A man'' and ``an orange hat'', which are
@@ -151,11 +151,22 @@ boxes ground truth coordinates.
 
 \subsection{ReferIt}
 
-ReferIt \todo{CITE: referit} is another popular dataset. The reason that led to developing this dataset is to study how people refer to objects in complex photographs of a real-world cluttered scenese. Thus, the focus is on referring expression grounding task. However, due to the heterogeneity of data, it can be employed also in phrase grounding.
+ReferIt \todo{CITE: referit} is another popular dataset. The reason
+that led to developing this dataset is to study how people refer to
+objects in complex photographs of a real-world cluttered scenese.
+Thus, the focus is on referring expression grounding task. However,
+due to the heterogeneity of data, it can be employed also in phrase
+grounding.
 
 ReferIt contains very challenging examples from phrase groudning point
 of view, because the dataset is collected entirely in an unsupervised
-context by crowd throught a game. Authors developed the ReferItGame,
+context by crowd throught a game. Examples vary from ``a man'' and
+``the person in red'' to ``buildings'' or more degenrative ones like
+``i don't think that was trash, lol. anyway, wall just above heads''.
+In ReferIt many phrases uses spatial relations among objects, such as
+``building on right behind guys'' or ``window top 2nd left''.
+
+Referring expressions are collected through \textit{ReferItGame},
 which is a two-player online game. The game is the key point of the
 whole dataset, because it allow to collect large-scale dataset
 containing natural language expressions referring to objects in
