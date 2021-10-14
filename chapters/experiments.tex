@@ -16,3 +16,90 @@ SCALETTA
 * model selection
 * results
 * qualitative results
+
+\section{Datasets}
+
+In this section we describe Flickr30K and ReferIt, the two datasets
+used for the experimental assessment. \todo{??? Furthermore, we
+describe two other noteworthy and popular datasets available in
+literature}
+
+\subsection{Flickr30K}
+
+The Flickr30K Entities \todo{CITE: Flickr30K Entities} is a dataset
+built on top of Flickr30K \todo{CITE: From image descriptions to
+visual denotations: New similarity metrics for semantic inference over
+event descriptions}. It is very popular and it's usually referred as Flickr30K or, simply, as Flickr. Compared to the original Flickr30K dataset, Flickr30K Entities focus on the task of grounding textual mentions of entities in image and augment data with some annotations.
+
+Annotations consists of cross-caption coreference chains linking
+mentions of the same entities together with bounding boxes localizing
+those entities in the image, and are collected throught a
+crowdsourcing protocol. These annotations are highly structured and
+vary in complexity from image to image, since images vary in the
+numbers of clearly distinguishable entities they contain, and
+sentences vary in the extent of their detail. Further, there are
+ambiguities involved in identifying whether two mentions refer to the
+same entity or set of entities, how many boxes (if any) these entities
+require, and whether these boxes are of sufficiently high quality. To
+tackle this problem, compounded by the unreliability of crowdsourced
+judgments, they administer a pipeline of simpler and atomic tasks
+which can be grouped into two main stages: coreference resolution, or
+forming coreference chains that refer to the same entities, and
+bounding box annotation for the resulting chains. This workflow
+provides two advantages: first, identifying coreferent mentions helps
+reduce redundancy and save box-drawing effort; and second, coreference
+annotation is intrinsically valuable.
+
+The coreference resolution problem is solved by first chunking
+information given in Flickr30K captions to identify potential entity
+mentions. Each chunk, i.e., noun phrase (NP), is a potential entity
+mention. For example, the frase ``A man in an orange hat'' is chunked
+in two noun phrases, namely ``A man'' and ``an orange hat'', which are
+the two mentions. Given $M$ a document containing noun phrases
+originated from captions of an image, a worker is required to specify
+whether two given mentions $m$ and $m'$ refer to the same entity. If
+the answer is positive, a link between the two mentions is addded,
+creating a coreference chain. Tipically, this would require $O(|M|^2)$
+which is the cost of all pairwise links. But since $M$ usually
+contains multiple mentions that refer to the same set of entities, the
+number of coreference chains is bounded by a number much smaller than
+$|M|$, on average. Also, the bound is lowered by making two assumptio.
+First, they assume that mentions from the same captions cannot be
+coreferent; second, they categorize each mention into eight
+coarse-grained types using manually constructed dictionaries (people,
+body parts, animals, clothing/color, instruments, vehicles, scene, and
+other), and assume mentions belonging to different categories cannot
+be coreferent. The goodnees of the strategy is empirically shown by a
+small-scale test on 200 images and the coreference chains are verified
+by another task which asks to a worker whether given mentions in
+coreference chain refer to the same entity. Their results shows that
+only $9.8\%$ of all coreference chains are not correct.
+
+Bounding box annotation is carried out with a workflow composed by
+four tasks administered to workers, namely: box requirement, box
+drawing, box quality and box coverage. In box requirement, a worker
+needs to specify, whether at least one bounding box can be drawn in
+image for given mention. If the response is negative, the mention
+leaves the workflow, otherwise it goes throught the box drawing stage.
+Here, a worker should draw a box as tight as possible around the
+mentioned entity. The main source of difficulty in this stage is due
+to mentions that refer to multiple entities. If a box is drawn, then
+the mention-box pair proceeds to box quality stage. At this point,
+drawn box is evaluated in terms of redundancy (are there any box that
+already covers the same entity?), accuracy (is the box tight around
+the entity?), distinctiveness (can a box be drawn for single entity
+instead of covering multiple elements?). If the answer is positive,
+the example goes to the last stage. In box coverage, workers decide
+whether all required boxes are present in image. 
+
+During the annotation process, workers are subjected to quality
+control process. Workers must pass a test before being allowed to
+annotate dataset examples. Also, during the annotation process,
+workers are asked some verification questions (question with known
+answer, written by authors).
+
+Above work leads to Flicker30K Entities, taht contains 32K images,
+159K sentences, 275K bounding boxes, and 360K noun phrases where each
+image is associated with five sentences with a variable number of noun
+phrases, and each noun phrase is associated with a set of bounding
+boxes ground truth coordinates. 
