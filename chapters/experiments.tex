@@ -18,6 +18,7 @@ SCALETTA
 * qualitative results
 
 \section{Datasets}
+\label{sec:datasets}
 
 In this section we describe Flickr30K and ReferIt, the two datasets
 used for the experimental assessment. \todo{??? Furthermore, we
@@ -149,6 +150,41 @@ is associated with five sentences with a variable number of noun
 phrases, and each noun phrase is associated with a set of bounding
 boxes ground truth coordinates. 
 
+\subsubsection{Data Representation}
+\label{subsec:flickr30k-data-representation}
+
+Technically speaking, in Flickr30K Entities each example is composed
+by information contained in three different files linked together by
+means of a positive integer $i$. Those files represent image, sentence
+annotations and image annotations information. The image file is
+simply a JPG file, while the sentence annotations file is a textual
+document containing five captions. Each caption is chunked into a
+variable number of noun phrases and each noun phrase can be linked to
+a bounding box contained in the third file. The image annotation file
+is an XML file with an array of objects. Every object has one or more
+name, that can be used to reconstruct which noun phrase is linked to
+the bounding box, and four coordinates $x_{min}, y_{min}, x_{max},
+y_{max}$ if it is a visual element, none otherwise. The structure is
+visually explained in
+Fig.~\todo{fig:flickr30k-technical-data-representation}.
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/flickr30k-document-specification.png}
+  \caption[TODO]{TODO: rappresentare i tre file e collegare gli ID con i colori evidenziano l'esempio, le query e le noun phrase per query. Aggiornare immagine con i nuovi fix}
+  \label{fig:flickr30k-technical-data-representation}
+\end{figure}
+
+Those data ara available online in two parts. First is about images
+file and can be downloaded by compiling a registration form.
+\footnote{\href{http://shannon.cs.illinois.edu/DenotationGraph/}{http://shannon.cs.illinois.edu/DenotationGraph/}}
+Annotations, instead, do not requires a sign up: data can be
+downloaded from B. A. Plummer repository on GitHub.
+\footnote{\href{https://github.com/BryanPlummer/flickr30k\_entities}{https://github.com/BryanPlummer/flickr30k\_entities}}
+Within the repository, authors have made available predefined
+training, validation and test split that we use in our work, following
+current literature.
+
+
 \subsection{ReferIt}
 
 ReferIt \todo{CITE: referit} is another popular dataset. The reason
@@ -202,6 +238,8 @@ expression are provided and also verificated.
   provided.}
   \label{fig:referitgame-example}
 \end{figure}
+
+\todo{ADD thecnical description of data representation}
 
 \section{Data analysis}
 
