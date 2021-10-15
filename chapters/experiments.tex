@@ -247,10 +247,43 @@ expression are provided and also verificated.
 
 \section{Data preprocessing}
 
-Following all works in literature, if a noun phrase
-corresponds to multiple ground truth bounding boxes, we merge the
-boxes and use their union region as its ground truth. On the contrary,
-if a noun phrase has no associated bounding box, we remove it from the
-dataset. We use the standard split for training, validation, and test
-set as defined in  \todo{CITE: Flickr30K Entities}, consisting of 30K,
-1K, and 1K images, respectively.
+It is well known that data preparation and filtering steps take
+considerable amount of processing time in machine learning problems
+\cite{kotsiantis2006data}. Most of the time, data we collect or borrow
+are biased, flowed, redundant, maybe irrelevant and sometimes
+corrupted or missing. For the development of an accurate and general
+model, the representation and quality of the instance data must be
+maximized by working on task like cleaning, normalization,
+transformation, feature extraction and selection. Fortunately, we do
+not work with row data: due to the large adoption of datasets
+described in Sec.~\ref{sec:datasets}, provided data are already
+preprocessed in a grossly way.
+
+However, in the next section we describe our preprocessing pipeline,
+focusing on data representation which can be confusing due to the
+etherogeneity of representations.
+
+\subsection{Data preparation}
+
+Given data as specified in
+Sec.~\ref{subsec:flickr30k-data-representation} and
+\ref{subsec:referit-data-representation} both for Flickr30K and
+ReferIt, we create a single and unified interface for data where
+information are represented homogeneously. Then we augment data, and
+we fix some problems coming from dataset.
+
+TODO: riassumere pipeline, funzioni extract ingo, remove\_queries\_and\_new\_var
+
+TOOD: discutere operations on single element e varie trasformazioni
+
+TODO: argomantere il padding e la creazione del batch
+
+TODO: aggiungere descrizione "formale", elencando le chiavi del dizionario del batch
+
+TODO \todo{AGGIUNGERE in extract inf/remove queries (prima parte)} Following all works in literature, if a noun
+phrase corresponds to multiple ground truth bounding boxes, we merge
+the boxes and use their union region as its ground truth. On the
+contrary, if a noun phrase has no associated bounding box, we remove
+it from the dataset. We use the standard split for training,
+validation, and test set as defined in  \todo{CITE: Flickr30K
+Entities}, consisting of 30K, 1K, and 1K images, respectively.
