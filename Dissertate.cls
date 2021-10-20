@@ -75,6 +75,7 @@
 \RequirePackage{lettrine}
 \RequirePackage{setspace}
 \RequirePackage{verbatim}
+\RequirePackage{listings}
 
 % Fonts.
 \RequirePackage{color}
