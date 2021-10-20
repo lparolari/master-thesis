@@ -27,13 +27,13 @@ literature}
 
 \subsection{Flickr30K}
 
-The Flickr30K Entities \todo{CITE: Flickr30K Entities} is a dataset
-built on top of Flickr30K \todo{CITE: From image descriptions to
-visual denotations: New similarity metrics for semantic inference over
-event descriptions}. Flickr30K Entities is usually referred as
-Flickr30K or, simply, as Flickr and, compared to the original
-Flickr30K dataset, it focuses on the task of grounding textual
-mentions of entities in image and augment data with some annotations.
+Flickr30K Entities \todo{CITE: Flickr30K Entities} is a dataset built
+on top of Flickr30K \todo{CITE: From image descriptions to visual
+denotations: New similarity metrics for semantic inference over event
+descriptions}. It is usually referred as Flickr30K or simply as Flickr
+and, compared to the original Flickr30K dataset, it focuses on the
+task of grounding textual mentions of entities in image by augmenting
+data with extra annotations.
 
 Annotations consists of cross-caption coreference chains linking
 mentions of the same entities together with bounding boxes localizing
@@ -46,13 +46,16 @@ ambiguities involved in identifying whether two mentions refer to the
 same entity or set of entities, how many boxes (if any) these entities
 require, and whether these boxes are of sufficiently high quality. To
 tackle this problem, compounded by the unreliability of crowdsourced
-judgments, they administer a pipeline of simpler and atomic tasks
-which can be grouped into two main stages: coreference resolution, or
+judgments, they administer a pipeline of simple and atomic tasks which
+can be grouped into two main stages: coreference resolution, or
 forming coreference chains that refer to the same entities, and
 bounding box annotation for the resulting chains. This workflow
 provides two advantages: first, identifying coreferent mentions helps
 reduce redundancy and save box-drawing effort; and second, coreference
-annotation is intrinsically valuable.
+annotation is intrinsically valuable. In
+Fig.~\ref{fig:flickr30k-example}, taken from \todo{CITE: flickr30k
+entitites} are shown the interfaces used to gather annotations with
+respect to tasks described next.
 
 \begin{figure}
   \centering
@@ -96,7 +99,7 @@ annotation is intrinsically valuable.
   \label{fig:flickr30k-example}
 \end{figure}
 
-The coreference resolution problem is solved by first chunking
+The coreference resolution task is solved by first chunking
 information given in Flickr captions to identify potential entity
 mentions. Each chunk, i.e., noun phrase (NP), is a potential entity
 mention. For example, the frase ``A man in an orange hat'' is chunked
@@ -109,7 +112,7 @@ creating a coreference chain. Tipically, this would require $O(|M|^2)$
 which is the cost of all pairwise links. But since $M$ usually
 contains multiple mentions that refer to the same set of entities, the
 number of coreference chains is bounded by a number much smaller than
-$|M|$, on average. Also, the bound is lowered by making two assumptio.
+$|M|$, on average. Also, the bound is lowered by making two assumptions.
 First, they assume that mentions from the same captions cannot be
 coreferent; second, they categorize each mention into eight
 coarse-grained types using manually constructed dictionaries (people,
@@ -155,7 +158,7 @@ boxes ground truth coordinates.
 
 Technically speaking, in Flickr30K Entities each example is composed
 by information contained in three different files linked together by
-means of a positive integer $i$. Those files represent image, sentence
+means of an identifier $id$. Those files represent image, sentence
 annotations and image annotations information. The image file is
 simply a JPG file, while the sentence annotations file is a textual
 document containing five captions. Each caption is chunked into a
@@ -166,7 +169,7 @@ name, that can be used to reconstruct which noun phrase is linked to
 the bounding box, and four coordinates $x_{min}, y_{min}, x_{max},
 y_{max}$ if it is a visual element, none otherwise. The structure is
 visually explained in
-Fig.~\todo{fig:flickr30k-technical-data-representation}.
+Fig.~\ref{fig:flickr30k-technical-data-representation}.
 
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/flickr30k-document-specification.png}
@@ -174,16 +177,15 @@ Fig.~\todo{fig:flickr30k-technical-data-representation}.
   \label{fig:flickr30k-technical-data-representation}
 \end{figure}
 
-Those data ara available online in two parts. First is about images
-file and can be downloaded by compiling a registration form.
+Those data ara available online in two parts: images and can be
+downloaded by compiling a registration form,
 \footnote{\href{http://shannon.cs.illinois.edu/DenotationGraph/}{http://shannon.cs.illinois.edu/DenotationGraph/}}
-Annotations, instead, do not requires a sign up: data can be
+while annotations, instead, do not requires a sign up: data can be
 downloaded from B. A. Plummer repository on GitHub.
 \footnote{\href{https://github.com/BryanPlummer/flickr30k\_entities}{https://github.com/BryanPlummer/flickr30k\_entities}}
 Within the repository, authors have made available predefined
 training, validation and test split that we use in our work, following
 current literature.
-
 
 \subsection{ReferIt}
 
