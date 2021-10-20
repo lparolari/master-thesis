@@ -241,7 +241,26 @@ expression are provided and also verificated.
   \label{fig:referitgame-example}
 \end{figure}
 
-\todo{ADD thecnical description of data representation}
+\subsubsection{Data Representation}
+\label{subsec:referit-data-representation}
+
+All ReferIt data is available online and instructions are provided at
+Licheng Yu's GitHub
+repository.\footnote{\href{https://github.com/lichengunc/refer}{https://github.com/lichengunc/refer}}
+Images are stored in JPG files, while annotations are described
+throught two structured file. One is a JSON file containing the
+bounding box annotations along with a list of images and their $id$,
+the other is a PICKLE
+file\footnote{\href{https://docs.python.org/3/library/pickle.html}{https://docs.python.org/3/library/pickle.html}}
+containing a serialized Python object that represents sentence
+annotations. The Fig.~\ref{fig:referit-technical-data-representation} depict
+described structure.
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/referit-document-specification.png}
+  \caption[TODO]{TODO: desc}
+  \label{fig:referit-technical-data-representation}
+\end{figure}
 
 \section{Data analysis}
 
