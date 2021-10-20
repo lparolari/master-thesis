@@ -12,6 +12,12 @@
             ]
         },
         {
+            "name": "xelatex",
+            "tools": [
+                "xelatex"
+            ]
+        },
+        {
             "name": "latexmk 🔃",
             "tools": [
                 "latexmk"
