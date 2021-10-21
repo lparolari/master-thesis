@@ -12,3 +12,91 @@ TODO
 * object detector (theory)
 * rnn + lstm
 * textual embedding
+
+\section{Object detection and recognition}
+
+Object detection (OD) and object recognition (OR) systems are crucial
+in a wide variety of everyday tasks such us face detection, image and
+video databases information retrieval, surveillance applications,
+driver assistance, self drive, robotics, automation and, specially in
+vision tasks, it is a foundamental building block used to extract
+information from images.
+
+The primary essence of those systems can be broken down into two
+parts: to locate objects in a scene such us by drawing a bounding box
+around the object (object detection) and later to classify the objects
+based on the classes it was trained on (obejct recognition). OD and OR
+are Often used together and for this reason the name of two tasks is
+usually used interchangeably.
+
+We can group the state-of-the-art detection systems in two main
+approaches: one-stage methods (YOLO - You Only Look Once \todo{CITE:
+yolo}, SSD - Single Shot Detection \todo{CITE: ssd}) and two-stage
+approaches (R-CNN, Fast R-CNN, Faster R-CNN \todo{CITE: RCNN}).
+
+\newthought{One stage methods}
+
+\begin{enumerate}[label=(\alph*)]
+  \item YOLO -- \emph{You Only Look Once} is a state-of-the-art,
+  real-time object detection system which offers extreme levels of
+  speed and accuracy. YOLO reframes object detection as a regression
+  problem to spatially separated bounding boxes and associated class
+  probabilities. A single neural network predicts bounding boxes and
+  class probabilities directly from full images in one evaluation.
+  Since the whole detection pipeline is a single network, it can be
+  optimized end-to-end directly on detection performance. This
+  architecture offers some advantages wrt to other methods: first,
+  YOLO is extremely fast and second, it reasons globally about the
+  image when making prediction implicitly encoding contextual
+  information about classes as well as their appearance. Last but not
+  least, YOLO is more likely to learn generalizable representations of
+  objects because of its global reasoning on image.
+  \item SSD -- \emph{Single Shot Detection} another state-of-the-art
+  method for detecting objects in images using a single deep neural
+  network. SSD discretizes the output space of bounding boxes into a
+  set of default boxes over different aspect ratios and scales per
+  feature map location and, at prediction time, the network generates
+  scores for the presence of each object category in each default box
+  and produces adjustments to the box to better match the object
+  shape. Additionally, the network combines predictions from multiple
+  feature maps with diﬀerent resolutions to naturally handle objects
+  of various sizes. Also, SSD offers high speed performance due its
+  single network and for this reason it is easy to train and
+  straightforward to integrate into systems that require a detection
+  component. In terms of accuracy, experimental results conﬁrm that
+  SSD has competitive accuracy also in low resolution compared to
+  methods that utilize an additional object proposal step.
+\end{enumerate}
+
+\newthought{Two stage methods}
+
+\begin{enumerate}[label=(\alph*)]
+  \item R-CNN -- \emph{Regions with CNN} is the first performant
+  object detection system ever built. It is composed by a two-stage
+  architecture: in the first step the Selective Search algorithm
+  generates around 2000 category-independent region proposals for the
+  input image, in the last step instead it extracts a fixed-length
+  feature vector from each proposal using a CNN (hence the name
+  R-CNN), and then classifies each region with category-specific
+  linear SVMs. The method shows interesting results and can be applied
+  also with scarce data availability: the system can be pretrained and
+  the fine-tuned. In temrs of computation time, R-CNN performs some
+  expensive operations required for greedy non-maximum suppression,
+  amogn others, but on relatively small inputs.
+  \item Fast R-CNN -- The Fast R-CNN model was built to counter a few
+  drawbacks of the previous R-CNN model. In this approach, similar to
+  the previous, Selective Search is used to generate region proposals
+  but the input image is fed to a CNN and a convolutional feature map
+  is generated from it which is then used to identify the regions and
+  combine them into larger squares by using a RoI pooling layer. A
+  softmax layer is finally used to predict the class of the proposed
+  region.
+  \item Unlike R-CNN and Fast R-CNN, Faster R-CNN does not use
+  Selective Search which is a slow process. Instead, it allows the
+  network to learn the region proposals throught a separate network,
+  able to predict the region proposals. The predicted proposals are
+  then pooled into larger squares using the RoI pooling layer which is
+  then finally used to classify the image.
+\end{enumerate}
+
+\todo{ADD: quale abbiamo scelto? attenzione a quanto già detto in introduzione (potrebbe essere spostato qui...)}
