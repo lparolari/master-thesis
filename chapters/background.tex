@@ -100,3 +100,28 @@ approaches (R-CNN, Fast R-CNN, Faster R-CNN \todo{CITE: RCNN}).
 \end{enumerate}
 
 \todo{ADD: quale abbiamo scelto? attenzione a quanto già detto in introduzione (potrebbe essere spostato qui...)}
+
+\section{Intersection over Union (IoU)}
+
+Given a pair of bounding box coordinates (b i , b j ), the
+Intersection over Union (IoU), also known as Jaccard index, is an evaluation metric used mainly in object detection
+tasks, which aims to evaluate how much the two bounding
+box refer to the same content in the image. Specifically, it
+is defined as:
+\[
+  \iou(\bbox_i, \bbox_i) = \frac{| \bbox_i \inters \bbox_j |}{| \bbox_i \union \bbox_j |}
+\]
+where $| \bbox_i \inters \bbox_j |$ is the area of the box obtained by
+the intersection of boxes $\bbox_i$ and $\bbox_j$ , while $| \bbox_i
+\union \bbox_j |$ is the area of the box obtained by the union of
+boxes $\bbox_i$ and $\bbox_j$. It is invariant to the bounding boxes
+sizes, and it returns values that are strictly contained in the
+interval $[0, 1] \in \Rset$, where $1$ means that the two bounding
+boxes refer to the same image area, while a score of $0$ means that
+the two bounding boxes do not overlap at all. The fact that two
+bounding boxes that do not overlap have IoU score equal to $0$, is the
+major issue of this metric: the zero value does not represent how much
+the two bounding boxes are far from each other. For this reason, in
+its standard definition, the intersection over union is mainly used as
+an evaluation metric rather than as a component of a loss function for
+learning.
