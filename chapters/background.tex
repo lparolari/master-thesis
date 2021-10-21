@@ -101,6 +101,106 @@ approaches (R-CNN, Fast R-CNN, Faster R-CNN \todo{CITE: RCNN}).
 
 \todo{ADD: quale abbiamo scelto? attenzione a quanto già detto in introduzione (potrebbe essere spostato qui...)}
 
+\section{Word Embeddings}
+
+Being able to model and represent natural language features is a
+relevant machine learning task that belongs to the natural language
+processing field and has many applications, such us information
+retrieval (Manning et al., 2008), document classification (Sebastiani,
+2002), question answering (Tellex et al., 2003), named entity
+recognition (Turian et al., 2010), and parsing (Socher et al., 2013).
+\todo{CITE: recupeare i paper dal paper GloVe} 
+
+Instead of treating words as atomic units where there is no notion of
+similarity between words, as these are represented as indices in a
+vocabulary, natural language information can be represented as
+real-valued feature vectors throught a semantic vector space, where
+representation of words are learned for a predefined fixed sized
+vocabulary from a corpus of text and the intrinsic quality of such a
+set of word is evaluated by the distance or angle between pairs of
+word vectors representations or by their various dimensions of
+difference\todo{CITE:  Mikolov et al. (2013c)}. In light of this we
+can formulate the definition for word embedding: 
+
+\begin{quote}
+    \textit{A word embedding is a learned representation for text
+    where words that have the same meaning have similar
+    representation.}
+\end{quote}
+
+With the years, literature explored different approaches for learning
+good words representation: either joint with the neural network model
+on some task, such as document classification, or using document
+statistics throught unsupervised settings.
+
+\subsection{Indexing by Latent Semantic Analysis}
+
+A first approach for learning representative word embeddings was first
+introduced by S. Deerwester \etal{} in \todo{CITE: Deer- wester et
+al., 1990}, exploiting global matrix factorization by means of latent
+semantic analyis (LSA). The proposed approach tries to overcome the
+deficiencies of term-matching retrieval by treating the unreliability
+of observed term-document association data as a statistical problem.
+Indeed, they take advantage of a particular version of LSA that uses
+singular-value decomposition. First, a large matrix of term-document
+association data is crteated and then a semantic space wherein terms
+and documents that are closely associated are placed near one another
+is constructed. Singular-value decomposition allows the arrangement of
+the space to reflect the major associative patterns in the data, and
+ignore the smaller, less important influences.
+
+\subsection{Word2Vec}
+
+Word2Vec, introduced by T. Mikolov in \todo{CITE: w2v-1} and then
+updated and revisioned in \todo{CITE: w2v-2, w2v-3}, is a statistical
+method for efficiently learning a standalone word embedding from a
+text corpus. One of the goal of Word2Vec is to learn distributed
+representations of words by neural networks, in particular, they
+introduced two different learning models that can be used as part of
+the word2vec approach to learn the word embedding: Continuous
+ag-of-Words (CBOW) and Continuous Skip-Gram Model. The CBOW model
+learns the embedding by predicting the current word based on its
+context. The continuous skip-gram model learns by predicting the
+surrounding words given a current word. Both models, shown in
+Fig.~\ref{fig:word2vec-learning-models} are focused on learning about
+words given their local usage context, where the context is defined by
+a window of neighboring words. This window is a configurable parameter
+of the model. The quality of these representations is measured in a
+word similarity task.
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/word2vec-training-models.png}
+  \caption[TODO]{TODO: desc}
+  \label{fig:word2vec-learning-models}
+\end{figure}
+
+The key benefit of the approach is that high-quality word embeddings
+can be learned efficiently (low space and time complexity), allowing
+larger embeddings to be learned (more dimensions) from much larger
+corpora of text (billions of words). Also, Word2Vec perform
+significantly better than LSA for preserving linear regularities among
+words and LDA moreover becomes computationally very expensive on
+large data sets.
+
+\subsection{GloVe}
+
+GloVe is an extension to the Word2Vec method for efficiently learning
+word vectors, developed by Pennington \etal{} in \todo{CITE: glove},
+that wants to to marry both the global statistics of matrix
+factorization techniques like LSA with the local context-based
+learning in Word2Vec. Rather than using a window to define local
+context, GloVe constructs an explicit word-context or word
+co-occurrence matrix using statistics across the whole text corpus.
+The result is a learning model that may result in generally better
+word embeddings.
+
+\subsection{Other methods}
+
+\newthought{BERT} -- Bidirectional Encoder Representations from Transformers is a relatively recent language representation model, introduced by J. Devlin \etal{} in \todo{CITE: BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding},  designed to pretrain deep bidirectional representations from
+unlabeled text by jointly conditioning on both left and right context in all layer. BERT’s key technical innovation is applying the bidirectional training of Transformer, a popular attention model, to language modelling. This is in contrast to previous efforts which looked at a text sequence either from left to right or combined left-to-right and right-to-left training.
+
+\todo{ADD OR REMOVE: Both families suffer significant drawbacks. While methods like LSA efficiently leverage statistical information, they do relatively poorly on the word analogy task, indicating a sub-optimal vector space structure. Methods like skip-gram may do better on the analogy task, but they poorly utilize the statistics of the corpus since they train on separate local context windows instead of on global co-occurrence counts.}
+
 \section{Intersection over Union (IoU)}
 
 Given a pair of bounding box coordinates (b i , b j ), the
