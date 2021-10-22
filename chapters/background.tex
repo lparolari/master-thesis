@@ -73,11 +73,11 @@ the rest of the sentence.
 Recurrent neural networks can be built in many diﬀerent ways with
 varying architecture. In literature emerged some successful RNNs
 architecture with a well defined and non-casual structure, such us
-Bidirection RNN (Bi-RNN), Long Short-Term Memory (LSTM) and Gated Recurrent
-Unit (GRU). Each RNN architecture has some pro and cons and can be
-applied successfully to specific tasks.
+Bidirection RNN (Bi-RNN), Long Short-Term Memory (LSTM) and Gated
+Recurrent Unit (GRU). Each RNN architecture has some pro and cons and
+can be applied successfully to specific tasks.
 
-\subsubsection{Bidirectional RNN}
+\subsection{Bidirectional RNN}
 
 As the name suggests, bidirectional RNNs combine an RNN that moves
 forward through time beginning from the start of the sequence with
@@ -99,7 +99,7 @@ time: it requires the full sequence, so it cannot work with real-time
 input sequences, but for the same reason it can better infer the
 output from the past and future kwown context.
 
-\subsubsection{Gated RNN}
+\subsection{Gated RNN (LSTM and GRU)}
 
 Being able to work with long term dependencies is crucial for many
 applications: think, for example, to a dialogue system which should
@@ -361,7 +361,9 @@ unlabeled text by jointly conditioning on both left and right context in all lay
 
 \todo{ADD OR REMOVE: Both families suffer significant drawbacks. While methods like LSA efficiently leverage statistical information, they do relatively poorly on the word analogy task, indicating a sub-optimal vector space structure. Methods like skip-gram may do better on the analogy task, but they poorly utilize the statistics of the corpus since they train on separate local context windows instead of on global co-occurrence counts.}
 
-\section{Intersection over Union (IoU)}
+\section{Similarity Measures}
+
+\subsection{Intersection over Union (IoU)}
 
 Given a pair of bounding box coordinates (b i , b j ), the
 Intersection over Union (IoU), also known as Jaccard index, is an evaluation metric used mainly in object detection
@@ -385,3 +387,15 @@ the two bounding boxes are far from each other. For this reason, in
 its standard definition, the intersection over union is mainly used as
 an evaluation metric rather than as a component of a loss function for
 learning.
+
+\subsection{Cosine Similarity}
+
+Cosine similarity is a metric used to measure how similar
+representations are irrespective of their size (norm). Mathematically,
+it measures the cosine of the angle between two vectors projected in a
+multi-dimensional space:
+\begin{equation}
+  s_{\cos}(\bm{a}, \bm{b}) = \frac{\veca \cdot \vecb}{\normtwo\veca \normtwo\vecb},
+\end{equation}
+where $\veca \cdot \vecb$ is the dot product between two vectors and
+$\normtwo\veca$ is the L2-norm of a vector.
