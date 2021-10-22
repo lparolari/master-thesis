@@ -12,6 +12,166 @@ TODO
 * object detector (theory)
 * rnn + lstm
 * textual embedding
+* vocabulary (move to impl. details)
+
+\section{Recurrent Neural Network}
+
+A recurrent neural network (RNN) is a special type of an artificial
+neural network (ANN) adapted to work for time series data or data that
+involves sequences. Ordinary feed forward neural networks are only
+meant for data points independent of each other while RNN introduces
+the concept of ``memory'' that helps them store the states or
+information of previous inputs to generate the next output of the
+sequence by sharing weights.
+
+An ANN with recursion can be easily modeled by the Eq.\ref{eq:rnn}:
+
+\begin{equation}
+  \label{eq:rnn}
+  \bm{h}^{(t)} = f ( \bm{h}^{(t - 1)}, \bm{x}^{(t)} ; \bm{\theta} ),
+\end{equation}
+
+where $\bm{x}^{(1)}, \ldots, \bm{x}^{(\tau)}$ is the input sequence,
+$f$ is the function that maps hidden units at time step $t - 1$ to
+time step $t$ and $\bm{\theta}$ the parameters of $f$. The equation is
+recurrent because the deﬁnition of $\bm{h}$ at time $t$ refers back to
+the same deﬁnition at time $t - 1$. The process is visually depicted
+in Fig.\ref{fig:rnn-with-unfold} \emph{(Left)} where the black square
+indicates a delay of a single time step. At this point the problem is:
+how do we propagate our input throught the RNN? Here comes in the idea
+of unfolding. To unfold an RNN basically means to unroll the cyclic
+circuit in a graph by explicitly applying the function $f$ on
+$\bm{x}^{(t)}$, the input at time $t$, and $\bm{h}^{(t-1)}$, the
+hidden state at time $t - 1$. RNN unfolding is visually explained in
+Fig.\ref{fig:rnn-with-unfold} \emph{(Right)}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/rnn-with-unfold.png}
+  \caption[TODO]{TODO: desc}
+  \label{fig:rnn-with-unfold}
+\end{figure}
+
+Tipycal RNNs add extra architectural features such as output layers
+that read information out of the state $\bm{h}$ to make predictions.
+
+When the recurrent network is trained to perform a task that requires
+predicting the future from the past, the network typically learns to
+use $\bm{h}^{(t)}$ as a kind of lossy summary of the task-relevant
+aspects of the past sequence of inputs up to t. This summary is in
+general necessarily lossy, since it maps an arbitrary length sequence
+$( \bm{x}^{(t)}, \bm{x}^{(t-1)}, \bm{x}^{(t-2)} , \ldots ,
+\bm{x}^{(2)}, \bm{x}^{(1)} )$ to a ﬁxed length vector $\bm{h}^{(t)}$ .
+Depending on the training criterion, this summary might selectively
+keep some aspects of the past sequence with more precision than other
+aspects. For example, if the RNN is used in statistical language
+modeling, typically to predict the next word given previous words, it
+may not be necessary to store all of the information in the input
+sequence up to time $t$, but rather only enough information to predict
+the rest of the sentence.
+
+Recurrent neural networks can be built in many diﬀerent ways with
+varying architecture. In literature emerged some successful RNNs
+architecture with a well defined and non-casual structure, such us
+Bidirection RNN (Bi-RNN), Long Short-Term Memory (LSTM) and Gated Recurrent
+Unit (GRU). Each RNN architecture has some pro and cons and can be
+applied successfully to specific tasks.
+
+\subsubsection{Bidirectional RNN}
+
+As the name suggests, bidirectional RNNs combine an RNN that moves
+forward through time beginning from the start of the sequence with
+another RNN that moves backward through time beginning from the end of
+the sequence. Those networks have been applied successfully when the
+output we want to predict depetnds on the whole input sequence. For
+example, in speech recognition, the correct interpretation of the
+current sound as a phoneme may depend on the next few phonemes because
+of co-articulation and potentially may even depend on the next few
+words because of the linguistic dependencies between nearby words: if
+there are two interpretations of the current word that are both
+acoustically plausible, we may have to look far into the future (and
+the past) to disambiguate them. This is also true of handwriting
+recognition and many other sequence-to-sequence learning tasks such us
+bioinformatics.
+
+The Bi-RNNs convoy an intrisic advantage and drawback at the same
+time: it requires the full sequence, so it cannot work with real-time
+input sequences, but for the same reason it can better infer the
+output from the past and future kwown context.
+
+\subsubsection{Gated RNN}
+
+Being able to work with long term dependencies is crucial for many
+applications: think, for example, to a dialogue system which should
+remember previous parts of the speech on order to keep on with the
+dialogue.
+
+Unfortunately, RNNs and long term dependencies yield a mathematical
+challenge. The basic problem is that gradients propagated over many
+stages tend to either vanish (most of the time) or explode (rarely,
+but with much damage to the optimization). Moreover, I. Goodfellow
+\etal{} in \todo{CITE: deeplearningbook}, states also that:
+
+\begin{quote}
+  Even if we assume that the parameters are such that the recurrent
+  network is stable (can store memories, with gradients not
+  exploding), the diﬃculty with long-term dependencies arises from the
+  exponentially smaller weights given to long-term interactions
+  (involving the multiplication of many Jacobians) compared to
+  short-term ones.
+\end{quote}
+
+One way to deal with long-term dependencies is to design a model that
+operates at multiple time scales, so that some parts of the model
+operate at ﬁne-grained time scales and can handle small details, while
+other parts operate at coarse time scales and transfer information
+from the distant past to the present more eﬃciently. Various
+strategies for building both ﬁne and coarse time scales are possible.
+These include the addition of skip connections across time, ``leaky
+units'' that integrate signals with diﬀerent time constants, and the
+removal of some of the connections used to model ﬁne-grained time
+scales.
+
+Like leaky units, gated RNNs are based on the idea of creating paths
+through time that have derivatives that neither vanish nor explode.
+Leaky units did this with connection weights that were either manually
+chosen constants or were parameters. Gated RNNs generalize this to
+connection weights that may change at each time step.
+
+Leaky units allow the network to accumulate information (such as
+evidence for a particular feature or category) over a long duration.
+However, once that information has been used, it might be useful for
+the neural network to forget the old state. For example, if a sequence
+is made of sub-sequences and we want a leaky unit to accumulate
+evidence inside each sub-subsequence, we need a mechanism to forget
+the old state by setting it to zero. Instead of manually deciding when
+to clear the state, we want the neural network to learn to decide when
+to do it.
+
+LSTM basically integrates the idea of self-loops to produce paths
+where the gradient can ﬂow for long durations with the addition to
+control weight on this self-loop conditioned on the context, rather
+than ﬁxed. By making the weight of this self-loop gated (controlled by
+another hidden unit), the time scale of integration can be changed
+dynamically. LSTM recurrent networks have ``LSTM cells''that have an
+internal recurrence (a self-loop), in addition to the outer recurrence
+of the RNN. Fig.~\ref{fig:lstm} illustrate the LSTM block diagram. In
+an LSTM cell, the self-loop controls the flow of information from
+input to output through three key components: a forget gate, an
+external input gate and an output gate.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.6\textwidth]{figures/lstm.png}
+  \caption[TODO]{TODO: desc}
+  \label{fig:lstm}
+\end{figure}
+
+Along with LSTM architecture, a simpler version was recently proposed
+with the aim to simplify cells and speed-up computations: the gated
+recurrent units (GRU). The behaviour wrt LSTM is very similar, the
+only difference is that a single gating unit simultaneously controls
+the forgetting factor and the decision to update the state unit.
 
 \section{Object detection and recognition}
 
