@@ -85,3 +85,60 @@ as:
 where $\bm{h}^*_j \in \Rset^t$ is the LSTM output of the last word in
 the noun phrase $\bm{q}_j$ , and $L1$ is the L$1$ normalization
 function.
+
+\subsection{Similarity Branch}
+
+Along with visual and textual features we also compute a similarity
+score beween noun phrases and bounding box class labels. Such score is
+crucial for learning to ground, and we call it concept similarity. The
+idea behind this is straightforward: the more the noun phrase and the
+councept expressed throught the bounding box label are semantically
+similar, the more they are related. In a weakly-supervised scenario
+where we are missing the grounding information, to known whether a
+phrase and the concept that it expresses (i.e, the bounding box) are
+related is very important for the learning process. Here, an
+assumption is made: the bounding box class label semantically define
+the content of the bounding box. 
+
+Formally, given set of proposal $\calP^{\bm{I}}$ and a noun phrase
+$\bm{q}_j$, we compute the concept similarity score for each proposal
+$i$ and phrase $j$ as:
+\begin{equation}
+  \bm{S}^c_{ji} = \fsim \left( \xi, \ePI_i \right),
+\end{equation}
+where $\fsim$ is a similarity measure such us the cosine similarity,
+$\ePI_i$ is the embedding of the class for the $i$-th proposal, and
+$\xi$ is the embedding representing the concept of the noun phrase
+$\qj$:
+\begin{equation}
+  \xi = \fagg(\Eqj, \EPI).
+\end{equation}
+Please note that we use the same notation for proposal class
+embeddings: $\EPI = \{ \ePI_i \}^{k}_{i=1}$ is the set of embeddings,
+one per proposal, representing the bounding box class label. Moreover,
+for each proposal we consider only the embedding of the class with
+maximum probability: $\max Pr_{Cls} (\bm{p}_i)$, i.e., every proposal
+is associated with one class label. \todo{ADD: problema del background
+delle calssi} The new embedding $\xi$ can be computed with different
+strategies: for example, we can simply compute the mean of all word
+embeddings in the noun phrase:
+\begin{equation}
+  \fagg^{\text{mean}}(\Eqj, \EPI) = \frac{\sum^l_{i=1} \eqj_i}{| \Eqj |},
+\end{equation}
+or use only the last word as done in \todo{CITE: Phrase Loc
+wo Paired Training Examples}:
+\begin{equation}
+  \fagg^{\text{last}}(\Eqj, \EPI) = \eqj_l.
+\end{equation}
+More complex strategies instead take into account external
+information, such us the similarity wrt proposal class embeddings.
+Here, we compute the similarity between word in noun phrase and
+proposal class embeddings and then we select one word in the noun
+phrase with maximum similarity wrt the detected concept in proposal:
+\begin{equation}
+  \fagg^{\text{max}}(\Eqj, \EPI) = \max_{\eqj \in \Eqj} \{ \max g(\eqj) \},
+\end{equation}
+where
+\begin{equation}
+  g(\eqj) = \{ \fsim(\ePI, \eqj) \mid \ePI \in \EPI \}.
+\end{equation}
