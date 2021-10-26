@@ -67,3 +67,21 @@ Cls$ that the content of the bounding box $\bm{p}_i$ belongs to
 $\zeta$. This information is typically returned by most of the object
 detectors, and it will be used to define our novel loss function.
 \todo{UPDATE: to define our...}
+
+\subsection{Textual Branch}
+
+Regarding the textual features extraction, given a noun phrase
+$\bm{q}_j$, initially all its words $W^{\bm{q}_j} = \{ w^{\bm{q}_j}_i
+\}^l_{i=1}$ are embedded in a set of vectors $E^{\bm{q}_j} =
+\{e^{\bm{q}_j}_i \}^l_{i=1}$ where $e^{\bm{q}_j}_i \in \Rset^w$, where
+$w$ is the size of the embedding. Then, our model applies a LSTM (see
+Sec.~\ref{subsec:gated-rnn}) neural network to generate from the
+sequence of word embeddings only one new embedding $\bm{h}^*_j$ for
+each phrase $\bm{q}_j$. This textual features extraction is defined
+as:
+\begin{equation}
+  \bm{h}^*_j = L1(LSTM(E^{\bm{q}_j}))
+\end{equation}
+where $\bm{h}^*_j \in \Rset^t$ is the LSTM output of the last word in
+the noun phrase $\bm{q}_j$ , and $L1$ is the L$1$ normalization
+function.
