@@ -142,3 +142,87 @@ where
 \begin{equation}
   g(\eqj) = \{ \fsim(\ePI, \eqj) \mid \ePI \in \EPI \}.
 \end{equation}
+
+\subsection{Prediction Module}
+
+Finally, the model predicts the probability $\bm{P}_{jz}$ that a given
+noun phrase $\qj$ is referrred to a proposal bounding box $\bm{p}_z$
+as:
+\begin{equation}
+  \bm{P}_{jz} = \fsim ( \bm{h}^{||}_{jz} , \bm{h}^*_j ).
+\end{equation}
+Here, $c$ should be equal to $t$, where $c$ and $t$ are the dimension of vector,
+respectively $\bm{h}^{||}_{jz} \in \Rset^c$ and $\bm{h}^*_j \in
+\Rset^t$.
+
+As noted in \todo{CITE: kak net}, concept similarit is a direct
+consequence of the intrinsic knwoledge convoyed by the object
+detector. This can be exploited to instruct the model on what to
+focus. The idea behind this is simple but effective: given the concept
+similarity, that is, the similarity of concept expressed in phrase wrt
+the content of the bounding box, we can use it as a prior for the
+model and down-weight unrelated proposals. Hence, we can apply the
+concept similarity on previously computed $\bm{P}_{jz}$ as:
+\begin{equation}
+  \bm{P}^*_{jz} = \fapplysim \left( \bm{P}_{jz} , \bm{S}^c_{jz} \right).
+\end{equation}
+
+For the sake of presentation, we show that $\bm{P}_{jz}$ is equal to
+$\bm{P}^*_{jz}$ by applying concept similarity on $\bm{P}$ with
+$\fapplysim^{\text{one}}$, a funcion that simply ignore $\bm{S}^c$
+matrix:
+\begin{equation}
+  \fapplysim^{\text{one}} (\bm{S}^c_{jz}, \bm{P}_{jz}) = \bm{P}_{jz}.
+\end{equation}
+Outside of this section, we use the notation $\bm{P}^*$ for referring
+to the predictions matrix, and whether the concept similarity is
+applied or not is an implementation detail.
+
+The simplest strategy for applying the concept similarity to
+previously computed predictions is by multiplying the two, treating
+$\bm{S}^c_{jz}$ as a weight matrix:
+\begin{equation}
+  \fapplysim^{\text{prod}} (\bm{S}^c_{jz}, \bm{P}_{jz}) = \bm{S}^c_{jz} * \bm{P}_{jz}.
+\end{equation}
+
+At first glance, this approach seems very promising because we force
+the model to return predictions ``on steroid'' when there is a
+semantic relation between phrase and proposal or downweighted when no
+similarity is found. However, this relies on the assumption that the
+embedding space and similarity measure we are using for words
+perfectly captures the semantic similarity between them, and this is
+not true. Also, we assume that proposals are classified with no error
+by the object detector, neither this is true. Under those hypotesis,
+such application of concept similarity cannot be fruitful. 
+
+An example my clarify our statement. We are given $\bm{S}^c \in
+\Rset^{1 \times 2}$, $\bm{S}^c = [0.1, 0.2]$ for an example composed by a
+phrase and two proposal, and we know that the bounding box to ground
+with our prhrase is the first. The only way the model has to output
+the first proposal as the best bounding box, i.e., the bounding box to
+ground, is to predict a score $p_{0}$ which is at least the double of
+$p_{1}$, because
+\begin{equation}
+  \bm{P}^* = [0.1 * p_{0}, 0.2 * p_{1}]
+\end{equation}
+where $p_{j} = \bm{P}[0, j]$, and 
+\begin{equation}
+\begin{split}
+0.1 * p_{0} > 0.2 * p_{1} & \iff p_{0} >  \frac{0.2}{0.1} * p_{1} \\
+  & \iff p_{0} > 2 * p_{1}.
+\end{split}
+\end{equation}
+Thus, with such scores $\bm{S}^c$, when the model predicts $0.1$ for
+$p_1$, it must learn to predict $> 0.2$ for $p_0$, when it predicts
+$0.5$ for $p_1$, it must learn to predict $1.0$ for $p_0$ and when it
+predicts a value $> 0.5$ for $p_1$ there is no way to predict a
+greater score for $p_0$. In conclusion, it's very difficult to learn
+to ground in such settings and given problems highlighted above.
+
+A more convenient way of applying concept similarity to prediction is
+instead to compute the mean between two. Eventually, we can also put a
+weight on two terms in order to balance contributions. Formally,
+$\fapplysim$ becomes:
+\begin{equation}
+  \fapplysim^{\text{mean}} (\bm{S}^c_{jz}, \bm{P}_{jz}) = (1 - \lambda) * \bm{S}^c_{jz} + \lambda * \bm{P}_{jz}.
+\end{equation}

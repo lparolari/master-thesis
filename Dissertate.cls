@@ -83,6 +83,7 @@
 \usepackage{hyperref}
 \RequirePackage{url}
 \RequirePackage{amssymb}
+\RequirePackage{amsmath}
 \RequirePackage{mathspec}
 \RequirePackage{bm}  % bold math
 \RequirePackage{bbold}
