@@ -226,3 +226,56 @@ $\fapplysim$ becomes:
 \begin{equation}
   \fapplysim^{\text{mean}} (\bm{S}^c_{jz}, \bm{P}_{jz}) = (1 - \lambda) * \bm{S}^c_{jz} + \lambda * \bm{P}_{jz}.
 \end{equation}
+
+\section{Training}
+
+In this section, we present our loss. For the sake of presentation, we
+define in the following the loss terms referred to a single example.
+The total loss is then obtained by summing up the contributions of all
+examples in the training set.
+
+Please note that in weakly-supervised settings, for a training example
+$\left( \bm{I}, S \right)$ we are not given the query-proposal pair
+set $\{ ( q^{gt}_j, p^{gt}_j ) \}^m_{j=1}$, where $m$ is the number of
+noun phrases.
+% Thus, how can instruct our model to learn without the ground truth?
+% This problem is well known in literature: in \todo{CITE: align2ground}
+% they enforces the score between a noun phrase and a proposal to be
+% higher than a non-paired proposal, and vice-versa. In ...
+To tackle this problem, in our work we adopt a very simple strategy:
+we exploit concept similarity. Basically, we consider ``positive'' an
+example where the concept similarity is above a certain treshold, and
+``negative'' an example whose concept similarity is below threshold:
+\begin{equation}
+  \bm{D}_{jz} =
+  \begin{cases}
+    0, & \bm{S}^c_{jz} > \sigma \\
+    1, & \text{otherwise}
+  \end{cases},
+\end{equation}
+ \todo{FIX: equation: out are in -1, 0, 1}
+where $\bm{S}^c$ is the concept similarity. This policy relies on the
+assumption that concept similarity correctly captures the semantic
+relation between query and proposal. $\bm{D}$ is the concept direction
+matrix.
+
+Now, given a training example $\left( \bm{I}, S \right)$, where
+$\cal{P}_{\bm{I}}$ the bounding box proposals set, we define the loss
+function $\calL$ (for a single example) as:
+\begin{equation}
+  \calL = \frac{1}{m} \sum^m_{j=1} \Bigg( \frac{1}{z} \sum^k_{z=1} \floss ( \bm{P}^*_{jz}, \bm{D}_{jz} ) \Bigg)
+\end{equation}
+where $m$ in the number of noun phrases, $k$ is the number of proposal
+bounding box, $\bm{P}^*_{jz}$ is the model predicted probability that
+the noun phrase $\bm{q}_j \in \calQ$ refers to the image content
+localized by $\bm{p}_z \in \calP_{\bm{I}}$. Our loss is scaled by $m$
+and $k$ because number of noun phrase can change, but also number of
+proposal: in our case, we ignore proposal with class label equal to
+``background'' (see Sec.~\todo{REF: sec}). In the end, $\floss$ is the
+function that optimize the learning process by combining predicted
+scores with the concept direction. TODO: many strategie can apply, but
+we chose...\todo{TODO: complete sentence}
+\begin{equation}
+  \floss ( \bm{P}^*_{jz}, \bm{D}_{jz} ) = -1 * ... % TODO \bm{D}_{jz} * x_pos + torch.square(y * x_neg)
+\end{equation}
+\todo{FIX: equation}
