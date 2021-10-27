@@ -423,7 +423,44 @@ artifacts (generated with $0$-coords only to fill the vector), they
 are pretty rare: XX in Flickr30k and YY in ReferIt \todo{ADD: numbers}
 and we can keep $k = 100$ to reach maximum objects coverage.
 
+\subsection{Upperbound Accuracy}
+
+Model performance depends on the degree of overlap between predicted
+bounding box and ground truth bounding box (see
+Sec.~\ref{sec:evaluation-metric}). However, our model deals with
+proposal given by object detector and it has no power in moving them
+around. This means that, without the ability to tune proposal
+coordinates, the model obtains good performace only if a bounding box
+that overlap the ground truth by a certain value exists. So, do the
+object detector's proposals cover the ground truth?
+
+We analyzed the data and we discovered that, with $k = 100$ bounding
+box the coverage is good enough (nearly $93$-$91$\%), however, by
+decreasing $k$ upperbound accuracy drops by a large margin (nearly
+$54$-$51$\%) . Results are shown in Tab.~\ref{tab:bb-coverage}.
+
+\begin{table}
+  \centering
+  \begin{tabular}{c|cc}
+     & \multicolumn{2}{c}{Accuracy (\%)} \\
+    $k$ & Flickr30k & ReferIt \\\hline 
+    $100$ & $93.4$ & $91.4$ \\ 
+    $90$ & $93.1$ & $90.9$ \\  
+    $80$ & $92.7$ & $90.3$ \\
+    $70$ & $92.0$ & $89.5$ \\
+    $60$ & $91.2$ & $88.5$ \\
+    $50$ & $89.8$ & $86.8$ \\
+    $40$ & $87.5$ & $84.2$ \\
+    $30$ & $83.3$ & $79.7$ \\
+    $20$ & $74.5$ & $70.5$ \\
+    $10$ & $53.9$ & $51.0$ \\\hline
+  \end{tabular}
+  \caption[TODO]{TODO}
+  \label{tab:bb-coverage}
+\end{table}
+
 \section{Evaluation Metric}
+\label{sec:evaluation-metric}
 
 Aligned with the works in literature, we consider the standard
 accuracy metric. Given a noun phrase, it considers a bounding box
