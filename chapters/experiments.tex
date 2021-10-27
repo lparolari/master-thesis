@@ -403,6 +403,26 @@ Within the folllwing sections we outline our shallow data analysis,
 performed on-demand while designing the model in order to develop
 winning strategies.
 
+\subsection{Number of Bounding Box per Image}
+
+Each image in the dataset is different and vary wrt number of objects
+in it, type of scene, dimensions and so on. Thus, by nature of images,
+the object detector can extract a variable number of bounding boxex
+and usually, only a variable subset of these are relevant. However,
+for implementation purposes we need to fix a number $k$ of proposal
+per example. Then, how to chose $k$? 
+
+Following literature we initially fixed the upper-threshold to $k =
+100$ proposals, and then we performed an analysis on both dataset
+aimed to detect the distribution of proposals per image. We discovered
+that the object detector can detect maximum number of proposal for
+almost every example except to some degenerative images.
+
+Such metric allowed us to conclude that even if some boxes are
+artifacts (generated with $0$-coords only to fill the vector), they
+are pretty rare: XX in Flickr30k and YY in ReferIt \todo{ADD: numbers}
+and we can keep $k = 100$ to reach maximum objects coverage.
+
 \section{Evaluation Metric}
 
 Aligned with the works in literature, we consider the standard
