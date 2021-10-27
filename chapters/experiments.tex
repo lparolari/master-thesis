@@ -442,21 +442,68 @@ $54$-$51$\%) . Results are shown in Tab.~\ref{tab:bb-coverage}.
 \begin{table}
   \centering
   \begin{tabular}{c|cc}
-     & \multicolumn{2}{c}{Accuracy (\%)} \\
+     & \multicolumn{2}{c}{Upperbound Accuracy (\%)} \\
     $k$ & Flickr30k & ReferIt \\\hline 
     $100$ & $93.4$ & $91.4$ \\ 
-    $90$ & $93.1$ & $90.9$ \\  
-    $80$ & $92.7$ & $90.3$ \\
-    $70$ & $92.0$ & $89.5$ \\
-    $60$ & $91.2$ & $88.5$ \\
-    $50$ & $89.8$ & $86.8$ \\
-    $40$ & $87.5$ & $84.2$ \\
-    $30$ & $83.3$ & $79.7$ \\
-    $20$ & $74.5$ & $70.5$ \\
-    $10$ & $53.9$ & $51.0$ \\\hline
+     $90$ & $93.1$ & $90.9$ \\  
+     $80$ & $92.7$ & $90.3$ \\
+     $70$ & $92.0$ & $89.5$ \\
+     $60$ & $91.2$ & $88.5$ \\
+     $50$ & $89.8$ & $86.8$ \\
+     $40$ & $87.5$ & $84.2$ \\
+     $30$ & $83.3$ & $79.7$ \\
+     $20$ & $74.5$ & $70.5$ \\
+     $10$ & $53.9$ & $51.0$ \\\hline
   \end{tabular}
   \caption[TODO]{TODO}
   \label{tab:bb-coverage}
+\end{table}
+
+\subsection{Upperbound Accuracy Removing Background Class}
+
+As stated in Sec.~\todo{REF: section} we remove proposal where
+predicted class is ``background''. ``Background'' is a special class
+and represents the absence of a classification. In many supervised
+works the removal of such potential candidate proposals may impact on
+the performance, because every proposal should potentially be the one
+that maximize the overlapping with the ground truth and a supervised
+model can learn to identify it. Instead, under weakly supervised
+settings, this kind of proposals are a source of noise. How can the
+model discriminate a positive or negative example based on the
+similarity of the phrase with the proposal class label whether the
+label is ``background''?
+
+To remove this kind of boxes, as mentioned above, may reduce the
+maximum achievable accuracy. We analyzed this phenomenom and we
+surprisingly noticed that even removing on average one proposal over
+two, the upperbound accuracy remains comparable to the version without
+background removal. In particular, we obtained a relative loss of
+$4.1$ and $6.6$\% on average and an absolute loss of $3.7$ and $5.8$\%
+on average, respectively for Flickr30k and ReferIt, wrt to upperbound
+accuracy without background removal. Analytics details are reported in
+Tab.~\ref{tab:bb-coverage-no-background}.
+
+Such results allow us to apply the background removal with translates
+in noise removal without any relevant drop in performace.
+
+\begin{table}
+    \centering
+    \begin{tabular}{c|cc|cc}
+       & \multicolumn{2}{c|}{Flickr30k} & \multicolumn{2}{c}{ReferIt} \\\hline
+      $k$ & \multicolumn{1}{p{2.2cm}|}{\centering Upperbound\\ Accuracy (\%)} & \multicolumn{1}{p{2.2cm}|}{\centering Average Box\\ Removed (\%)} & \multicolumn{1}{p{2.2cm}|}{\centering Upperbound\\ Accuracy (\%)} & \multicolumn{1}{p{2.2cm}}{\centering Average Box\\ Removed (\%)}   \\\hline 
+      $100$ & $88.3$ & $47.6$ & $83.0$ & $51.1$ \\
+       $90$ & $87.9$ & $46.6$ & $82.6$ & $49.9$ \\
+       $80$ & $87.5$ & $44.8$ & $82.2$ & $48.4$ \\
+       $70$ & $86.9$ & $42.7$ & $81.6$ & $46.4$ \\
+       $60$ & $86.3$ & $40.0$ & $80.9$ & $43.7$ \\
+       $50$ & $85.3$ & $36.3$ & $80.1$ & $39.9$ \\
+       $40$ & $83.8$ & $30.8$ & $78.8$ & $34.5$ \\
+       $30$ & $80.8$ & $22.4$ & $76.0$ & $26.4$ \\
+       $20$ & $73.6$ & $10.8$ & $68.9$ & $15.0$ \\
+       $10$ & $53.9$ &  $1.2$ & $50.8$ &  $3.8$ \\\hline
+    \end{tabular}
+  \caption[TODO]{TODO}
+  \label{tab:bb-coverage-no-background}
 \end{table}
 
 \section{Evaluation Metric}
