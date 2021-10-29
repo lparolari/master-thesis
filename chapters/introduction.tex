@@ -76,9 +76,9 @@ dictionary of labels, predicted with maximum confidence by an object
 detector for that bounding box. The concept similarity is the
 similarity between the phrase concept and bounding box class. Here,
 the key idea is that the head of the phrase should be very similar
-(semantically speaking) to the content of the bounding an thus, to its
-class. Indeed, we optimize the model to learn a representation in the
-this similarity subspace, where semantically similar features from
+(semantically speaking) to the content of the bounding box and thus,
+to its class. Indeed, we optimize the model to learn a representation
+in this similarity subspace, where semantically similar features from
 image and text should be close each other, otherwise they are forced
 to be perpendicular. In this process, we use concept similarity to
 attract or repulse features.
