@@ -31,18 +31,18 @@ in Fig.\ref{fig:model-architecture}.
   \label{fig:model-architecture}
 \end{figure}
 
-Our model, outlined in Fig.~\ref{fig:model-architecture}, follows a
-typical basic architecture for visual textual grounding tasks. It is
-based on a two-stage approach in which, initially, a pre-trained
-object detector (see Sec.~\ref{sec:object-detection-recognition}) is
-used to extract, from a given image $\bm{I}$, a set of $k$ bounding
-box proposals $\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$, where $p_i
-\in \Rset^4$, jointly with features $H^v = \{ \bm{h}^v_i \}^k_{i=1}$,
-where $\bm{h}^v_i \in \Rset^v$. The features represent the internal
-object detector activation values before the classification layers and
-regression layer for bounding boxes. Moreover, our model extracts the
-spatial features $H^s = \{ \bm{h}^s_i \}^k_{i=1}$, where $\bm{h}^s_i
-\in \Rset^s$ from all the bounding boxes proposals, with the spatial
+\subsection{Visual Branch}
+\label{subsec:visual-branch}
+
+Given an image $\bm{I}$, we extract a set of $k$ bounding box
+proposals $\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$ by means of a
+pre-trained object detector, where $p_i \in \Rset^4$, jointly with
+features $H^v = \{ \bm{h}^v_i \}^k_{i=1}$, where $\bm{h}^v_i \in
+\Rset^v$. The features represent the internal object detector
+activation values before the classification layers and regression
+layer for bounding boxes. Moreover, our model extracts the spatial
+features $H^s = \{ \bm{h}^s_i \}^k_{i=1}$, where $\bm{h}^s_i \in
+\Rset^s$ from all the bounding boxes proposals, with the spatial
 features for the proposal $\bm{p}_i$ defined as:
 \begin{equation}
   \bm{h}^s_i = \left[ \frac{x1}{wt}, \frac{y1}{ht}, \frac{x2}{wt}, \frac{y2}{ht}, \frac{(x2 - x1) \times (y2 - y1)}{wt \times ht}  \right]
@@ -59,7 +59,8 @@ are defined as:
 \end{equation}
 where $||$ indicates the concatenation operator, $\bm{h}^{||}_{jz} \in
 \Rset^c$, $\bm{W}^{||} \in \Rset^{c \times (s + v)}$ is a matrix
-of weights, and $\bm{b}^{||} \in \Rset^c$ is a bias vector.
+of weights, $\bm{b}^{||} \in \Rset^c$ is a bias vector, and $L1$ is
+the L$1$ normalization function.
 
 We also assume that the object detector returns, for each $\bm{p}_i$,
 a probability distribution $Pr_{Cls}(\bm{p}_i)$ over a set $Cls$ of
@@ -84,7 +85,7 @@ as:
   \bm{h}^*_j = L1(LSTM(E^{\bm{q}_j}))
 \end{equation}
 where $\bm{h}^*_j \in \Rset^t$ is the LSTM output of the last word in
-the noun phrase $\bm{q}_j$ , and $L1$ is the L$1$ normalization
+the noun phrase $\bm{q}_j$, and $L1$ is the L$1$ normalization
 function.
 
 \subsection{Similarity Branch}
