@@ -117,7 +117,9 @@
             "args": [
                 "%DOCFILE%"
             ],
-            "env": {}
+            "env": {
+                "PATH": "/opt/texlive/2021/bin/x86_64-linux:/home/red/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/var/lib/snapd/snap/bin"
+            }
         },
         {
             "name": "rnw2tex",
@@ -165,7 +167,9 @@
                 "-file-line-error",
                 "%DOC%"
             ],
-            "env": {}
+            "env": {
+                "PATH": "/opt/texlive/2021/bin/x86_64-linux:/home/red/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/var/lib/snapd/snap/bin"
+            }
         }
     ]
 }
