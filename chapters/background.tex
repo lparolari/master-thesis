@@ -219,6 +219,113 @@ The third type of weakly supervision in phrase grounding is usually
 mixed with the other because the label procedure which must be carried
 out by an human annotator and it's very error prone.
 
+\section{NLP and Part of Speech Tagging}
+
+Part of Speech (POS) Tagging is a very basic and well known Natural
+Language Processing (NLP) problem which consists of assigning to each
+word of a text the proper morphosyntactic tag in its context of
+appearance \cite{marquez2000machine}. It is very useful for a number
+of NLP applications: as a preprocessing step to syntactic parsing,
+in information extraction and retrieval (e.g. document classification
+in internet searchers), text to speech systems, corpus linguistics,
+etc. The base of POS tagging is that many words being ambiguous
+regarding their POS, in most cases they can be completely
+disambiguated by taking into account an adequate context. Furthermore,
+there are even cases in which the ambiguity is non-resolvable using
+only morphosyntactic features of the context, and require semantic
+and/or pragmatic knowledge. For instance, in the sample sentence
+``Yesterday I read the paper'' the word \textit{read} is disambiguated
+as a past simple because the word \textit{yesterday} at the beginning
+of the sentence. Without context, the POS tagger can tag \textit{read}
+also as a present or past participle.
+
+Starting with the pioneer tagger \textsc{Taggit} developed by B. B.
+Greene \etal{} in 1971, used for an initial tagging of the Brown
+Corpus (BC), a lot of effort has been devoted to improving the quality
+of the tagging process in terms of accuracy and efficiency. Existing
+taggers can be classified into three main groups according to the kind
+of knowledge they use: linguistic, statistic and machine-learning
+family. Of course some taggers are difficult to classify into these
+classes and hybrid approaches must be considered. Within the
+linguistic approach most systems codify the knowledge involved as a
+set of rules (or constraints) written by linguists. The linguistic
+models range from a few hundreds to several thousand rules, and they
+usually require years of labor.
+
+The most extended approach nowadays is the statistical family
+(obviously due to the limited amount of human effort involved).
+Basically it consists of building a statistical model of the language
+and using this model to disambiguate a word sequence. The language
+model is coded as a set of co-occurrence frequencies for different
+kinds of linguistic phenomena. This statistical acquisition is usually
+found in the form of n-gram collection, that is, the probability of a
+certain sequence of length $n$ is estimated from its occurrences in
+the training corpus. In the case of POS tagging, usual models consist
+of tag bi-grams and tri-grams (possible sequences of two or three
+consecutive tags, respectively). Once the n-gram probabilities have
+been estimated, new examples can be tagged by selecting the tag
+sequence with highest probability. This is roughly the technique
+followed by the widespread Hidden Markov Model taggers. Although the
+form of the model and the way of determining the sequence to be
+modeled can also be tackled in several ways, most systems reduce the
+model to unigrams, bi-grams or tri-grams. Moreover, some taggers try
+to reduce the amount of training data needed to estimate the model,
+and use the Baum-Welch re-estimation algorithm. Other works that can
+be placed in the statistical family performs energy-function
+optimization using neural nets. Recent works in this field try not to
+limit the model to a fixed order n-gram by combining different order
+n-grams, morphological information, long-distance n-grams, or
+triggering pairs. These are some approaches that we may see
+incorporated to POS tagging tasks in the short term.
+
+Although the statistical approach involves some kind of learning,
+supervised or unsupervised, of the parameters of the model from a
+training corpus, we place in the machine learning family only those
+systems that include more sophisticated information than a n-gram
+model. Many approaches were explored in literature: some works tried
+to automatically learn a set of transformation rules which best repair
+the errors committed by a most-frequent-tag tagger. Others acquire
+Constraint Grammar rules from tagged corpora or apply instance-based
+learning. Promosing approaches explore decision trees induced from
+tagged corpora, which are exploited, together with other statistical
+and linguistic information, in a hybrid environment that applies
+relaxation techniques over a set of constraints.
+
+\subsection{POS tags}
+
+POS tags were originially defined in \cite{marcus1993building} on the
+Penn Treebank corpus as a comprehensive list of tags for words,
+including noun, adjective, verb tenses and also symbols. The
+Fig.~\ref{fig:pos-tags} shows the tags along with their description.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/pos-tags.png}
+  \caption[POS tags]{POS tags of the Penn Treebank tag set \cite{marcus1993building}}
+  \label{fig:pos-tags}
+\end{figure}
+
+During years, three different annotation standard of POS tagging and
+dependency structure, such us Stanford Dependencies
+\cite{de2006generating, de2008stanford, silveira2014gold}, Google
+universal part-of-speech tags \cite{lin2012syntactic} and the Interset
+interlingua \cite{zeman2008reusable} for morphosyntactic tagsets.
+Universal Dependencies (UD) \cite{nivre2016universal,
+nivre2017universal} is a recent effort to to achieve cross-linguistic
+consistency of annotation, while still permitting language-specific
+extensions when necessary. The UD annotation scheme uses a
+representation in the form of dependency trees as opposed to a phrase
+structure trees and makesavailable over $100$ treebanks of more than
+$70$ languages. New Universal POS tags are listed in
+Fig.~\ref{fig:upos-tags}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/upos-tags.png}
+  \caption[Universal POS tags]{Universal part-of-speech tags (UPOS) \cite{nivre2017universal}}
+  \label{fig:upos-tags}
+\end{figure}
+ 
 \section{Recurrent Neural Network}
 
 A recurrent neural network (RNN) is a special type of an artificial
