@@ -91,52 +91,77 @@ function.
 \subsection{Similarity Branch}
 
 Along with visual and textual features we also compute a similarity
-score beween noun phrases and bounding box class labels. Such score is
-crucial for learning to ground, and we call it concept similarity. The
-idea behind this is straightforward: the more the noun phrase and the
-councept expressed throught the bounding box label are semantically
-similar, the more they are related. In a weakly-supervised scenario
-where we are missing the grounding information, to known whether a
-phrase and the concept that it expresses (i.e, the bounding box) are
-related is very important for the learning process. Here, an
-assumption is made: the bounding box class label semantically define
-the content of the bounding box. 
+score between noun phrases and bounding boxes: the concept similarity
+\cite{wang2019phrase}. The aim of such score is to capture the
+semantic similarity between the content of a proposal and the concept
+expressed by a phrase. But, instead of learning a complex multi-modal
+mapping function between features, which is very difficult to realize
+in unsupervised settings, we directly combine information given by
+object detector and phrases. More precisely, we exploit those
+information by leveraging on pretrained word embeddings. A good set of
+word embeddings is able to capture, above all, the semantic similarity
+between words, hence, words with same meaning should have similar
+representation (Sec.~\ref{sec:word-embeddings}). Based on this
+assumption, the similarity score can be trivially expressed as a
+distance measure between two vectors in a space. Thus, the concept
+similarity is none other than a distance measure applied to two word
+embeddings. The first word embedding is extracted in a way that it can
+express the content of a proposal. This information is made available
+by the object detector, which usually return a probability
+distribution over a set of classes, for each proposal
+(Sec.~\ref{subsec:visual-branch}). We can easily gather the class that
+best express proposal's content by simply taking the class associated
+with the maximum prediction among the returned probability
+distribution. This class is just a word (or, in some case a
+combination of words), that can be naturally embedded in the word
+embeddings space. The word embedding that express phrase concept,
+instead, can be obtained by means of an NLP tool. Such tool we can
+extract words that comply with some criteria, for example being a noun
+or the head of the phrase. \todo{Apart from this, our model selects
+the target words by considering the similarity with the bounding box
+class label. - NON LO SPIEGHIAMO QUI MA SOTTO QUANDO ELENCO LE STRATEGIE??}
 
-Formally, given set of proposal $\calP^{\bm{I}}$ and a noun phrase
-$\bm{q}_j$, we compute the concept similarity score for each proposal
-$i$ and phrase $j$ as:
+Formally, we define $\EPI = \{\ePI_i \}^{k}_{i=1}$ the set of class
+labels embeddings build on the set of proposal $\calP^{\bm{I}}$. Each
+$\ePI_i$ is a feature vector representing the class label predicted
+with maximum confidence by the object detector for the $i$-th
+proposal. Then, given a noun phrase $\bm{q}_j$ along with
+$E^{\bm{q}_j}$, we compute the concept similarity score for each
+proposal $i$ and phrase $j$ as:
 \begin{equation}
-  \bm{S}^c_{ji} = \fsim \left( \xi, \ePI_i \right),
+  \bm{S}^c_{ji} = \fsim \left( \xi_j, \ePI_i \right),
 \end{equation}
 where $\fsim$ is a similarity measure such us the cosine similarity,
-$\ePI_i$ is the embedding of the class for the $i$-th proposal, and
-$\xi$ is the embedding representing the concept of the noun phrase
+and $\xi_j$ is the embedding representing the concept of the noun phrase
 $\qj$:
 \begin{equation}
-  \xi = \fagg(\Eqj, \EPI).
+  \xi_j = \fagg(\Eqj, \EPI).
 \end{equation}
-Please note that we use the same notation for proposal class
-embeddings: $\EPI = \{ \ePI_i \}^{k}_{i=1}$ is the set of embeddings,
-one per proposal, representing the bounding box class label. Moreover,
-for each proposal we consider only the embedding of the class with
-maximum probability: $\max Pr_{Cls} (\bm{p}_i)$, i.e., every proposal
-is associated with one class label. \todo{ADD: problema del background
-delle calssi} The new embedding $\xi$ can be computed with different
-strategies: for example, we can simply compute the mean of all word
-embeddings in the noun phrase:
+The new embedding $\xi_j$ can be computed with various strategies that
+belongs to two different categories. In the first group we can find
+operators that take into account the entire phrase to generate a
+representative. A widely used strategy is to generate a new embedding
+by averaging phrase's word embeddings:
 \begin{equation}
   \fagg^{\text{mean}}(\Eqj, \EPI) = \frac{\sum^l_{i=1} \eqj_i}{| \Eqj |},
 \end{equation}
-or use only the last word as done in \todo{CITE: Phrase Loc
-wo Paired Training Examples}:
-\begin{equation}
-  \fagg^{\text{last}}(\Eqj, \EPI) = \eqj_l.
-\end{equation}
-More complex strategies instead take into account external
-information, such us the similarity wrt proposal class embeddings.
-Here, we compute the similarity between word in noun phrase and
-proposal class embeddings and then we select one word in the noun
-phrase with maximum similarity wrt the detected concept in proposal:
+however, there is an evidence that such averaging operations can
+compromise the discriminativeness
+\cite{wang2019phrase,datta2019align2ground}. If we consider instead a
+single word as a representative for the phrase, a common strategy in
+literature is to select the last word in the phrase
+\cite{wang2019phrase}. Specially in English language, the last word of
+a noun phrase is usually the head of the phrase. However, this
+strategy relies on strong assumptions on language and how dataset is
+built.\footnote{In \cite{wang2019phrase}, they show how the
+\textit{last} strategy differs in performance on different dataset: on
+Flickr30k Entities it is the second best strategy while in ReferIt it
+doesn't even appear on the leaderboard.} More complex strategies,
+instead, take into account external information, such us the
+similarity wrt proposal class embeddings. Here, we compute the
+similarity between word in noun phrase and proposal class embeddings
+and then we select one word in the noun phrase with maximum similarity
+wrt the detected concept in proposal:
 \begin{equation}
   \fagg^{\text{max}}(\Eqj, \EPI) = \max_{\eqj \in \Eqj} \{ \max g(\eqj) \},
 \end{equation}
