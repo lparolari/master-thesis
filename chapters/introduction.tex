@@ -69,19 +69,19 @@ truth is available.
 
 In this work we propose a simple and interpretable model that learns
 from concept similarity. The goal is to solve phrase localization
-problem under weakly supervised settings. Given a noun phrase, we
-define it's concept as the most important word in the phrase, while,
-given a bounding box we define it's class as the label, among a
-dictionary of labels, predicted with maximum confidence by an object
-detector for that bounding box. The concept similarity is the
-similarity between the phrase concept and bounding box class. Here,
-the key idea is that the head of the phrase should be very similar
-(semantically speaking) to the content of the bounding box and thus,
-to its class. Indeed, we optimize the model to learn a representation
-in this similarity subspace, where semantically similar features from
-image and text should be close each other, otherwise they are forced
-to be perpendicular. In this process, we use concept similarity to
-attract or repulse features.
+problem under unsupervised\todo{CHECK} settings. Given a noun phrase,
+we define it's concept as the most important word in the phrase,
+while, given a bounding box we define it's class as the label, among a
+dictionary of labels, predicted by an object detector for that
+bounding box. The concept similarity is the similarity between the
+phrase concept and bounding box class. Here, the key idea is that the
+head of the phrase should be very similar (semantically speaking) to
+the content of the bounding box and thus, to its class. Indeed, we
+optimize the model to learn a representation where similar concepts
+from image and text should be close each other, otherwise they are
+forced to be perpendicular. The model is unsupervised because no
+ground truth is used during training and supervision is enforced
+throught a similarity function computed among concepts.
 
 Our model is straightforward. First of all, we gather image features
 from the object detector and we compute five additional features
