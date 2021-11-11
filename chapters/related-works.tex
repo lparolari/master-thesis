@@ -131,15 +131,31 @@ of all its children nodes to be close to one another, while
 introduces competition such that the attention masks of sibling nodes
 are exclusive for every pixel.
 
+A few months later, following the idea of attention mask, H. Akbari
+\etal{} in \cite{akbari2019multi} addressed the problem of phrase
+localization  by learning a multi-level common semantic space shared
+by the textual and visual modalities. We exploit multiple levels of
+feature maps of a Deep Convolutional Neural Network, as well as
+contextualized word and sentence embeddings extracted from a
+character-based language model. Following dedicated non-linear
+mappings for visual features at each level, word, and sentence
+embeddings, we obtain multiple instantiations of our common semantic
+space in which comparisons between any target text and the visual
+content is performed with cosine similarity. We guide the model by a
+multi-level multimodal attention mechanism which outputs attended
+visual features at each level. The best level is chosen to be compared
+with text content for maximizing the pertinence scores of
+image-sentence pairs of the ground truth.
+
 \todo{REWRITE papers below}
 
-Also S. A. Javed
-\etal{} in \todo{Learning Unsupervised Visual Grounding Through
-Semantic Self-Supervision} make use of an attention map, but in this
-case they optimize the model for concept learning proxy task, which
-require the model to jointly decode the common concept in a batch of
-examles composed by image and captions. S. Datta \textit{et al.} in
-\todo{CITE: align2g} developed three-step model in which, 
+Also S. A. Javed \etal{} in \todo{Learning Unsupervised Visual
+Grounding Through Semantic Self-Supervision} make use of an attention
+map, but in this case they optimize the model for concept learning
+proxy task, which require the model to jointly decode the common
+concept in a batch of examles composed by image and captions. S. Datta
+\textit{et al.} in \todo{CITE: align2g} developed three-step model in
+which, 
 \begin{enumerate*}[label=(\roman*)] 
     \item bounding boxes are filtered based on caption, i.e., only a
     box per caption is selected, then
@@ -190,11 +206,8 @@ an attention mechanism.
 
 In supervised settings, the scientific community devoted much effort
 solving the phrase localization problem, leading to the development of
-many solution making use of different strategies. For example, H.
-Akbari \etal{} in \todo{CITE multilevel multimodal} employed a
-multi-level multimodal common semantic space for both visual and
-textual features in order to capture semantic information among the
-two modalities. Z. Yang \etal{} in \todo{CITE a fast and acc one stage
+many solution making use of different strategies. 
+Z. Yang \etal{} in \todo{CITE a fast and acc one stage
 appr} exploit YOLOv3 object detector features joined with textual
 features in order to learn to ground wihtout requiring the proposal
 extraction stage. In \todo{CITE zero shot groudning}, A. Sadhu \etal{}
