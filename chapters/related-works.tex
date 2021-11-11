@@ -6,9 +6,60 @@ Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin moles
 
 \chapter{Related works}
 
-\newthought{Phrase localization} requires strong
-understanding of both visual and textual modalities, specially when
-not all ground truth is available. F. Xiao \etal{} in \todo{CITE
+\section{Phrase Grounding}
+
+Phrase grounding is the task that studies the mapping from noun
+phrases to regions of an image (Sec.~\ref{sec:visual-grounding}) and
+requires strong understanding of both visual and textual modalities,
+specially when not all ground truth is available. 
+
+Even if phrase groudning is an extremely relevant task, the study of
+this problem in literature starts relatively late, mostly because a
+community-accepted formalization of the problem took its time for
+being developed. First efforts in this direction can be identified by
+the work of S. Fidler \etal{} \cite{fidler2013sentence}. They
+developed a model for semantic understanding of scene exploiting both
+textual and visual information. In their work, short sentences are
+parsed into nouns and prepositions, which are used to generate
+potentials in a holistic scene model. An attempt to find an alignment
+between entities in image and sentence is done by C. Kont \etal{}
+\cite{kong2014you}. They proposed a model that exploits potentials
+computed from text and RGB-D imagery to reason about the class of the
+3D objects, the scene type, as well as to align the nouns/pronouns
+with the referred visual objects. They used complex sentences, but
+grounding is contrained to nouns of 21 object classes relevant to
+indoor scenes. R. Hu \etal{} \cite{hu2016natural} moved to a slightly
+different task: natural language objects retrieval. They address the
+task to localize a target object within a given image based on a
+natural language query of the object. It differs from text-based image
+retrieval task as it involves spatial information about objects within
+the scene and global scene context. To address this issue, they
+proposed a novel Spatial Context Recurrent ConvNet (SCRC) model as
+scoring function on candidate boxes for object retrieval, integrating
+spatial configurations and global scene-level contextual information
+into the network. In particular, their model processes query text,
+local image descriptors, spatial configurations and global context
+features through a recurrent network, outputs the probability of the
+query text conditioned on each candidate box as a score for the box,
+and can transfer visual-linguistic knowledge from image captioning
+domain to their task. In \cite{rohrbach2016grounding}, A. Rohrbach
+\etal{} tackle the original problem of fine-grained phrase grounding.
+They developed a model able to reconstruct textual features in an
+encoder-decoder fashion, powered by an attention module which
+implements localization of regions of interest. Here, the attention is
+used to both ground and reconstruct. During training, the attention
+learns how to reconstruct given sentence describing the region to
+ground. During inference, attention localizes the such region. The key
+motivation under this idea is that by training to reconstruct the text
+phrase, the model learn first to ground the phrase in the image.
+Moreover, their model is able to work with no, semi or full
+supervision. When no ground truth is available, the model simply
+learns to reconstruct the given sentence. Otherwise, the correct
+localization is enforced besides the reconstruction.
+
+ \todo{REWRITE papers below}
+
+F. Xiao \etal{} in \todo{CITE
 Weakly-supervised Visual Grounding of Phrases with Linguistic
 Features} exploit linguistic structure arguing it can convoy rich
 semantic. By focusing on parent-sibling and sibling-sibling linguistic
