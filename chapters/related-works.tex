@@ -28,43 +28,112 @@ computed from text and RGB-D imagery to reason about the class of the
 3D objects, the scene type, as well as to align the nouns/pronouns
 with the referred visual objects. They used complex sentences, but
 grounding is contrained to nouns of 21 object classes relevant to
-indoor scenes. R. Hu \etal{} \cite{hu2016natural} moved to a slightly
-different task: natural language objects retrieval. They address the
-task to localize a target object within a given image based on a
-natural language query of the object. It differs from text-based image
-retrieval task as it involves spatial information about objects within
-the scene and global scene context. To address this issue, they
-proposed a novel Spatial Context Recurrent ConvNet (SCRC) model as
-scoring function on candidate boxes for object retrieval, integrating
-spatial configurations and global scene-level contextual information
-into the network. In particular, their model processes query text,
-local image descriptors, spatial configurations and global context
-features through a recurrent network, outputs the probability of the
-query text conditioned on each candidate box as a score for the box,
-and can transfer visual-linguistic knowledge from image captioning
-domain to their task. In \cite{rohrbach2016grounding}, A. Rohrbach
-\etal{} tackle the original problem of fine-grained phrase grounding.
-They developed a model able to reconstruct textual features in an
-encoder-decoder fashion, powered by an attention module which
-implements localization of regions of interest. Here, the attention is
-used to both ground and reconstruct. During training, the attention
-learns how to reconstruct given sentence describing the region to
-ground. During inference, attention localizes the such region. The key
-motivation under this idea is that by training to reconstruct the text
-phrase, the model learn first to ground the phrase in the image.
-Moreover, their model is able to work with no, semi or full
-supervision. When no ground truth is available, the model simply
-learns to reconstruct the given sentence. Otherwise, the correct
-localization is enforced besides the reconstruction.
+indoor scenes. In the same period, R. Hu \etal{} \cite{hu2016natural}
+moved to a sligtly different task that requires to localize a target
+object within a given image based on a natural language query of the
+object, named natural language object retrieval. It differs from
+text-based image retrieval task as it involves spatial information
+about objects within the scene and global scene context. To address
+this issue, they proposed a novel Spatial Context Recurrent ConvNet
+(SCRC) model as scoring function on candidate boxes for object
+retrieval, integrating spatial configurations and global scene-level
+contextual information into the network. In particular, their model
+processes query text, local image descriptors, spatial configurations
+and global context features through a recurrent network, outputs the
+probability of the query text conditioned on each candidate box as a
+score for the box, and can transfer visual-linguistic knowledge from
+image captioning domain to their task. The advent of Flickr30k
+Entities dataset collected and processed by B. Plummer \etal{}
+\cite{plummer2015flickr30k} (described in Sec.~\ref{subsec:flickr30k})
+boosted the development of morea accurate and general models, and
+allowed to face the problem phrase grounding without constraints.
+Along with the new dataset, they also provided a strong baseline for
+phrase grounding based on Canonical Correlation Analysis (CCA) for
+phrase grounding task. Their baseline consists in scoring each
+region-phrase correspondence separately, without taking into accont
+any context of performing any joint inference about the global
+correspondence between all regions in the image and all phrases in the
+sentence. On the countrary, L. Wang \etal{} in \cite{wang2016learning}
+proposed a method for learning joint embeddings of images and text
+using a two-branch neural network with multiple layers of linear
+projections followed by nonlinearities. The network is trained using a
+large margin objective that combines cross-view ranking constraints
+with within-view neighborhood structure preservation constraints
+inspired by metric learning literature. In
+\cite{rohrbach2016grounding}, A. Rohrbach \etal{}, authors developed a
+model able to reconstruct textual features in an encoder-decoder
+fashion, powered by an attention module which implements localization
+of regions of interest. Here, the attention is used to both ground and
+reconstruct. During training, the attention learns how to reconstruct
+given sentence describing the region to ground. During inference,
+attention localizes such region. The key motivation under this idea is
+that by training to reconstruct the text phrase, the model learn first
+to ground the phrase in the image. Moreover, their model is able to
+work with no, semi or full supervision. When no ground truth is
+available, the model simply learns to reconstruct the given sentence.
+Otherwise, the correct localization is enforced besides the
+reconstruction.
 
- \todo{REWRITE papers below}
+As A. Rohrbach \etal{} proved \cite{rohrbach2016grounding}, phrase
+grounding problem can be addressed even with some or no ground truth,
+allowing, on one side, to learn a more natural approach for grounding,
+i.e., wihtout memorizing mapping from phrases to boxes and, on the
+other side, to reduce the expansive annotations required with full
+supervision. Those annotation, as primarily pointed out by Flickr30k
+Entities authors \cite{plummer2015flickr30k} requires a good amount of
+work (implying time and money) to be collected because the need of
+manual annotators. Large corpus of text and images instead were
+already available. Otherwise, even the collection of a new dataset
+with shallow information like the link between an image and its
+caption is relatively easy to collect. On this wave, many researches
+tried to tackle phrase grounding in weak supervised settings.  For
+example, F. Xiao \etal{} in \cite{xiao2017weakly} proposed a a
+weakly-supervised approach that takes image-sentence pairs as input
+and learns to visually ground arbitrary linguistic phrases, in the
+form of spatial attention masks. To this end, they introduce an
+end-to-end model which learns visual groundings of phrases with two
+types of loss functions. In addition to the standard discriminative
+loss, which enforces that attended image regions and phrases are
+consistently encoded, they propose a novel structural loss which makes
+use of the parse tree structures induced by the sentences. In
+particular, they ensure complementarity among the attention masks that
+correspond to sibling noun phrases, and compositionality of attention
+masks among the children and parent phrases, as defined by the
+sentence parse tree. Technically speaking, their model encodes a
+sentence through a two-layers RNN with LSTM cells and a Dropout model
+to prevent overfitting, obtaining $\phi_L(P)$ the language code. The
+visual code $\phi_V(I)$ is computed insted by an embedding module,
+i.e., a two-layer perceptron with Dropout, that projects features from
+VGG-16 convolutional layers to a latent space. Leveragin on weak
+annotations their discriminative loss enforces the codes to be similar
+when features belongs to linked examples, otherwise to be different.
+Formally, given $I_i$ an image and $\{ P^1_i, P^2_i, \ldots, P^n_i \}$
+a set of corresponging phrases (both positive and negative), 
+\begin{equation}
+  L_{disc} = -Y^j_i \cdot Sigmoid(\phi_V(I_i) \cdot \phi_L(P^j_i))
+\end{equation}
+where $Y^j_i \in \{ -1, +1 \}$ is the indicator variable denoting
+whether $P^j_i$ s a negative/positive match to $I_i$. The structural
+loss instead heavily exploit relations on sentence structure to
+generate an attention mask for localization. A parser first extract
+parent-sibling (PC) and sibling-sibling (SIB) relation. Such
+constraints are then enforced on the attention mask throught the two
+structural loss components $L_{PC}$ and $L_{SIB}$. $L_{PC}$, defined
+as 
+\begin{equation}
+  L_{PC} = \frac{1}{|P|} \sum_{k \in P} \mid A_k - \max_{l \in child(k)} A_l \mid ^ 2,
+\end{equation}
+tries to bring the attention mask of a parent node and the union mask
+of all its children nodes to be close to one another, while
+\begin{equation}
+  L_{SIB} = - \frac{1}{|S|} \sum_{m \in S} \sum_{pixels \in A} W_m \cdot \log \frac{\max_n A_{m,n}}{\sum_n A_{m,n}}
+\end{equation}
+introduces competition such that the attention masks of sibling nodes
+are exclusive for every pixel.
 
-F. Xiao \etal{} in \todo{CITE
-Weakly-supervised Visual Grounding of Phrases with Linguistic
-Features} exploit linguistic structure arguing it can convoy rich
-semantic. By focusing on parent-sibling and sibling-sibling linguistic
-relations in a sentence, they build an attention map which can
-localize phrases in image following linguistic rules. Also S. A. Javed
+\todo{REWRITE papers below}
+
+Also S. A. Javed
 \etal{} in \todo{Learning Unsupervised Visual Grounding Through
 Semantic Self-Supervision} make use of an attention map, but in this
 case they optimize the model for concept learning proxy task, which
