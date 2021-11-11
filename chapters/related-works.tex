@@ -147,15 +147,27 @@ visual features at each level. The best level is chosen to be compared
 with text content for maximizing the pertinence scores of
 image-sentence pairs of the ground truth.
 
+S. A. Javed \etal{} in \cite{javed2018learning} proposed a different
+and interesting approach by learning to ground thought a proxy task.
+They propose a novel framework for unsupervised visual grounding which
+uses concept learning to obtain self-supervision. The intuition behind
+this idea is to encourage the model to localize to regions which can
+explain some semantic property in the data, such us, the property
+being the presence of a concept in a set of images. Basically, given a
+set of pairs image and caption all belonging to the same concept, the
+model must decode the common concept in the batch. Their model follows
+a typical encoder-decoder architecture where the encoder localizes the
+region that represents the batch's concept as an heatmap, while
+decoder reconstruct the common concept throuhgt a classifier. The
+concept batch is constructed by grouping together $k$ pairs image,
+caption where all captions contains the same concept. Concept is
+extracted from a phrase by selecting all nouns in a phrase thought a
+POS tagger and randomly picking one of them.
+
 \todo{REWRITE papers below}
 
-Also S. A. Javed \etal{} in \todo{Learning Unsupervised Visual
-Grounding Through Semantic Self-Supervision} make use of an attention
-map, but in this case they optimize the model for concept learning
-proxy task, which require the model to jointly decode the common
-concept in a batch of examles composed by image and captions. S. Datta
-\textit{et al.} in \todo{CITE: align2g} developed three-step model in
-which, 
+S. Datta \textit{et al.} in \todo{CITE: align2g} developed three-step
+model in which, 
 \begin{enumerate*}[label=(\roman*)] 
     \item bounding boxes are filtered based on caption, i.e., only a
     box per caption is selected, then
