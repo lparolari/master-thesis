@@ -334,6 +334,62 @@ they experiment with different tie-breaking strate gies:
   \label{fig:phraseloc-model}
 \end{figure}
 
+Q. Wang \etal{} in \cite{wang2020maf} proposed a multimodal alignment
+framework (MAF), outlined in Fig.~\ref{fix:maf-model} that joins the
+contrastive learning exploiting weakly-supervised annotations and the
+power of external knowledge from pretrained object detector. Inspired
+by \cite{wang2019phrase} which encompasses many etherogeneous
+categories, they employ the Faster-R CNN
+(Sec.~\ref{subsec:faster-rcnn}) object detector trained on $1600$
+classes and $400$ attributes. Using a linear projection, they join
+proposal features with the word embedding of proposal class label and
+proposal attribute label, yielding $\bm{v}_m$. For the textual part,
+they embed phrase $\bm{p}_n$ throught word embeddings yielding
+$\bm{h}_n,k$ and then, forach $k$-th word in phrase and foreach $n$-th
+phrase, they compute a score $\bm{a}^m_{n,k}$ representing the
+similarity between such word $\bm{h}_{n,k}$ and proposal features
+representation $\bm{v}_m$. The final attention score is the maximum
+similarity between proposal features representation and word features
+representation. Such attention is the normalized with softmax function
+and used as weight for averaging words representation in phrase. A
+projection matrix construct the final representation $\bm{e}_n$ for
+phrases $p_n$. The model is optimized by a contrastive loss $\calL$
+that aims to learn the visual and textual features by maximizing the
+similarity score between paired image-caption elements and minimizing
+the score between the negative samples:
+\begin{equation}
+  \calL = - \log \frac{e^{sim(I, S)}}{ \sum_{I' \in batch} e^sim(I', S) },
+\end{equation}
+where $sim(I, S)$ is the similarity function between image and query
+sentence defined as:
+\begin{equation}
+  sim(I, S) = \frac{1}{N} \sum_n \max_m A_{n,m},
+\end{equation}
+where $A \in \Rset^{N \times M}$ is the phrase-object similarity
+matrix, and its component is computed as:
+\begin{equation}
+  A_{n,m} = \bm{e}^T_n \bm{v}_m.
+\end{equation}
+Particularly, for each caption sentence, they use all the images $I′$
+in the current batch as candidate (negative) examples.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/maf-model.png}
+  \caption[Multimodal Alignment Framework model overview]{Overview
+  of our proposed Multimodal Alignment Framework (MAF)
+  \cite{wang2020maf}. A dataset of images and their captions is the
+  input to our model. PreDet predicts bounding boxes for objects in
+  the image and their labels, attributes, and features, which are
+  then integrated into visual feature representations. Attention is
+  applied between word embedding and visual representations to
+  compute the visually-aware language representations for phrases.
+  Finally, a multi-modal similarity function is used to measure the
+  caption-image relevance based on the phrase-object similarity
+  matrix.}
+  \label{fig:maf-model}
+\end{figure}
+
 \todo{REWRITE papers below}
 
 In supervised settings, the scientific community devoted much effort
