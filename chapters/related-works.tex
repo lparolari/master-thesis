@@ -205,6 +205,19 @@ shown in Fig.~\ref{fig:kac-example}.
     \label{fig:kac-example}
   \end{figure}
 
+In \cite{liu2019adaptive}, X. Liu \etal{} proposed a reconstruction
+network based on attention map and optimized for the task of REG
+(Sec.~\ref{sec:visual-grounding}). They extract the subject, location
+and context features to represent the proposals and the query
+respectively. Then, they design the adaptive grounding module to
+compute the matching score between each proposal and query by a
+hierarchical attention model. Finally, based on attention score and
+proposal features, they reconstruct the input query with a
+collaborative loss of language reconstruction loss, adaptive
+reconstruction loss, and attribute classification loss. The key idea
+under their approach is that this adaptive mechanism helps alleviating
+the variance of different referring expressions.
+
 \todo{REWRITE papers below}
 
 S. Datta \textit{et al.} in \todo{CITE: align2g} developed three-step
