@@ -164,6 +164,47 @@ caption where all captions contains the same concept. Concept is
 extracted from a phrase by selecting all nouns in a phrase thought a
 POS tagger and randomly picking one of them.
 
+The idea of using a form of external knowledge is taken up by K. Chen
+\etal{} in \cite{chen2018knowledge}, where they approached the problem
+by learning to reconstruct the input. However, their approach is
+slightly different wrt similar works where the optimization is solely
+guided by the reconstruction loss from the language modality. Instead,
+it encompasses rich visual information contained in proposals and
+useful cues from external knowledge. Their major contributions are
+twofold. In order to attend relevant features they introduce the
+knowledge base pooling (KBP) gate which returns a score between query
+and proposal content computed on the word embedding of proposal
+classification label. Basically, they leverage the pretrained object
+detector which, along with the proposal, returns a probability
+distribution on a vocabulary of labels, used to semantically
+categorize the content of the proposal. Such score is computed with a
+similarity function (like the cosine similarity) between the word
+embeddings of a representative word in query and the proposal class
+label. The query representative is computed by averaging the
+embeddings of all nouns in the query. Then, they reconstruct both
+visual and language modalities. The visual modality is reconstructed
+by an attention module that takes embedded features and predicts new
+proposal coordinates by optimizing them to be as close as possible to
+proposal's. Predicted coordinates as multiplied by the computed
+knowledge by KBP gate. The goal of visual consistency branch is to
+optimize the attention model via learning to predict location
+information contained in query-related proposals. The language
+modality is instead reconstructed in a classical way by predicting
+thought an RNN with LSTM cells. An high-level overview of the model is
+shown in Fig.~\ref{fig:kac-example}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.8\textwidth]{figures/kac-example.png}
+    \caption[Knowledge Aided Consistency high-level architecture
+    overview]{Knowledge Aided Consistency high-level architecture
+    overview \cite{chen2018knowledge}. KAC Net applies both visual and
+    language consistency and leverages complementary knowledge from
+    the visual feature extractor to facilitate weakly supervised
+    grounding.}
+    \label{fig:kac-example}
+  \end{figure}
+
 \todo{REWRITE papers below}
 
 S. Datta \textit{et al.} in \todo{CITE: align2g} developed three-step
@@ -178,16 +219,7 @@ model in which,
 with the caption.
 \end{enumerate*}
 Tha caption is required to match the encoded features as the model is
-optimized for the caption-to-image retrieval proxy task. In \todo{CITE
-Knowledge Aided Consistency for Weakly Supervised Phrase Grounding} K.
-Chen \etal{} approach the problem by learning to reconstruct the
-input. They reconstruct visual features throught a MLP and the textual
-features throught an LSTM. Both two branches rely on a
-filter/downweight network, namely Knowledge Aided Consistency (KAC)
-network, which is responsible to discard the unrelated proposal. The
-downweight network is implemented by considering the similarity of the
-visual content identified by the label of a bounding box and the
-aggregate of a phrase. In the field of weakly-supervised referring
+optimized for the caption-to-image retrieval proxy task. In the field of weakly-supervised referring
 expression grounding, X. Liu \etal{} in \todo{CITE adaptive net}
 exploit discriminative information about subject, location and context
 wheighted by an attention network and the used to reconstruct the
