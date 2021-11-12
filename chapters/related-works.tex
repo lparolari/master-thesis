@@ -261,29 +261,80 @@ where $S_{Ic}$ is the similarity between image $I$ and caption $c$. Thei model o
   \label{fig:align2ground-model}
 \end{figure}
 
-\todo{REWRITE papers below}
-
-J. Wang in \etal{} \todo{CITE phrase loc}, instead, tried a very new
-and different approach. They developed a model able to work under
-unsupervised settings, in which no ground truth is available at
-training time. The model 
+An important contribution in phrase grounding comes from the work of
+J. Wang in \etal{} in \cite{wang2019phrase}. In contrast to other
+works which attempt to learn mappings between textual and visual
+information from examples of phrase-image region correspondences
+(strong supervision) or from phrase-image pairs (weak supervision),
+they propose the first method for the phrase localization problem
+where neither training procedure nor paired, task-specific data is
+required. They argue that such a ``non-paired'' setting better
+reflects how humans localize objects in images -- not by memorizing
+paired examples, but by assembling prior knowledge from more general
+sources and tasks (e.g. recognizing concepts or attributes) to tackle
+a more specialized task (phrase localization). As a consequence, their
+model has the advantage of being simple and interpretable, acting as a
+strong baseline for the novel, non-paired settings. Their model is
+built on three steps, as Fig.~\ref{fig:phraseloc-model} shows. In the
+first stage, they employ many object detectors (tfcoco, tfcoco2,
+places365, yolo9000, colour) that vary in number and type of
+categories covered, training data and accuracy in order to explit
+their variance and redundancy to retrieve information on objects in
+images. Note that use pretrained models for detectors, hence, no
+training is performed. The second stage of our model bridges the query
+phrase to be localized and the output of detectors. It computes the
+semantic similarity between each phrase and the detector concept
+labels. The intuition is that the detected instance of a concept that
+is very similar or related to a word or phrase in the query is most
+likely to be the target object. Similarly to \cite{chen2018knowledge},
+they represent queries $q$ and labels $c$ as $300$-dimensional CBOW
+word2vec embeddings. The goal of this stage is to compute a ranked
+list of candidate bounding box detections based on their similarity to
+the aggregate query phrase. Such list is extracted by computing a
+similarity function $S(q, c)$ in the word embedding space between the
+aggregate emebdding of a query and the embedding of a label. They
+explore two approaches to aggregate the words in query phrases: as a
+single vector by summing the word vectors and normalizing to unit
+vector (w2v-avg), or by representing each word individually (w2v) and
+using only one of the words for localization. For the latter, they
+select the word with the highest semantic similarity to any detected
+concepts (w2v-max). Intuitively, they only consider one word from the
+phrase for localization, where this word has the highest similarity to
+a detected concept. Alternatively, they can use the last word for
+localization (w2v-last), assuming the last word is the head word.
+The third an last stage localizes the bounding box given the ranked
+list of candidates. The adopted localization approach is to select
+from candidate detections the concept most similar to the query
+phrase. Where multiple instances of the same concepts are detected,
+they experiment with different tie-breaking strate gies:
 \begin{enumerate*}[label=(\roman*)] 
-    \item detects instances by means of six heterogeneous object
-    detector, which vary in terms of accuracy, number of classes,
-    dataset trained on... then
-    \item selects the most related concept with respect to the phrase
-    by computing the similarity of detected instance labels and phrase
-    words, after this
-    \item localized the right bounding box which refers to the
-    selected concept.
-\end{enumerate*}
-The model is not trained: in fact, they leverage the information that
-object detector carry with them. A. Rohrbach \etal{} in \todo{CITE
-grounding by rec} provide their version of phrase localization in
-unsupervised settings together with semi and fully supervised settings
-by developing the model \textit{GroundeR}. The model learns to
-reconstruct the input phrase based on the boxes it attends to trought
-an attention mechanism. 
+  \item selecting a random instance;
+  \item selecting the in- stance with the largest bounding box; 
+  \item selecting the instance with the highest class prediction
+  confidence;
+  \item generating a minimal bounding box enclosing all instances
+  (union); and
+  \item using consensus from detectors. 
+\end{enumerate*} 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/phraseloc-model.png}
+  \caption[Phrase Localization without Paired Training Examples
+  model overview]{Phrase Localization without Paired Training
+  Examples model overview \cite{wang2019phrase}. In the figure is
+  depicted the three stages of the proposed model for non-paired
+  phrase localization. The instance detection phase detects
+  instances of various concepts using pre-trained detectors. The
+  concept selection stage ranks these detected concepts against the
+  query phrase (using pre-trained word embeddings) and forwards the
+  best candidate concept instance(s) to the localization phase,
+  where the model predicts the final bounding box for the query
+  phrase.}
+  \label{fig:phraseloc-model}
+\end{figure}
+
+\todo{REWRITE papers below}
 
 In supervised settings, the scientific community devoted much effort
 solving the phrase localization problem, leading to the development of
