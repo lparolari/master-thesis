@@ -218,26 +218,50 @@ reconstruction loss, and attribute classification loss. The key idea
 under their approach is that this adaptive mechanism helps alleviating
 the variance of different referring expressions.
 
-\todo{REWRITE papers below}
+% TODO
+% A completely different approach is proposed in \cite{sadhu2019zero} by A. Sadhu \etal{}. In their work they extend the task to Zero-Shot Grounding(ZSG) which can include novel, unseen nouns and they propose a one-stage model (Sec.~\ref{sec:two-stage-vs-one-stage}) which combines the detector network and the grounding system and predicts classification scores and regression parameters.
 
-S. Datta \textit{et al.} in \todo{CITE: align2g} developed three-step
-model in which, 
-\begin{enumerate*}[label=(\roman*)] 
-    \item bounding boxes are filtered based on caption, i.e., only a
-    box per caption is selected, then
-    \item caption conditioned bounding boxes are encoded with an
-    order-invariant deep encoder implemented as a two-layer MLP, and
-    finally
-    \item those encoded caption-conditioned bounding box are matched
-with the caption.
-\end{enumerate*}
-Tha caption is required to match the encoded features as the model is
-optimized for the caption-to-image retrieval proxy task. In the field of weakly-supervised referring
-expression grounding, X. Liu \etal{} in \todo{CITE adaptive net}
-exploit discriminative information about subject, location and context
-wheighted by an attention network and the used to reconstruct the
-hidden features of subject, location and context, the input query and
-attribute information.
+S. Datta \textit{et al.} in \cite{datta2019align2ground} proposed a
+system able to learn phrase grounding by optimizing the model for the
+downstream task of caption-to-image retrieval. Their key contribution
+lies in building a sort of caption-conditioned image encoding which
+tightly couples both the tasks and allows the weak supervision to
+effectively guide visual grounding. Their method is composed by three
+modules. As a first step, it infers the latent correspondences between
+regions-of-interest (RoIs) and phrases in the caption and creates a
+discriminative image representation using these matched RoIs.
+Practically, they project both visual and textual features in a joint
+embedding space by linear projection. Then, using a similarity
+function, they compute the similarity between each phrase and each
+RoI. For each phrase, the module returns a random proposal among top-k
+($k = 3$) similar proposals wrt the phrase. The intention here is to produce a list of caption-conditioned RoIs. In the second step, they build a global representation of previously matched RoIs with an order-invariant deep encoder. The encoder is imlemented as a two-layer MLP. Finally, they measure the similarity between the proposed image representation and the
+query caption by first embeddings the caption $c$, encoded
+by $\Phi_{RNN}$, in the same output space as the image representation  $I^c_{rois}$ by using a two-layer MLP $f_{enc}$:
+\begin{equation}
+    \hat{\bm{c}} = MLP (\Phi_{RNN} (c)) \qquad \hat{\bm{r}}_c = f_{enc} (I^c_{rois}).
+\end{equation}
+We then compute cosine
+similarity between the two multimodal representations.
+\begin{equation}
+    S_{Ic} = \frac{ \hat{\bm{c}}^T \hat{\bm{r}}_c }{ || \hat{\bm{c}} ||_2 || \hat{\bm{r}}_c ||_2 }.
+\end{equation}
+where $S_{Ic}$ is the similarity between image $I$ and caption $c$. Thei model overview is shown in Fig.~\ref{fig:align2ground-model}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/align2ground-model.png}
+  \caption[Align2Ground model overview]{Align2Ground model overview
+  \cite{datta2019align2ground}. The outputs from a Region Proposal
+  Network (RoIs) and the shallow parser (phrases) are fed into the
+  Local Matching module which infers the latent phrase-RoI
+  correspondences. The Local Aggregator module then digests these
+  matched RoIs to create a discriminative, caption-conditioned visual
+  representation -- which is then used to align the image-caption
+  pairs in the Global Matching module.}
+  \label{fig:align2ground-model}
+\end{figure}
+
+\todo{REWRITE papers below}
 
 J. Wang in \etal{} \todo{CITE phrase loc}, instead, tried a very new
 and different approach. They developed a model able to work under
