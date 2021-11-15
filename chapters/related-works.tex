@@ -398,20 +398,30 @@ localization problem, leading to the development of different very
 different strategies. 
 
 Z. Yang \etal{} in \cite{yang2019fast} designed a novel one-stage
-model, whose goal is to outperform existing propose-and-rank two-stage
-methods where the performances are capped by the quality of the region
-candidates. ``if none of the candi dates could cover the ground truth
-region'', they argue, ``there is no hope in the second stage to rank
-the right region to the top''. To avoid this caveat, they propose a
-one-stage model that enables end-to-end joint optimization. The main
-idea is to fuse text query's embedding into the YOLOv3 object detector
+model (Sec.~\ref{sec:two-stage-vs-one-stage}), whose goal is to
+outperform existing propose-and-rank two-stage methods where the
+performances are capped by the quality of the region candidates. ``if
+none of the candi dates could cover the ground truth region'', they
+argue, ``there is no hope in the second stage to rank the right region
+to the top''. To avoid this caveat, they propose a one-stage model
+that enables end-to-end joint optimization. The main idea is to fuse
+text query's embedding into the YOLOv3 object detector
 (Sec.~\ref{subsec:yolo}), augmented by spatial features so as to
 account for spatial mentions in the query. 
 
-In \todo{CITE zero shot groudning}, A. Sadhu \etal{}
-on the same line of \todo{CITE a fast and acc one stage appr} propose
-a one-stage model focusing on the slightly different task of Zero Shot
-Grounding, which can include unseen nouns in phrases. Instead, D.
+In \cite{sadhu2019zero}, A. Sadhu \etal{} on the same line of
+\cite{yang2019fast} proposed a one-stage model focusing on the
+slightly different task of Zero Shot Grounding, which can include
+unseen nouns in phrases. They argue that a two-stage approach
+(Sec.~\ref{sec:two-stage-vs-one-stage}) is an obstacle due to the
+constrained generation of appropriate proposals. Instead, they propose
+a single-stage model which combines the detector network and the
+grounding system and predicts classification scores and regression
+parameters.
+
+A completely different approach is adopted by H. Zhang \etal{} in \cite{}
+
+Instead, D.
 Rigoni \etal{} in \todo{CITE a better loss} optimize the model to
 learn with a new loss involving the use of metrics like Intersection
 Over Union (IoU) and Complete IoU (CIoU).
