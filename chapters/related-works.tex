@@ -334,8 +334,33 @@ they experiment with different tie-breaking strate gies:
   \label{fig:phraseloc-model}
 \end{figure}
 
+T. Gupta \etal{} in \cite{gupta2020contrastive} showed how to properly
+exploit weak annotations. They propose a model that learns phrase
+grounding by optimizing word-region attention to maximize a lower
+bound on mutual information between images and caption words.
+Basically, given pairs of images and captions, they maximize
+compatibility of the attention-weighted regions and the words in the
+corresponding caption, compared to non-corresponding pairs of images
+and captions. The key idea is to construct effective negative captions
+for learning through language model guided word substitutions.
+Technically, they first extract region and word features using an
+object detector and a language model respectively. Contrastive
+learning trains a word-region attention mechanism as part of a
+compatibility function $\phi_\theta$ between the set of region
+features from an image and individual contextualized word
+representations. The compatibility function is trained to maximize a
+lower bound on mutual information with two losses. For a given caption
+word, $\calL_{img}$ learns to produce a higher compatibility for the
+true image than a negative image in the mini-batch. $\calL_{lang}$
+learns to produce a higher compatibility of an image with a true
+caption-word than with a word in a negative caption. They construct
+negative captions by substituting a noun word like ``donut'' in the
+true caption like ``Chocolate donut in front of a computer'' with
+contextually plausible but untrue words like ``cookie'' using a
+language model.
+
 Q. Wang \etal{} in \cite{wang2020maf} proposed a multimodal alignment
-framework (MAF), outlined in Fig.~\ref{fix:maf-model} that joins the
+framework (MAF), outlined in Fig.~\ref{fig:maf-model} that joins the
 contrastive learning exploiting weakly-supervised annotations and the
 power of external knowledge from pretrained object detector. Inspired
 by \cite{wang2019phrase} which encompasses many etherogeneous
