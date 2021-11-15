@@ -194,16 +194,16 @@ thought an RNN with LSTM cells. An high-level overview of the model is
 shown in Fig.~\ref{fig:kac-example}.
 
 \begin{figure}
-    \centering
-    \includegraphics[width=.8\textwidth]{figures/kac-example.png}
-    \caption[Knowledge Aided Consistency high-level architecture
-    overview]{Knowledge Aided Consistency high-level architecture
-    overview \cite{chen2018knowledge}. KAC Net applies both visual and
-    language consistency and leverages complementary knowledge from
-    the visual feature extractor to facilitate weakly supervised
-    grounding.}
-    \label{fig:kac-example}
-  \end{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/kac-example.png}
+  \caption[Knowledge Aided Consistency high-level architecture
+  overview]{Knowledge Aided Consistency high-level architecture
+  overview \cite{chen2018knowledge}. KAC Net applies both visual and
+  language consistency and leverages complementary knowledge from
+  the visual feature extractor to facilitate weakly supervised
+  grounding.}
+  \label{fig:kac-example}
+\end{figure}
 
 In \cite{liu2019adaptive}, X. Liu \etal{} proposed a reconstruction
 network based on attention map and optimized for the task of REG
@@ -217,9 +217,6 @@ collaborative loss of language reconstruction loss, adaptive
 reconstruction loss, and attribute classification loss. The key idea
 under their approach is that this adaptive mechanism helps alleviating
 the variance of different referring expressions.
-
-% TODO
-% A completely different approach is proposed in \cite{sadhu2019zero} by A. Sadhu \etal{}. In their work they extend the task to Zero-Shot Grounding(ZSG) which can include novel, unseen nouns and they propose a one-stage model (Sec.~\ref{sec:two-stage-vs-one-stage}) which combines the detector network and the grounding system and predicts classification scores and regression parameters.
 
 S. Datta \textit{et al.} in \cite{datta2019align2ground} proposed a
 system able to learn phrase grounding by optimizing the model for the
@@ -238,12 +235,12 @@ RoI. For each phrase, the module returns a random proposal among top-k
 query caption by first embeddings the caption $c$, encoded
 by $\Phi_{RNN}$, in the same output space as the image representation  $I^c_{rois}$ by using a two-layer MLP $f_{enc}$:
 \begin{equation}
-    \hat{\bm{c}} = MLP (\Phi_{RNN} (c)) \qquad \hat{\bm{r}}_c = f_{enc} (I^c_{rois}).
+  \hat{\bm{c}} = MLP (\Phi_{RNN} (c)) \qquad \hat{\bm{r}}_c = f_{enc} (I^c_{rois}).
 \end{equation}
 We then compute cosine
 similarity between the two multimodal representations.
 \begin{equation}
-    S_{Ic} = \frac{ \hat{\bm{c}}^T \hat{\bm{r}}_c }{ || \hat{\bm{c}} ||_2 || \hat{\bm{r}}_c ||_2 }.
+  S_{Ic} = \frac{ \hat{\bm{c}}^T \hat{\bm{r}}_c }{ || \hat{\bm{c}} ||_2 || \hat{\bm{r}}_c ||_2 }.
 \end{equation}
 where $S_{Ic}$ is the similarity between image $I$ and caption $c$. Thei model overview is shown in Fig.~\ref{fig:align2ground-model}.
 
