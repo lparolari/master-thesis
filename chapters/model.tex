@@ -8,17 +8,6 @@ This is some random quote to start off the chapter.
 
 \todo{rivedere il titolo del capitolo}
 
-SCALETTA:
-
-* Visual branch
-  * proposal 
-  * object generator
-* textual branch
-  word embedding (w2v, glove)
-* concept branch
-* loss
-* training and inference
-
 \section{Model}
 
 In the following sections we describe the model architecture, outlined
@@ -56,6 +45,7 @@ a set of new vectorial representations $H^{||} = \{ \bm{h}^{||}_{jz}
 $\bm{h}^{||}_{jz}$ are defined as:
 \begin{equation}
   \bm{h}^{||}_{jz} = \bm{W}^{||} \left( \bm{h}^s_z || L1(\bm{h}^v_z) \right) + \bm{b}^{||}
+  \label{eq:h-par-jz}
 \end{equation}
 where $||$ indicates the concatenation operator, $\bm{h}^{||}_{jz} \in
 \Rset^c$, $\bm{W}^{||} \in \Rset^{c \times (s + v)}$ is a matrix of
@@ -82,6 +72,7 @@ each phrase $\bm{q}_j$. This textual features extraction is defined
 as:
 \begin{equation}
   \bm{h}^*_j = L1(LSTM(E^{\bm{q}_j}))
+  \label{eq:h-star}
 \end{equation}
 where $\bm{h}^*_j \in \Rset^t$ is the LSTM output of the last word in
 the noun phrase $\bm{q}_j$, and $L1$ is the L$1$ normalization
@@ -235,45 +226,42 @@ The major benefit of this approach is that model predictions are not
 constrained to values defined by concept similarity: they co-work to
 the final predictions.
 
-\section{Training}
+\section{Loss Function}
 
-
-In this section we present our loss function. For the sake of
-presentation, we define in the following the loss terms referred to a
-single example. The total loss is then obtained by summing up the
-contributions of all examples in the training set.
-
-Please note that in unsupervised settings, for a training example
-$\left( \bm{I}, S \right)$ we are not given the query-proposal pair
-set $\{ ( q^{gt}_j, p^{gt}_j ) \}^m_{j=1}$, where $m$ is the number of
-noun phrases. To tackle this problem, in our work we adopt a very
-simple strategy: we exploit concept similarity. Basically, we attract
-representations whose concept similarity is above a certain treshold,
-otherwise we want to repulse them. We define our oracle as:
+In this section we present our loss function. Please note that in
+weakly supervised settings, for a training example $\left( \bm{I}, S
+\right)$ we are not given the query-proposal pair set $\{ ( q^{gt}_j,
+p^{gt}_j ) \}^m_{j=1}$, where $m$ is the number of noun phrases.
+Inspired by \cite{wang2020maf}, we adopt a contrastive loss. The
+contrastive objective $\calL$ aims to learn the visual and textual
+features by maximizing the similarity score between paired
+image-caption elements and minimizing the score between the negative
+samples (i.e., other irrelevant captions). Formally, given the image
+$\bm{I}$, $Q_S = \{ \bm{q}_j \}^m_{j=1}$ the set of noun phrases built
+on the sentence $S$ weakly linked to $\bm{I}$ and $Q'_S = \{ \bm{q}_h
+\}^{m'}_{h=1}$ we define $\calL$ as:
 \begin{equation}
-  \bm{D}_{jz} =
-  \begin{cases}
-    1, & \bm{S}^c_{jz} > \alpha \\
-    -1, & \text{otherwise}
-  \end{cases},
+  \calL = - \frac{1}{m} \sum^m_{j=1} \calL_j,
 \end{equation}
-where $\bm{S}^c$ is the concept similarity matrix, $j$ is the
-$\alpha$ is the threshold. This policy relies on the assumption that
-concept similarity correctly captures the semantic relation between
-query and proposal. $\bm{D}$ is the concept direction matrix.
-
-Now, given a training example $\left( \bm{I}, S \right)$, where
-$\cal{P}_{\bm{I}}$ the bounding box proposals set, we define the loss
-function $\calL$ (for a single example) as:
+where
 \begin{equation}
-  \calL = \frac{1}{m} \sum^m_{j=1} \Bigg( \frac{1}{k} \sum^k_{z=1} \floss ( \bm{P}_{jz}, \bm{D}_{jz} ) \Bigg)
+  \calL_j = \log \frac{e^{\fmmsim(\bm{I}, \bm{q}_j)}}{\sum^{m'}_{h = 1} e^{\fmmsim'(\bm{I}, \bm{q}_{h})}}.
 \end{equation}
-where $m$ in the number of noun phrases, $k$ is the number of proposal
-bounding box, $\bm{P}_{jz}$ is the model predicted probability that
-the noun phrase $\bm{q}_j \in \calQ$ refers to the image content
-localized by $\bm{p}_z \in \calP_{\bm{I}}$. Our loss is scaled by $m$
-and $k$ because number of noun phrase can change, but also number of
-proposal. 
+Here, $\fmmsim$ and $\fmmsim'$ are the multimodal similarity functions
+between image and positive/negative queries respectively. We define
+\begin{equation}
+  \fmmsim(\bm{I}, \bm{q}_j) = \max_{z} \bm{P}_{jz}, \qquad \text{and} \qquad \fmmsim'(\bm{I}, \bm{q}_h) = \max_z \bm{P}_{hi}
+\end{equation}
+where $\bm{P}_{jz}$ is the predicted similarity between query
+$\bm{q}_j$ and proposal $\bm{p}_z$ with $\bm{p}_z \in \calP_{\bm{I}}$,
+while $i = \argmax_z \bm{P}_{hz}$. Basically, the model optimizes the
+similarity between each positive query $\bm{q}_j$ and the image
+$\bm{I}$ to be higher, while the similarity between negative queries
+$\bm{q}_h$ and image $\bm{I}$ to be smaller. Moreover, the similarity
+function on negative queries $\fmmsim'$ bounds the model to consider
+only bounding boxes affected by positive queries.
+
+--- \todo{REMOVE BELOW}
 
 We optimize the model to learn features representation in the
 similarity space, such that the depiction of $\bm{p}_z$ and $\bm{q}_j$
@@ -294,7 +282,7 @@ concept similarity above threshold; $\One$ is the unit step function
     0, & \text{otherwise}
   \end{cases}.
 \end{equation}
-<
+
 Also in this case, some different strategies are available. Instead of
 optimizing repulsed features to be perpendicular, one could also
 exploit the similarity space and force them to be inversely
@@ -303,3 +291,24 @@ number of bounding box with same class label. Indeed, due to the
 long-tail distribution of bounding box class labels in dataset, some
 representations are moved more than other: the normalization allows to
 introduce a kind of equality.
+
+\section{Training and Inference}
+
+At training stage, we are given the example $(\bm{I}, S)$ with
+$\calP_{\bm{I}} = \{ bm{p}_i \}^k_{i=1}$ are bounding box proposal
+built on $\bm{I}$ and $\bm{q}_j$ are queries in $S$. As noted in
+Sec.~\ref{subsec:visual-branch} we use extra information from object
+detector such us the probability distribution on bounding box class
+labels $Pr_{Cls}(\bm{p}_i)$. Following \cite{chen2018knowledge} we fix
+$k = 100$ proposals. (We studied $k$ can affect results in
+Sec.~\ref{sec:data-analysis}). The parameters to be optimized include
+parameters in encoding LSTM (Eq.~\ref{eq:h-star}) and projection
+parameters (Eq.~\ref{eq:h-par-jz}). We use the cosine similarity as
+similarity measure $\fsim$ between vectors. Our network is trained
+end-to-end using Adam optimizer with gradient clipping set to $1$ and
+learning rate $0.001$.
+
+At test stage, we feed the $\bm{q}_j$ and $\calP_{\bm{I}}$ to the model. It predict a similarity score from $-1$ to $1$ for each bounding box. The grounded bounding box is calculated as
+\begin{equation}
+  \bm{p}_{z^*} \quad \text{s.t.} \quad z^* = \argmax_z \bm{P}_{jz}
+\end{equation}
