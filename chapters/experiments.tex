@@ -510,6 +510,69 @@ in noise removal without any relevant drop in performace.
   \label{tab:bb-coverage-no-background}
 \end{table}
 
+\subsection{Distribution of Class Labels on Proposals}
+
+For a good comprehension of object detector information, we study the
+distribution of number of examples per label. We perfomed the analysis
+on both dataset but for presentation purposes, here we show
+qualitative data from Flickr30k; ReferIt shows comparable insights.
+The distribution, shown in
+Fig.~\ref{fig:flickr30k-label-distribution}, is a long-tail
+distribution. This means that there are few labels with a very large
+population, while many other labels count little number of examples.
+We truncate the plot to top-100 labels with larger population and the
+phenomenon is clearly visible. In
+Tab.~\ref{tab:flickr30k-label-distribution-nobg-top10} we report the
+top-10 labels per number of examples. Except to the evident gender gap
+effect in data, we show that there is a great discrepancy in terms of
+number of examples for labels like \textit{man}, \textit{woman},
+\textit{people} and the others. Also, the special \textit{background}
+class is very popular: we show that removing it preserves order
+between most popular labels.
+
+\begin{figure}
+  \includegraphics[width=0.8\textwidth]{figures/number-of-examples-per-label-over-top-100-most-popular-labels.png}
+  \caption[Number of examples per label over top-100 most popular labels on Flicker30k]{Distribution of examples ($y$ axis, log scaled) per label over top-100 most popular labeles ($x$ axis) on Flicker30k.}
+  \label{tab:flickr30k-label-distribution-top10}
+\end{figure}
+
+\begin{table}
+  \begin{subtable}{.5\linewidth}
+    \centering
+    \begin{tabular}{lc}
+      Class                & N       \\\hline
+      man                  & $71120$ \\
+      \textit{background}  & $58014$ \\
+      woman                & $34421$ \\
+      people               & $29121$ \\
+      shirt                & $19129$ \\
+      boy                  & $11182$ \\
+      dog                  & $9427$  \\
+      girl                 & $7292$  \\
+      water                & $7118$  \\
+      wall                 & $6358$  \\
+    \end{tabular}
+  \end{subtable}%
+  \begin{subtable}{.5\linewidth}
+    \centering
+    \begin{tabular}{lc}
+      Class  & N       \\\hline
+      man    & $78250$ \\
+      woman  & $37751$ \\
+      people & $33149$ \\
+      shirt  & $22585$ \\
+      boy    & $12019$ \\
+      dog    & $9989$  \\
+      wall   & $7905$  \\
+      girl   & $7886$  \\
+      water  & $7674$  \\
+      ground & $7547$  \\
+    \end{tabular}
+  \end{subtable} 
+  \caption{Distribution of examples over top-10 labels with larger population with (Left) and without (Right) \textit{backgorund} class.}
+  \label{tab:flickr30k-label-data-top10}
+\end{table}
+
 \section{Evaluation Metric}
 \label{sec:evaluation-metric}
 
