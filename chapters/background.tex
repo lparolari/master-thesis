@@ -6,13 +6,7 @@ Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin moles
 \end{savequote}
 
 \chapter{Background}
-
-TODO
-
-* object detector (theory)
-* rnn + lstm
-* textual embedding
-* vocabulary (move to impl. details)
+\label{ch:background}
 
 \section{Visual Grounding}
 \label{sec:visual-grounding}
@@ -63,13 +57,6 @@ paper we assume that each noun phrase is associated to one and only
 one bounding box. Bounding boxes, however, can identify more objects,
 e.g. several persons in the case the noun phrase is ``people''.
 
-\newthought In of our work we will focus on phrase grounding, as it is
-considered the foundamental building block for many high-level
-computer vision tasks such as image retrieval, QA, video QA, etc.
-\todo{remove from here} \todo{cite kwnowledge aided consistency}.
-
-\cite{conser2019revisiting} \todo{FIX CITE}
-
 \section{Two Stage vs One Stage}
 \label{sec:two-stage-vs-one-stage}
 
@@ -80,63 +67,75 @@ generally formulated as an object detection task followed by a
 classification task in which, given an input image and sentece, the
 goal is to return only the detected object(s) that represents the best
 semantic match with the sentence. This approach was extensively used
-by many researchers in visual grounding field \todo{CITE vedere fast
-and accurate one-stage approach...} due to its simplicity. On the
-other hand, some recent works started introducing the one stage
-approach in which the object detection and the classification problem
-are solved joinly, arguing this new architecture may lead to faster
-and more accurate models.
+by many researchers in visual grounding field
+\cite{rohrbach2016grounding, xiao2017weakly, akbari2019multi, chen2018knowledge, datta2019align2ground, wang2020maf}
+due to its simplicity. On the other hand, some recent works started
+introducing the one stage approach \cite{yang2019fast,sadhu2019zero}
+in which the object detection and the classification problem are
+solved joinly, arguing this new architecture may lead to faster and
+more accurate models.
 
 \newthought{The two stage approach} is a simple approach to the visual
 grounding task which relies on the decomposition of the main task in
 two sub-tasks, namely object detection and classification. Given an
 input image, the first step generates candidate regions using an
-object proposal extractor such us Edge Boxes and Selective Search
-\todo{CITE edge box, selective searcg} or by an object detector, such
-us Faster R-CNN, Single Shot multibox Detector (SSD), or YOLO
-\todo{CITE faster rcnn, ssd, yolo...}. The second step consists in
-ranking this candidate regions, which hopefully capture the semantic
-context, conditioned on a language query about the image. Practically,
-this means that the model predicts, for each proposal bounding box, a
-score that represents how much the content of the bounidng box is
-likely to be referred by the sentence. Sometimes, models predict also
-new coordintas for the best predicted proposal, in order to better fit
-the visual content accordingly to the sentence semantic information.
-\todo{Aggiungere schema che descrive l'approccio}
+object proposal extractor such us Edge Boxes \cite{zitnick2014edge}
+and Selective Search \cite{uijlings2013selective} or by an object
+detector, such us Faster R-CNN \cite{girshick2014rich}, Single Shot
+multibox Detector (SSD) \cite{liu2016ssd}, or YOLO
+\cite{redmon2016you}. The second step consists in ranking this
+candidate regions, which hopefully capture the semantic context,
+conditioned on a language query about the image. Practically, this
+means that the model predicts, for each proposal bounding box, a score
+that represents how much the content of the bounidng box is likely to
+be referred by the sentence. Sometimes, models predict also new
+coordintas for the best predicted proposal, in order to better fit the
+visual content accordingly to the sentence semantic information. The
+two stage method is outlined in Fig.~\ref{fig:two-stage-approach}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/two-stage-approach.png}
+  \caption[Two stage approach]{
+    The two stage approach. The grounding system receives a set of
+    proposel extracted by a proposal generation system and, given the
+    query, it aligns entities in query with (fixed) set of proposal.
+  }
+  \label{fig:two-stage-approach}
+\end{figure}
 
 Even if the approach seems very promising, it is not exempt from some
-problems. As reported by \todo{CITE fast and acc one stage} ``the
-propose-and-rank two stage framework is flawed in at least two major
-ways''. First of all, if none of the region candidates of the first
-stage hits the ground truth region, the whole framework fails no
-matter how good the second ranking stage could perform. Note that a
-hit is considered successful if any of the proposals overlap the
-ground truth by more than fifty percent in term of intersection over
-union (IoU). Secondly, they argue that the process can be optimized by
-focusing on relevant bounding boxes which are often a small number
-(2-5), instead of waste lot of resources by computing thousands of
-proposal and then rank them down to a list.
+problems. As reported in \cite{yang2019fast} ``the propose-and-rank
+two stage framework is flawed in at least two major ways''. First of
+all, if none of the region candidates of the first stage hits the
+ground truth region, the whole framework fails no matter how good the
+second ranking stage could perform. Note that a hit is considered
+successful if any of the proposals overlap the ground truth by more
+than fifty percent in term of intersection over union (IoU). Secondly,
+they argue that the process can be optimized by focusing on relevant
+bounding boxes which are often a small number (2-5), instead of waste
+lot of resources by computing thousands of proposal and then rank them
+down to a list.
 
-However, the highlighted problems highly depends on chosen
-proposal extractor/object detector. Consider, for example, the problem
-of hitting the ground truth with at least one bounding box. Given an
-image $\bm{I}$ and $b'$ the ground truth bounding box, if we employee
-a very simple (yet extremely inefficient) proposal extractor such us
-the one who generates $\bm{B}$ the set of all possible bounding boxes
-in $\bm{I}$, then, by construction we have that $b' \in \bm{B}$. So,
-by chosing the maximum number of bounding box we can tackle the
-problem. However, this solution is not feasible in practice, but
-fortunately we do not need to generate all possible solutions. In
-fact, only a small subset of all solution are required to hit the
-ground truth bounding box because thanks to the advancements in object
-detection system we can recognize relevant objects in image and focus
-only on those proposals.
+However, the highlighted problems highly depends on chosen proposal
+extractor/object detector. Consider, for example, the problem of
+hitting the ground truth with at least one bounding box. Given an
+image $\bm{I}$ and $\bm{b}'$ a ground truth bounding box, if we
+employee a very simple (yet extremely inefficient) proposal extractor
+such us the one who generates $\calP^*_{\bm{I}}$ the set of all
+possible bounding boxes in $\bm{I}$, then, by construction we have
+that $b' \in \bm{B}$. Hence, the more proposals we consider, the
+better we overlap with $\bm{b}'$. However, this solution is bound by
+time and memory constraints, but fortunately we do not need to
+generate all possible proposals. Indeed, only a small subset of all
+solution are required to hit the ground truth bounding box. Thanks to
+powerful object detection system we can recognize relevant objects in
+image and focus only on those proposals.
 
-Practically, we proved that with 100 bounding boxes and Faster-R CNN
-object detector, we obtain a coverage which is greater than 90\% on
-both two major dataset in the field of study: Flickr30k and ReferIt.
-The table \todo{REF table} shows how the upperbound accuracy changes
-by varying the number of considered bounding box.
+Practically, we proved (Sec.~\ref{subsec:num-of-proposals}) that with
+$100$ bounding boxes and Faster-R CNN object detector, we obtain a
+coverage which is greater than 90\% on both two major dataset in the
+field of study: Flickr30k and ReferIt.
 
 The second problem instead is partially solvable because the system,
 in order to perform its classification task, needs to consider all the
@@ -144,21 +143,33 @@ extracted proposal. However, the first stage can be precalculated and
 cached for the second stage, drastically reducing the required
 resources. 
 
-\newthought{The one stage approach} firstly introducted by \todo{CITE
-fast and accurate one stage}, instead, relies on a single step for
+\newthought{The one stage approach}, outlined in
+Fig.~\ref{fig:one-stage-approach} relies on a single step for
 computing the solution. The model receives in input an image and a
 textual sentence, and it should learn how to extract and fuse all the
 visual and textual information in order to predict the best bounidng
 box in output, according to the input sentence. 
 
-The thight coupling provided by this approach may lead to interesting
-results \todo{CITE fast and accurate one stage}, but it raises some
-major issues: \begin{enumerate*}[label=(\roman*)] \item not all the
-visual grounding datasets are suitable for training an object
-detector, due to lack of images and/or because they are not densely
-annotated; \item the model requires an high number of parameters, and
-because of that \item the training requires significant computing
-resources. \end{enumerate*}
+The thight coupling provided by this approach may lead to higher
+results with lower computational resources \cite{yang2019fast} and can
+be used when there is no fixed set of categories \cite{sadhu2019zero},
+but it raises some major issues. First of all not all the visual
+grounding datasets are suitable for training an object detector, due
+to lack of images and/or because they are not densely annotated.
+Secondly, the model requires an high number of parameters, and because
+of that the training requires significant computing resources
+\cite{rigoni2021better}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/one-stage-approach.png}
+  \caption[One stage approach]{
+    The one stage approach. The grounding system receives features
+    encoded by a custom network with jointly process visual and
+    textual features.
+  }
+  \label{fig:one-stage-approach}
+\end{figure}
 
 \section{Fully/Weakly/Self/Un-Supervised Settings}
 
@@ -167,58 +178,130 @@ particularly in supervised learning tasks such as classification and
 regression, but it is noteworthy that in many other tasks it is
 difficult to get strong supervision information like fully
 ground-truth labels due to the high cost of the data-labeling process.
+Visual grounding is a striking example of that. 
 
-Visual grounding is a striking example of that. Consider again the
-example with image given in Fig.~\ref{img} and the sentence "A
-colly..." \todo{completare sentence copiandola da sopra}.
-\todo{Valutare se cambiare esempio o meno} In order to properly
-evaluate the phrase localization task, is required to know each query
-$q$ \todo{aggiustare matematica} in sentence $S$, and for each query
-$q$ the mapping to a bounding box $b$ in image $I$, which means to
-know also bounding boxes.\todo{aggiustare forma}. Practically
-speaking, a human annotator given an image $I$ and a sentence $S$ has
-to annotate all queries in sentence, undestand the query, identify the
-referred object in image by drowing a bounding box surrounding it and
-linking the bounding box with the query. With those insight it's
-straighforward to see that the fully supervised scenario for the
-visual grounding task is very hard to obtain. 
+In visual grounding, large amount of annotations are required. Think at the example in Fig.~\ref{fig:dog-playing-with-ball} along with the sentence "A collie plays with a white ball in a field of green grass", to perform phrase grounding task we need a lot of data: 
+\begin{itemize}
+  \item The image;
+  \item The sentence;
+  \item The annotations identifying queries in the sentence, for
+  example ``the dog'', ``a ball'' and ``a field of green grass'';
+  \item The annotations identifying entities in the image, i.e., the
+  bounding box of the dog, of the ball and of the field with green
+  grass.
+  \item The annotations that links queries and boxes in the image,
+  which are $\calO(mk)$ (fortunately, usually lower than that) where
+  $m$ is the number of queries and $k$ the number of bounding box.
+\end{itemize}
+The collection of such amout of data needs a lot of effort and human
+work to be carried out. Furthermore, because of the requirement of
+human annotators, gathered data can be erroneous and biased. In
+Sec.~\ref{sec:datasets} we extensively discuss two experiments (among
+the others) that successfully collected such data and are became
+State-of-the-Art datasets in phrase grounding.
+
+It's straightforward to see that this approach cannot scale: larger
+sets of annotations are exponentially difficult and expansive to
+build. For this reason, researches usually redefine the phrase
+grounding task under harder settings where less data are involved.
+This is the case of weakly-supervised, or even, unsupervised visual
+grounding. The Fig.~\ref{fig:full-weak-no-supervision} shows the
+differences between the three supervised settings. In the first case,
+a key information is available: the link between the query and the
+correct box to ground. Under weakly supervised scenario instead, such
+annotations are not available: we only know whether a query is linked
+to an image, involving all its bounding box but not which is the
+correct one. Under the unsupervised settings insteat we do not have
+access to ground truth, we have a corpus of text and a set of images
+without link between them.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.8\textwidth]{figures/full-weak-no-supervision.png}
+  \caption[Differences between full, weak and no supervision]{
+    Differences between full, weak and no supervision
+    \cite{wang2019phrase}. Conventional settings require phrase and
+    image localization annotations (fully supervised) or phrase and
+    image pairs (weakly supervised) at training time. In contrast, the
+    non-paired setting does not provide such annotations for training.
+  }
+  \label{fig:full-weak-no-supervision}
+\end{figure}
+
+A simpler way to think at differnt supervision settings for phrase
+grounding is by analogy with the ``match the shape'' game shown in
+Fig.~\ref{fig:match-the-shape-game}, a game for children that make
+them learn to recognize shapes like cube, cylinder, sphere and so on.
+The gameplay is very simple: we are provided some pieces and we win
+when all pieces fit in the hole on the board. Here, the model is
+represented by the kid, and the input that in phrase grounding would
+have been an image made by bounding box proposals and some queries are
+the board along with holes and wooden pieces to fit on boards. Now,
+consider a kid playing with two of such boards, the first has holes
+for geometric shapes (cube, cylinder, sphere, etc.), while the second
+has holes for tiny wooden animals (cow, cat, dog, fish, etc.). The
+goal is to learn learn to fit pieces on boards. He starts without
+knowledge, so he just tries. Pieces that fit in the holes will not
+fall, so the kid undestand whether a try is correct or not. After some
+time of playing he has learnt where to put the cube and where to put a
+cow. This is how the kid (or a grounding model) learns in fully
+supervised scenario. Consider instead the scenario where the kid plays
+with this two board, but he cannot try to put pieces in holes, he can
+just ask whether a piece belongs to the board of shapes or animals. In
+this much more complex way of playing, we give to kid only a weak
+information: we tell him that a piece will fit on a board rather than
+on the other, but we do not tell him which is the correct hole. This
+is the weak supervision. In unsupervised settings instead the kid
+cannot try neither to fit pieces on boards, nor to ask anything. He is
+just left to itself.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.4\textwidth]{figures/match-shapes-game.jpg}
+  \caption[Match the shape game]{
+    Match the shape game. A kid game useful to learn to recognize
+    shapes. The kid has to fit colored pieces in their respective
+    holes.
+  }
+  \label{fig:match-the-shape-game}
+\end{figure}
 
 More abstractly, in fully supervised settings a training example
 consists of two parts: a feature vector (or instance) describing the
-event/object, and a label indicating the ground-truth output.
+event/object, and a label indicating the ground truth output.
 Projected in phrase grounding this means knowing the map $\gamma :
 \calI \times \calS \rightarrow 2^{\calQ \times \calB}$ that links the
-ground truth bounding box $b_i \in \calB$ with its query $q_j \in
-\calQ$.
+ground truth bounding box $\bm{b}_i \in \calB$ with its query
+$\bm{q}_j \in \calQ$.
 
 Another form of supervision is the weak supervision. Broadly speaking,
 weakly supervised learning is an umbrella term covering a variety of
 studiesthat attemptto construct predictive models by learning with
-weak supervision \todo{CITE A brief introduction to weakly supervised
-learning}. Typically, there are three types of weak supervision. 
+weak supervision \cite{zhou2018brief}. Typically, there are three
+types of weak supervision. 
 
 \begin{itemize}
-    \item The first is incomplete supervision, i.e. only a (usually
-small) subset of training data is given with labels while the other
-data remain unlabeled. \todo{AKA semi-supervised, CITE grounidng by
-reconstruction}. Consider the following image TODO with the sentence
-TODO \todo{}, in incomplete supervision we may lack some ground truth,
-i.e., not for some query $q$, $\gamma(\bm{I}, S)$ is undefined.
-    \item The second type is inexact supervision, i.e. only
-coarse-grained labels are given. In phrase grounding inexact
-supervision means we have weak ground truth, for example given
-$\bm{I}$ an image and $S$ a sentence a weak ground truth may be the
-map $\gamma' : \calI \times \calS \rightarrow 2^{\calI \times \calS}$.
-Note that in this setting we do not know which bounding box $b$ is
-linked to query $q$. \todo{aggiustare notazione math}
-    \item The third type is inaccurate supervision, i.e. the given
-labels are not always ground truth.  In other words, some label
+  \item The first is incomplete supervision (also known as semi
+supervision \cite{rohrbach2016grounding}), i.e. only a (usually small)
+subset of training data is given with labels while the other data
+remain unlabeled. Given an example $(\bm{I}, S, G)$, $G = \{
+(\bm{q}^{gt}_j, \bm{b}^{gt}_j) \}^{m'}_{j=1}$ where $m' \leq m$ with
+$m$ the number of noun phrases, in incomplete supervision we may lack
+some ground truth in $G$.
+  \item The second type is inexact supervision (also known as weak
+supervision), i.e. only coarse-grained labels are given. In phrase
+grounding inexact supervision means we have weak ground truth, that
+is, we are given the pair $(\bm{I}, S)$ where we know only the link
+between image and sentence but not the link between bounding boxes and
+queries.
+  \item The third type is inaccurate supervision, i.e. the given
+labels are not always ground truth. In other words, some label
 information may suffer from errors.
 \end{itemize}
 
-The third type of weakly supervision in phrase grounding is usually
-mixed with the other because the label procedure which must be carried
-out by an human annotator and it's very error prone.
+Inaccurate supervision is usually mixed with other settings because
+the labelling procedure is carried out by human annotators which can
+introduct errors.
 
 \section{NLP and Part of Speech Tagging}
 
