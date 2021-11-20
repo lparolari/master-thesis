@@ -30,3 +30,34 @@ shown in Ch.~\ref{ch:experiments} that our approach is very promising
 and outperforms all previous approach except the excellent work by Q.
 Wang \etal{} \cite{wang2020maf}. In Sec.~\ref{TODO} we motivated our
 deficiency wrt their work. \todo{make the sec.}
+
+\section{Encountered Problems}
+
+During this work we encountered many problems, both conceptual and
+thecnical. Not surprisingly, the trickies one was conceptual: we
+thought we could shift from weak supervision to unsupervision by means
+of concept similarity. We had just found out the (super)power of
+concept similarity, but, of course, not all that glitters is gold.
+More details are reported in Appendix~\ref{TODO}\todo{MAKE APPENDIX}.
+
+Another problem we encountered is a flaw in phrase grounding field of
+study: we found some publication to be uncomplete and not professional
+as other works on mainstream tasks. In particular, we noticed the
+inconsistency between the naming, task and problem definition.
+Moreover, many works do not allow the reproduction of results by
+omitting important implementation details: one a few works made their
+implementation available online. Furthermore, some works perform
+unfair comparison by mixing up different backbones for object detector
+or different word embeddings, or, even worse, they ignore works with
+good results. For the sake of science, we hope that this situation
+will be resolved as soon as possible.
+
+Many other problems instead were technical. As already pointed out,
+phrase grounding requires a strong knowledge of many components: from
+object detectors to word embeddings, from LSTM to similarity measures.
+Hence, also a solid technical skill is required to make the components
+interact each others, develop a maintainable codebase and implement
+the model with fewer bugs possibile. For this reason we devoted a good
+amount of effort in developing high-quality code, making use of main
+guidelines and principles from software engineering. Indeed, our model
+is covered by $137$ unit tests and $8$ integration tests.
