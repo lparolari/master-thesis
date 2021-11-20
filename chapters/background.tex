@@ -547,7 +547,16 @@ Fig.\ref{fig:rnn-with-unfold} \emph{(Right)}.
 \begin{figure}[H]
   \centering
   \includegraphics[width=.8\textwidth]{figures/rnn-with-unfold.png}
-  \caption[TODO]{TODO: desc}
+  \caption[Recurrent network circuit diagram and unfolded computational graph]{
+    A recurrent network with no outputs. This recurrent network just
+    processes information from the input $x$ by incorporating it into
+    the state $\bm{h}$ that is passed forward through
+    time.\cite{goodfellow2016deep} \textit{(Left)} Circuit diagram.
+    The black square indicates a delay of a single time step.
+    \textit{(Right)} The same network seen as an unfolded
+    computational graph, where each node is now associated with one
+    particular time instance.
+  }
   \label{fig:rnn-with-unfold}
 \end{figure}
 
@@ -610,7 +619,7 @@ Unfortunately, RNNs and long term dependencies yield a mathematical
 challenge. The basic problem is that gradients propagated over many
 stages tend to either vanish (most of the time) or explode (rarely,
 but with much damage to the optimization). Moreover, I. Goodfellow
-\etal{} in \todo{CITE: deeplearningbook}, states also that:
+\etal{} in \cite{goodfellow2016deep}, states also that:
 
 \begin{quote}
   Even if we assume that the parameters are such that the recurrent
@@ -653,7 +662,7 @@ where the gradient can ﬂow for long durations with the addition to
 control weight on this self-loop conditioned on the context, rather
 than ﬁxed. By making the weight of this self-loop gated (controlled by
 another hidden unit), the time scale of integration can be changed
-dynamically. LSTM recurrent networks have ``LSTM cells''that have an
+dynamically. LSTM recurrent networks have ``LSTM cells'' that have an
 internal recurrence (a self-loop), in addition to the outer recurrence
 of the RNN. Fig.~\ref{fig:lstm} illustrate the LSTM block diagram. In
 an LSTM cell, the self-loop controls the flow of information from
@@ -663,7 +672,20 @@ external input gate and an output gate.
 \begin{figure}
   \centering
   \includegraphics[width=.6\textwidth]{figures/lstm.png}
-  \caption[TODO]{TODO: desc}
+  \caption[Block diagram of the LSTM recurrent network cell]{
+    Block diagram of the LSTM recurrent network ``cell''
+    \cite{goodfellow2016deep}. Cells are connected recurrently to each
+    other, replacing the usual hidden units of ordinary recurrent
+    networks. An input feature is computed with a regular artiﬁcial
+    neuron unit. Its value can be accumulated into the state if the
+    sigmoidal input gate allows it. The state unit has a linear
+    self-loop whose weight is controlled by the forget gate. The
+    output of the cell can be shut oﬀ by the output gate. All the
+    gating units have a sigmoid nonlinearity, while the input unit can
+    have any squashing nonlinearity. The state unit can also be used
+    as an extra input to the gating units. The black square indicates
+    a delay of a single time step.
+  }
   \label{fig:lstm}
 \end{figure}
 
