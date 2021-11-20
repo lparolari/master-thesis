@@ -917,29 +917,51 @@ training.
 \section{Similarity Measures}
 
 \subsection{Intersection over Union (IoU)}
+\label{subsec:iou}
 
-Given a pair of bounding box coordinates (b i , b j ), the
-Intersection over Union (IoU), also known as Jaccard index, is an evaluation metric used mainly in object detection
-tasks, which aims to evaluate how much the two bounding
-box refer to the same content in the image. Specifically, it
-is defined as:
+Given a pair of bounding box coordinates $(\bm{b}_i , \bm{b}_j)$, the
+Intersection over Union (IoU), also known as Jaccard index, i.e.,
+coefficient of similarity for two sets of data
+\cite{jaccard1901comparative}, is an evaluation metric used mainly in
+object detection tasks, which aims to evaluate how much the two
+bounding box refer to the same content in the image
+\cite{rigoni2021better, padilla2020survey}. Specifically, it is
+defined as:
 \[
-  \iou(\bbox_i, \bbox_i) = \frac{| \bbox_i \inters \bbox_j |}{| \bbox_i \union \bbox_j |}
+  \iou(\bbox_i, \bbox_j) = \frac{| \bbox_i \inters \bbox_j |}{| \bbox_i \union \bbox_j |}
 \]
 where $| \bbox_i \inters \bbox_j |$ is the area of the box obtained by
 the intersection of boxes $\bbox_i$ and $\bbox_j$ , while $| \bbox_i
 \union \bbox_j |$ is the area of the box obtained by the union of
-boxes $\bbox_i$ and $\bbox_j$. It is invariant to the bounding boxes
-sizes, and it returns values that are strictly contained in the
-interval $[0, 1] \in \Rset$, where $1$ means that the two bounding
-boxes refer to the same image area, while a score of $0$ means that
-the two bounding boxes do not overlap at all. The fact that two
-bounding boxes that do not overlap have IoU score equal to $0$, is the
-major issue of this metric: the zero value does not represent how much
-the two bounding boxes are far from each other. For this reason, in
-its standard definition, the intersection over union is mainly used as
-an evaluation metric rather than as a component of a loss function for
-learning.
+boxes $\bbox_i$ and $\bbox_j$. A conceptual explaination is given in
+Fig.~\ref{fig:iou}. It is invariant to the bounding boxes sizes, and
+it returns values that are strictly contained in the interval $[0, 1]
+\in \Rset$, where $1$ means that the two bounding boxes refer to the
+same image area, while a score of $0$ means that the two bounding
+boxes do not overlap at all.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/iou.png}
+  \caption[Intersection over Union (IoU)]{Intersection over Union (IoU) \cite{padilla2020survey}}
+  \label{fig:iou}
+\end{figure}
+
+\subsection{Pointing Game Metric}
+\label{subsec:pointing-game-metric}
+
+The pointing game can be considered an human evaluation metric
+\cite{petsiuk2018rise} and was first introduced by J. Zhang \etal{} in
+\cite{zhang2018top}. Given $(\bm{b}_i , \bm{b}_j)$ a pair of bounding
+box, the ponting game metric defines a hit the highest saliency point
+of $\bm{b}_i$ lies inside the $\bm{b}_j$, otherwise it is a miss.
+
+The highest saliency point of a bounding box is usually defined
+depending on the task and setting of the problem. For example, in the
+phrase localization task, such point is the center of the bounding
+box. In other cases, given an attention mask which localizes an object
+in an image, the highest saliency point is the maximum point on the
+attention mask.
 
 \subsection{Cosine Similarity}
 

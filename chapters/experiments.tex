@@ -580,18 +580,22 @@ between most popular labels.
 Aligned with the works in literature, we consider the standard
 accuracy metric. Given a noun phrase, it considers a bounding box
 prediction to be correct if and only if the intersection over union
-(Sec.~\todo{REF: iou}) value between the predicted bounding box and
-the ground truth bounding box is at least 0.5. Formally, accuracy between $B* = \{ b* | b = model(\bm{I}, S) \}$ the set of predicted bounding boxes and $B^{gt}$ the set of ground truth bounidng boxes, can be defined as
+(Sec.~\ref{subsec:iou}) value between the predicted bounding box and
+the ground truth bounding box is at least $t$. Formally, accuracy
+between $B* = \{ b* | b = model(\bm{I}, S) \}$ the set of predicted
+bounding boxes and $B^{gt}$ the set of ground truth bounidng boxes,
+can be defined as
 \[
-  acc(B^*, B^{gt}) = \frac{\sum_{i = 1}^{n} \One (\iou (b_i^*, b_i^{gt}) \geq 0.5)}{n}.
+  acc(B^*, B^{gt}) = \frac{\sum_{i = 1}^{n} \One (\iou (b_i^*, b_i^{gt}) \geq t)}{n}.
 \]
+Again, following literature we chose $t = 0.5$.
 
-Moreover, we also calculate the pointing game accuracy in order to
-evaluate model's performance in localizing the correct bounding box in
-the space, even if it is considered very optimistic with respect to
-the standard accuracy. Poiting game accuracy consider an example to be
-positive whether the center of predicted bounding box lies wherever
-inside the ground truth box. More formally,
+Moreover, we also calculate the pointing game accuracy
+(Sec.~\ref{subsec:pointing-game-metric}) in order to evaluate model's
+performance localizing the correct bounding box in the space. Poiting
+game accuracy consider an example to be positive whether the center of
+predicted bounding box lies wherever inside the ground truth box. More
+formally,
 \[
   acc_{point}(B^*, B^{gt}) = \frac{\sum_{i = 1}^{n} \One (c_i^* \in  b_i^{gt})}{n},
 \]
@@ -599,3 +603,10 @@ where $c^* = (x + \frac{w}{2}, y + \frac{h}{2})$ with $x, y$ the
 bounidng box top-left point and $w, h$ its width and height. Note that
 $c^* \in b^{gt}$ is an abuse of notation, we mean true when $c^*$ is
 inside the box boundaries.
+
+The pointing game accuracy is a very optimistic metric wrt the
+standard accuracy. This is because it requires at least a point
+falling inside the ground truth bounding box to consider the grounding
+as a hit, while the standard accuracy requires, depending on a
+parameter, that at least some fraction of the area overlaps the ground
+truth bounding box.
