@@ -2,4 +2,31 @@
 \chapter{Conclusion}
 \label{conclusion}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.
+In this work we focused on the problem of phrase grounding with weak
+supervision. The phrase grounding task is relevant for many other
+import tasks, as outlined in Ch.~\ref{ch:intro}, such us visual
+question answering, image retrieval, robotic navigation and more. The
+complexity of phrase grounding problem with weak supervision is
+partially due to its multimodal nature that involves textual and
+visual features, which, in turn, brings extra challenges as disccused
+in Ch.~\ref{ch:background}, and partially because the missing of
+ground truth which makes unfeasible the learning throught standard
+approaches. Being able to solve the pharse grounding problem under
+weakly supervised settings is extremely important both because we can
+overcome the bottleneck in collecting new and larger dataset which can
+improve even more grounding performance and it would constitute a
+strong baseline for fully supervised settings. At the light of this,
+we discussed in Ch.~\ref{ch:model} how to solve the problem thanks to
+free information offered by the object detector: a probability
+distribution over given set of labels for bounding box proposals. We
+integrated this form of prior knowledge in our model as a similarity
+score between the concept in query and the categorized content of a
+proposal by empowering the score of query related proposals while
+downscale other proposals' score. Finally, the model leanrs to
+maximize the multumodal similarity between query and proposals
+belonging to positive example, i.e., sentence with its own image,
+while minimizing the multimodal similarity on negative examples. We
+shown in Ch.~\ref{ch:experiments} that our approach is very promising
+and outperforms all previous approach except the excellent work by Q.
+Wang \etal{} \cite{wang2020maf}. In Sec.~\ref{TODO} we motivated our
+deficiency wrt their work. \todo{make the sec.}
