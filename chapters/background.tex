@@ -389,27 +389,130 @@ Fig.~\ref{fig:pos-tags} shows the tags along with their description.
   \label{fig:pos-tags}
 \end{figure}
 
-During years, three different annotation standard of POS tagging and
-dependency structure, such us Stanford Dependencies
+During years, many different annotation for standard of POS tagging
+and dependency structure were developed, such us Stanford Dependencies
 \cite{de2006generating, de2008stanford, silveira2014gold}, Google
 universal part-of-speech tags \cite{lin2012syntactic} and the Interset
 interlingua \cite{zeman2008reusable} for morphosyntactic tagsets.
 Universal Dependencies (UD) \cite{nivre2016universal,
-nivre2017universal} is a recent effort to to achieve cross-linguistic
+nivre2017universal} is a recent effort to achieve cross-linguistic
 consistency of annotation, while still permitting language-specific
 extensions when necessary. The UD annotation scheme uses a
 representation in the form of dependency trees as opposed to a phrase
-structure trees and makesavailable over $100$ treebanks of more than
+structure trees and makes available over $100$ treebanks for more than
 $70$ languages. New Universal POS tags are listed in
 Fig.~\ref{fig:upos-tags}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=.8\textwidth]{figures/upos-tags.png}
+  \includegraphics[width=0.9\textwidth]{figures/upos-tags.png}
   \caption[Universal POS tags]{Universal part-of-speech tags (UPOS) \cite{nivre2017universal}}
   \label{fig:upos-tags}
 \end{figure}
  
+\subsection{NLP Tools}
+
+During years many good NLP tools were developed. The reasons are
+twofold: first of all the availability of open-source dataset
+simplified the training of such complex system, and secondly, NLP has
+applications in many fields, from research to industry and even
+government, thus, involving high demand for accurate and efficient
+tools. Most famous and widely adopted appliances are CoreNLP
+\cite{manning2014stanford}, \textsc{Flair} \cite{akbik2019flair},
+spaCy\footnote{\href{https://spacy.io/}{https://spacy.io/}}, UDPipe
+\cite{straka2018udpipe} and Stanza \cite{qi2020stanza}. Below we
+discuss most relevant projects, highlighting their pro and cons.
+
+\subsubsection{Standford CoreNLP}
+
+Standford CoreNLP \cite{manning2014stanford} is the first NLP tool
+developed for the mass adoption. CoreNLP was born at Standford
+University in 2006 for internal usage and the released under an
+open-source license in 2010. It implements a generic NLP pipeline from
+tokenization through to coreference resolution. The motivations under
+its development are:
+\begin{itemize}
+  \item To be able to quickly and painlessly get linguistic
+  annotations for a text.
+  \item To hide variations across components behind a common API.
+  \item To have a minimal conceptual footprint, so the system is easy
+  to learn.
+  \item To provide a lightweight framework, using plain Java objects
+  (rather than something of heavier weight, such as XML or UIMA's
+  Common Analysis System (CAS) objects).
+\end{itemize}
+It tries to overcome problems of existing systems such us UIMA
+\cite{ferrucci2004uima} and GATE \cite{cunningham2002gate} by allowing
+the user to get ready in few minutes only knowning a little Java. For
+example, Standford CoreNLP makes available an intuitive command line
+interface and an easy way to write text annotators. Moreover, it
+provides a simple concrete API which enables its usage from extenal,
+existing systems. However, it does not attempt to provide multiple
+machine scale-out (though it does provide multi-threaded processing on
+a single machine).
+
+Out of the box, Standford CoreNLP comes with many annotators and
+supports all language encodings and various human languages like
+English, Cinese, German, Franch and Arabic.
+
+\subsubsection{Flair}
+
+\textsc{Flair} \cite{akbik2019flair} is an NLP framework designed to
+facilitate training and distribution of state-of-the-art sequence
+labeling, text classification and language models. The core idea of
+the framework is to present a simple, unified interface for
+conceptually very different types of word and document embeddings.
+This effectively hides all embedding-specific engineering complexity
+and allows researchers to ``mix and match'' various embeddings with
+little effort. The framework also implements standard model training
+and hyperparameter selection routines, as well as a data fetching
+module that can download publicly available NLP datasets and convert
+them into data structures for quick set up of experiments.
+\textsc{Flair} also comes with a collection of pre-trained models to
+allow researchers to use state-of-the-art NLP models in their
+applications.
+
+\subsubsection{SpaCy}
+
+SpaCy defines itself an ``Industrial-Strength Natural Language
+Processing Toolkit''. It is a free, open-source library for advanced
+Natural Language Processing (NLP) in Python. It is designed
+specifically for production use and helps you build applications that
+process and ``understand'' large volumes of text. It can be used to
+build information extraction or natural language understanding
+systems, or to pre-process text for deep learning.
+
+SpaCy implements many core features like tokenization, POS tagging,
+dependency parsing, lemmatization, Sentence Boundary Detection (SBD),
+Named Entity Recognition (NER), Entity Linking (EL), similarity, text
+classification and rule-based matching. Pratically, it is a swiss-army
+knife for NLP pipelines.
+
+\subsubsection{Stanza}
+
+Stanza \cite{qi2020stanza} is a Python natural language
+processing toolkit supporting many human languages. Its core features are:
+\begin{itemize}
+  \item From raw text to annotations. It features a fully neural
+  pipeline which takes raw text as input, and produces annotations
+  including tokenization, multi-word token expansion, lemmatization,
+  part-of-speech and morphological feature tagging, dependency
+  parsing, and named entity recognition.
+  \item Multilinguality. Its architectural design is language-agnostic
+  and data-driven, which allows us to release models supporting 66
+  languages, by training the pipeline on the Universal Dependencies
+  (UD) treebanks and other multilingual corpora
+  \item State-of-the-art performance. They evaluate Stanza on a total
+  of 112 datasets, and find its neural pipeline adapts well to text of
+  different genres, achieving state-of-the-art or competitive
+  performance at each step of the pipeline-
+\end{itemize}
+Additionally, Stanza features a Python interface to the widely used
+Java CoreNLP package, allowing access to additional tools such as
+coreference resolution and relation extraction. It is fully open
+source and mdeks available pretrained models for all supported
+languages and datasets available for public download.
+
 \section{Recurrent Neural Network}
 
 A recurrent neural network (RNN) is a special type of an artificial
@@ -441,7 +544,7 @@ $\bm{x}^{(t)}$, the input at time $t$, and $\bm{h}^{(t-1)}$, the
 hidden state at time $t - 1$. RNN unfolding is visually explained in
 Fig.\ref{fig:rnn-with-unfold} \emph{(Right)}.
 
-\begin{figure}
+\begin{figure}[H]
   \centering
   \includegraphics[width=.8\textwidth]{figures/rnn-with-unfold.png}
   \caption[TODO]{TODO: desc}
