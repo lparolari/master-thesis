@@ -61,3 +61,30 @@ the model with fewer bugs possibile. For this reason we devoted a good
 amount of effort in developing high-quality code, making use of main
 guidelines and principles from software engineering. Indeed, our model
 is covered by $137$ unit tests and $8$ integration tests.
+
+\section{Future Development}
+
+The multimodal fusion component component we adopted is a simple
+concatenation of features, we did not get further as it is out of
+scope for our work, but there are many good alternatives. For example
+\cite{datta2019align2ground} considers an order-invariant, deep
+encoder for feature fusion. In some other cases attention mechanism is
+used \todo{CITE}.
+
+There is a large margin of improvement for the multimodal similarities
+$\fmmsim$ and $\fmmsim'$ defined in Sec.~\ref{sec:loss}. In $\fmmsim$
+the similarity image-query is defined by the maximum score over
+proposals. This definition fly over important information and only
+consider the maxium. We could instead define a similarity that takes
+into account all proposals score in a weighted manner. Also $\fmmsim'$
+is very simple: in this case the similarity image-query is defined as
+the score of the maximum proposal fixed by the positive query over
+negative queries. Also in this case maximum could be a problem and we
+may consider also neighbors.
+
+Another interesting deepening regards attributes. Some object
+detectors also return a probability distribution on a set of
+attributes, highlighting extra information over proposals. A good
+improvement would be to join the information from adjective in queries
+with attributes over proposals and up or down weight scores based on
+this attribute similarity measure.
