@@ -364,7 +364,7 @@
 
 \newcommand{\acknowledgments}{
 	\phantomsection
-	\chapter*{Acknowledgments}
+	\chapter*{Ringraziamenti}
 	\noindent
 	\input{frontmatter/thanks}
 	\vspace*{\fill} \newpage
