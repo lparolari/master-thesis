@@ -172,7 +172,8 @@ visually explained in
 Fig.~\ref{fig:flickr30k-technical-data-representation}.
 
 \begin{figure}
-  \includegraphics[width=\textwidth]{figures/flickr30k-document-specification.png}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/flickr30k-document-specification.png}
   \caption[Flickr30k Entities document specification]{ Flickr30k
     Entities document specification. Each image is identified by a
     number that is identical for textual and visual annotations. The
@@ -194,12 +195,12 @@ current literature.
 
 \subsection{ReferIt}
 
-ReferIt \todo{CITE: referit} is another popular dataset. The reason
-that led to developing this dataset is to study how people refer to
-objects in complex photographs of a real-world cluttered scenese.
-Thus, the focus is on referring expression grounding task. However,
-due to the heterogeneity of data, it can be employed also in phrase
-grounding.
+ReferIt \cite{kazemzadeh2014referitgame} is another popular dataset.
+The reason that led to developing this dataset is to study how people
+refer to objects in complex photographs of a real-world cluttered
+scenese. Thus, the focus is on referring expression grounding task.
+However, due to the heterogeneity of data, it can be employed also in
+phrase grounding.
 
 ReferIt contains very challenging examples from phrase groudning point
 of view, because the dataset is collected entirely in an unsupervised
@@ -218,39 +219,42 @@ photographs of real world scenes in an inexpansive way.
 The game is a simple two player game where players alternate between
 generating expressions referring to objects in images of natural
 scenes, and clicking on the locations of described objects.
-Fig.~\ref{fig:referitgame-example}, from \todo{CITE: referit paper}
-shows an example of the game. The game play is straightforward: an
-image with an object outlined in red and a text box is show to Player
-1. Player 2 instead receives, the same image and the referring
-expression written by Player 1 and must click on the location of the
-described object (note, Player 2 does not see the object
-segmentation). If Player 2 clicks on the correct object, then both
-players receive game points and the Player 1 and Player 2 roles swap
-for the next image. If Player 2 does not click on the correct object
-then no points are received and the players remain in their current
-roles. When there are no players available for a player vs player
-match, then a canned match is started where the missing player is
-replaced by a CPU palyer. In this way, by design the referring
-expression are provided and also verificated. 
+Fig.~\ref{fig:referitgame-example}, from
+\cite{kazemzadeh2014referitgame} shows an example of the game. The
+game play is straightforward: an image with an object outlined in red
+and a text box is show to Player 1. Player 2 instead receives, the
+same image and the referring expression written by Player 1 and must
+click on the location of the described object (note, Player 2 does not
+see the object segmentation). If Player 2 clicks on the correct
+object, then both players receive game points and the Player 1 and
+Player 2 roles swap for the next image. If Player 2 does not click on
+the correct object then no points are received and the players remain
+in their current roles. When there are no players available for a
+player vs player match, then a canned match is started where the
+missing player is replaced by a CPU palyer. In this way, by design the
+referring expression are provided and also verificated. 
 
 \begin{figure}
-  \includegraphics[width=\textwidth]{figures/referitgame-example.png}
-  \caption[ReferIt Game Example.]{An example game from \todo{CITE:
-  referit}. Player 1 \textit{(left)} sees an image with an object
-  outlined in red (the man) and provides a referring expression for
-  the object (``man in red shirt on horse''). Player 2
-  \textit{(right)} sees the image and the expression from Player 1 and
-  must localize the correct object by clicking on it (click indicated
-  by the red square). Elapsed time and current scores are also
-  provided.}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/referitgame-example.png}
+  \caption[ReferIt Game Example.]{An example game from
+  \cite{kazemzadeh2014referitgame}. Player 1 \textit{(left)} sees an
+  image with an object outlined in red (the man) and provides a
+  referring expression for the object (``man in red shirt on horse'').
+  Player 2 \textit{(right)} sees the image and the expression from
+  Player 1 and must localize the correct object by clicking on it
+  (click indicated by the red square). Elapsed time and current scores
+  are also provided. }
   \label{fig:referitgame-example}
 \end{figure}
 
 \subsubsection{Data Representation}
 \label{subsec:referit-data-representation}
 
-All ReferIt data is available online and instructions are provided at
-Licheng Yu's GitHub
+ReferIt resources and references are made available online at its
+website
+\footnote{\href{http://tamaraberg.com/referitgame/}{http://tamaraberg.com/referitgame/}},
+while instructions and data are provided at Licheng Yu's GitHub
 repository.\footnote{\href{https://github.com/lichengunc/refer}{https://github.com/lichengunc/refer}}
 Images are stored in JPG files, while annotations are described
 throught two structured file. One is a JSON file containing the
@@ -258,12 +262,20 @@ bounding box annotations along with a list of images and their $id$,
 the other is a PICKLE
 file\footnote{\href{https://docs.python.org/3/library/pickle.html}{https://docs.python.org/3/library/pickle.html}}
 containing a serialized Python object that represents sentence
-annotations. The Fig.~\ref{fig:referit-technical-data-representation} depict
-described structure.
+annotations. The Fig.~\ref{fig:referit-technical-data-representation}
+depict described structure.
 
 \begin{figure}
-  \includegraphics[width=\textwidth]{figures/referit-document-specification.png}
-  \caption[TODO]{TODO: desc}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/referit-document-specification.png}
+  \caption[ReferIt document specification]{ReferIt document
+  specification. Each image is identified by a number. This identifier
+  is used to link visual and textual annotations in the two json file.
+  Particularly, ``ref(xxx).json'' contains a list of sencences along
+  with their annotations, while in ``instances.json'' there are two
+  list. The first is an index of all images (with some properties),
+  while the second contains annotation for ground truth bounding
+  boxes. }
   \label{fig:referit-technical-data-representation}
 \end{figure}
 
