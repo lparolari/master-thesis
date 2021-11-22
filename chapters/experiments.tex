@@ -351,20 +351,18 @@ In particular our interface includes the follwoing.
 \begin{itemize}
   \item An postive integer used as identifier for the example.
   \item A sentence, i.e, the caption of the image.
-  \item A list of phrases, i.e., noun phrases in sentence along with
-  its counter.
+  \item A list of phrases, i.e., noun phrases in sentence.
   \item A list of coordinates, representing, for each phrase, the
   ground truth bounding box.
   \item The width and the height of the image.
-  \item A list of bounding box coordinates along with the counter of
-  the list.
+  \item A list of bounding box coordinates.
   \item A list of features per bounding box.
-  \item A list of class probabilities, i.e., for each class $c$, the
-  probabilitity that the bounding box $b$ is of class $c$, $\Pr(\cls(b)
-  = c)$, for each bounding box $b$.
-  \item A list of attribute probabilities, i.e., for each attribute
-  $a$, the probabilitity that the bounding box $b$ is has the
-  attribute $a$, $\Pr(\attr(b) = a)$, for each bounding box $b$.
+  \item A list of probabilities, i.e., a probability distribution
+  $Pr_{Cls}(\bm{i})$ for each proposal $\bm{p}_i$ over a set of
+  classes $Cls$.
+  \item A list of attribute probabilities, i.e., a probability
+  distribution $Pr_{Attr}(\bm{i})$ for each proposal $\bm{p}_i$ over a
+  set of attributes $Cls$.
   \item A list of features per bounding box.
 \end{itemize}
 
@@ -388,13 +386,7 @@ exposing data throught the unified interface.
 }
 \end{lstlisting}
 
-
-TODO: aggiungere descrizione "formale", elencando le chiavi del dizionario del batch
-
-
-
-
-TODO: discutere operations on single element e varie trasformazioni + il padding e la creazione del batch in un'altra sezione! (più collegata a impl. techine)
+TODO: discutere operations on single element e varie trasformazioni + il padding e la creazione del batch in un'altra sezione! (più collegata a impl. techine) \todo{VEDERE QUI}
 
 \section{Data Analysis}
 \label{sec:data-analysis}
