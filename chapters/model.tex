@@ -12,12 +12,35 @@ This is some random quote to start off the chapter.
 \section{Model}
 
 In the following sections we describe the model architecture, outlined
-in Fig.\ref{fig:model-architecture}.
+in Fig.\ref{fig:model-architecture}. We first delineate the visual and
+textual branch in Sec.~\ref{subsec:visual-branch} and
+\ref{subsec:textual-branch}. We then present the concept similarity,
+our novel contribution, in Sec.~\ref{subsec:similarity-branch}, along
+with the prediction and loss modules in
+Sec.~\ref{subsec:prediction-module} and \ref{sec:loss}. We then
+conclude highlighting the training and inference protocol in
+Sec.~\ref{sec:training-and-inference}.
+
+TODO \todo{CAMBIARE IMMAGINE, QUESTA é QUELLA SBAGLIATA}
 
 \begin{figure}
   \centering
   \includegraphics[width=1.0\textwidth]{figures/model-architecture.png}
-  \caption[TODO]{Our model architecture overview. [WORK IN PROGRESS]}
+  \caption[Model architecture overview]{ Our model architecture
+    overview. Initially, the image is processed by a pre-trained
+    Faster R-CNN object detector in order to extract all the proposals
+    bounding boxes from which the spatial features are generated.
+    Then, the model generates textual features from the input noun
+    phrase by first retrieving each word embedding and then using an
+    LSTM network. Finally, the model fuses together all the visual,
+    spatial, and textual features by the Fusion Operator. Those
+    features are then used by the model in combination with textual
+    feature to predict a score of similarity between the two. The
+    concept branch predict another similarity score between the word
+    embedding of concept the phrase and the class label on proposal.
+    Such score is applied to models predictions as a prior and fed
+    into the loss module that optimizes positive scores to be larger
+    than negative scores. }
   \label{fig:model-architecture}
 \end{figure}
 
@@ -61,6 +84,7 @@ $\zeta$. This information is typically returned by most of the object
 detectors, and it will be used in Sec.~\ref{subsec:similarity-branch} to define the concept similarity.
 
 \subsection{Textual Branch}
+\label{subsec:textual-branch}
 
 Regarding the textual features extraction, given a noun phrase
 $\bm{q}_j$, initially all its words $W^{\bm{q}_j} = \{ w^{\bm{q}_j}_i
@@ -160,6 +184,7 @@ where
 \end{equation}
 
 \subsection{Prediction Module}
+\label{subsec:prediction-module}
 
 Finally, the model predicts the probability $\bm{P}_{jz}$ that a given
 noun phrase $\qj$ is referrred to a proposal bounding box $\bm{p}_z$
@@ -295,6 +320,7 @@ representations are moved more than other: the normalization allows to
 introduce a kind of equality.
 
 \section{Training and Inference}
+\label{sec:training-and-inference}
 
 At training stage, we are given the example $(\bm{I}, S)$ with
 $\calP_{\bm{I}} = \{ bm{p}_i \}^k_{i=1}$ are bounding box proposal
