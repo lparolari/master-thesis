@@ -189,7 +189,7 @@ maximum similarity wrt proposals. In our example, the word
 ``elephant'' has maximum similarity with the proposal labeled with
 \textit{animal}, so it becomes the concept of the phrase. Scores
 associated with this concept will be used at prediction stage
-(Sec.~\ref{subsec:prediction-module}) to down- or up- weight
+(Sec.~\ref{subsec:prediction-module}) to downweight unrelated
 proposals.
 
 \begin{figure}
@@ -206,12 +206,15 @@ Finally, the model predicts the probability $\bm{P}_{jz}$ that a given
 noun phrase $\qj$ is referrred to a proposal bounding box $\bm{p}_z$
 as:
 \begin{equation}
-  \bm{P}_{jz} = \fsim ( \bm{h}^{||}_{jz} , \bm{h}^*_j ).
+  \bm{P}_{jz} = \fsim ( \bm{h}^{||}_{jz} , \bm{h}^*_j ),
 \end{equation}
+where $\fsim$ is a similarity measure and $\bm{h}^{||}_{jz}$,
+$\bm{h}^*_j$ are features extracted by visual and textual branch,
+respectively.
 
 As noted in \cite{chen2018knowledge}, concept similarity is a direct
 consequence of the intrinsic knwoledge convoyed by the object
-detector. Such score can be useful to down-weight unrelated proposals.
+detector. Such score can be useful to downweight unrelated proposals.
 Its effectiveness is due to the fact that the word embedding usually
 captures the semantic similarity between concept in phrase and the
 content of the bounding box, and thus, let the model focuses on
@@ -265,7 +268,7 @@ contributions. Formally:
   \bm{\hat{P}}_{jz} = (1 - \lambda) * \bm{S}^c_{jz} + \lambda * \bm{P}_{jz}.
 \end{equation}
 The major benefit of this approach is that model predictions are not
-constrained to values defined by concept similarity: they co-work to
+constrained to values defined by concept similarity: they co-work for
 the final predictions.
 
 \section{Loss Function}
@@ -279,10 +282,11 @@ Inspired by \cite{wang2020maf}, we adopt a contrastive loss. The
 contrastive objective $\calL$ aims to learn the visual and textual
 features by maximizing the similarity score between paired
 image-caption elements and minimizing the score between the negative
-samples (i.e., other irrelevant captions). Formally, given the image
-$\bm{I}$, $Q_S = \{ \bm{q}_j \}^m_{j=1}$ the set of noun phrases built
-on the sentence $S$ weakly linked to $\bm{I}$ and $Q'_S = \{ \bm{q}_h
-\}^{m'}_{h=1}$ we define $\calL$ as:
+samples (i.e., other irrelevant captions). Formally, given $\bm{I}$
+the image, $Q_S = \{ \bm{q}_j \}^m_{j=1}$ the set of noun phrases
+built on the sentence $S$ that describes $\bm{I}$ and $Q'_S = \{
+\bm{q}_h \}^{m'}_{h=1}$ the set of noun phrases built on $S'$ that do
+not describe $\bm{I}$, we define $\calL$ as:
 \begin{equation}
   \calL = - \frac{1}{m} \sum^m_{j=1} \calL_j,
 \end{equation}
@@ -291,7 +295,7 @@ where
   \calL_j = \log \frac{e^{\fmmsim(\bm{I}, \bm{q}_j)}}{\sum^{m'}_{h = 1} e^{\fmmsim'(\bm{I}, \bm{q}_{h})}}.
 \end{equation}
 Here, $\fmmsim$ and $\fmmsim'$ are the multimodal similarity functions
-between image and positive/negative queries respectively. We define
+between image and positive/negative queries, respectively. We define
 \begin{equation}
   \fmmsim(\bm{I}, \bm{q}_j) = \max_{z} \bm{P}_{jz}, \qquad \text{and} \qquad \fmmsim'(\bm{I}, \bm{q}_h) = \max_z \bm{P}_{hi}
 \end{equation}
@@ -304,47 +308,16 @@ $\bm{q}_h$ and image $\bm{I}$ to be smaller. Moreover, the similarity
 function on negative queries $\fmmsim'$ bounds the model to consider
 only bounding boxes affected by positive queries.
 
---- \todo{REMOVE BELOW}
-
-We optimize the model to learn features representation in the
-similarity space, such that the depiction of $\bm{p}_z$ and $\bm{q}_j$
-are neighbors when $\bm{D}_{jz}$ is $1$, perpendicular otherwise.
-Formally:
-\begin{equation}
-  \floss^{\text{orthogonal}} \left( \bm{P}_{jz}, \bm{D}_{jz} \right) = - \bm{D}_{jz} \bm{P}^+_{jz} + \left( \bm{D}_{jz} \bm{P}^-_{jz} \right)^2,
-\end{equation}
-where $\bm{P}^+_{jz} = \One\left( \bm{D}_{jz} \right) \bm{P}_{jz}$
-is the matrix that keeps predictions whose concept direction is over
-the threshold and cancel the other, $\bm{P}^-_{jz} = \One\left( -
-\bm{D}_{jz} \right) \bm{P}_{jz}$ instead cancels prediction with
-concept similarity above threshold; $\One$ is the unit step function
-\begin{equation}
-  \One(x) =
-  \begin{cases}
-    1, & x \geq 0 \\
-    0, & \text{otherwise}
-  \end{cases}.
-\end{equation}
-
-Also in this case, some different strategies are available. Instead of
-optimizing repulsed features to be perpendicular, one could also
-exploit the similarity space and force them to be inversely
-correlated. Another improvement would be to normalize the score by
-number of bounding box with same class label. Indeed, due to the
-long-tail distribution of bounding box class labels in dataset, some
-representations are moved more than other: the normalization allows to
-introduce a kind of equality.
-
 \section{Training and Inference}
 \label{sec:training-and-inference}
 
 At training stage, we are given the example $(\bm{I}, S)$ with
-$\calP_{\bm{I}} = \{ bm{p}_i \}^k_{i=1}$ are bounding box proposal
+$\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$ are bounding box proposal
 built on $\bm{I}$ and $\bm{q}_j$ are queries in $S$. As noted in
 Sec.~\ref{subsec:visual-branch} we use extra information from object
 detector such us the probability distribution on bounding box class
 labels $Pr_{Cls}(\bm{p}_i)$. Following \cite{chen2018knowledge} we fix
-$k = 100$ proposals. (We studied $k$ can affect results in
+$k = 100$ proposals. (We studied how $k$ can affect results in
 Sec.~\ref{sec:data-analysis}). The parameters to be optimized include
 parameters in encoding LSTM (Eq.~\ref{eq:h-star}) and projection
 parameters (Eq.~\ref{eq:h-par-jz}). We use the cosine similarity as
@@ -352,7 +325,9 @@ similarity measure $\fsim$ between vectors. Our network is trained
 end-to-end using Adam optimizer with gradient clipping set to $1$ and
 learning rate $0.001$.
 
-At test stage, we feed the $\bm{q}_j$ and $\calP_{\bm{I}}$ to the model. It predict a similarity score from $-1$ to $1$ for each bounding box. The grounded bounding box is calculated as
+At test stage, we feed the $\bm{q}_j$ and $\calP_{\bm{I}}$ to the
+model. It predict a similarity score from $-1$ to $1$ for each
+bounding box. The grounded proposal is defined as:
 \begin{equation}
-  \bm{p}_{z^*} \quad \text{s.t.} \quad z^* = \argmax_z \bm{P}_{jz}
+  \bm{p}_{z^*} \quad \text{s.t.} \quad z^* = \argmax_z \bm{P}_{jz}.
 \end{equation}
