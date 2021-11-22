@@ -21,21 +21,19 @@ SCALETTA
 \section{Datasets}
 \label{sec:datasets}
 
-In this section we describe Flickr30K and ReferIt, the two datasets
-used for the experimental assessment. \todo{??? Furthermore, we
-describe two other noteworthy and popular datasets available in
-literature}
+In this section we describe Flickr30K Entities and ReferIt, the two
+datasets used for the experimental assessment. For both we discuss how
+they were collected, what are their purposes, some statistics and we
+highlight the data representation.
 
 \subsection{Flickr30K}
 \label{subsec:flickr30k}
 
-Flickr30K Entities \todo{CITE: Flickr30K Entities} is a dataset built
-on top of Flickr30K \todo{CITE: From image descriptions to visual
-denotations: New similarity metrics for semantic inference over event
-descriptions}. It is usually referred as Flickr30K or simply as Flickr
-and, compared to the original Flickr30K dataset, it focuses on the
-task of grounding textual mentions of entities in image by augmenting
-data with extra annotations.
+Flickr30K Entities \cite{plummer2015flickr30k} is a dataset built on
+top of Flickr30K \cite{young2014image}. It is usually referred as
+Flickr30K or simply as Flickr and, compared to the original Flickr30K
+dataset, it focuses on the task of grounding textual mentions of
+entities in image by augmenting data with extra annotations.
 
 Annotations consists of cross-caption coreference chains linking
 mentions of the same entities together with bounding boxes localizing
@@ -55,9 +53,9 @@ bounding box annotation for the resulting chains. This workflow
 provides two advantages: first, identifying coreferent mentions helps
 reduce redundancy and save box-drawing effort; and second, coreference
 annotation is intrinsically valuable. In
-Fig.~\ref{fig:flickr30k-example}, taken from \todo{CITE: flickr30k
-entitites} are shown the interfaces used to gather annotations with
-respect to tasks described next.
+Fig.~\ref{fig:flickr30k-example} \cite{plummer2015flickr30k}, are
+shown the interfaces used to gather annotations with respect to tasks
+described next.
 
 \begin{figure}
   \centering
@@ -175,7 +173,12 @@ Fig.~\ref{fig:flickr30k-technical-data-representation}.
 
 \begin{figure}
   \includegraphics[width=\textwidth]{figures/flickr30k-document-specification.png}
-  \caption[TODO]{TODO: rappresentare i tre file e collegare gli ID con i colori evidenziano l'esempio, le query e le noun phrase per query. Aggiornare immagine con i nuovi fix}
+  \caption[Flickr30k Entities document specification]{ Flickr30k
+    Entities document specification. Each image is identified by a
+    number that is identical for textual and visual annotations. The
+    txt file describe five captions, each one containing one or more
+    noun phrases. The xml file descibes the ground truth bounding box
+    annotations. }
   \label{fig:flickr30k-technical-data-representation}
 \end{figure}
 
