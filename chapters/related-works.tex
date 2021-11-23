@@ -465,12 +465,35 @@ few works.
 \section{Visual Question Answering}
 
 Visual Question Answering (VQA) is a computer vision task where a
-system is given a text-based question about an image, and it must
-infer the answer \cite{kafle2017visual}. Questions can be arbitrary
-and can encompass many computer vision task, varying from object
-recognition or detection to attribute or scene classification and also
-to counting. Beyond this, there are many more complex question that
-can be asked, such as questions about spatial relationships among
-objects and common sesnse reasoning question. Under this definition,
-phrase localization becomes a foundamental building block for VQA
-systems.
+system must infer the answer given a natural language question about
+an image \cite{kafle2017visual}. VQA is a challenging taks because it
+encompasses many computer vision task, such us, object recognition or
+detection, attribute or scene classification, counting and so on.
+Moreover, questions are arbitrary, for example questions about spatial
+relationships among objects or common sesnse reasoning may be asked.
+Thus, solving the VQA task means being able to solve the phrase
+localization task.
+
+In \cite{kafle2017visual} authors made an awesome work collecting all
+VQA related stuff:a proper definition of the problem, challenges,
+motivations, datasets, metrics, algorithms and a summary of actual
+main baseline models. As they highlight, among the large number of
+algorithm proposed in literature, all consists of
+\begin{enumerate*}[label=(\roman*)] 
+  \item extracting image features,
+  \item extracting question features, and
+  \item producing an answer by combining these features.
+\end{enumerate*}
+VQA is mostly treated as a classification problem, where image and
+question features are the input to the classification system, while
+each unique answer is treated as a distinct category. The main
+difference among existing systems is how they combine image and
+question features. Some works uses simple combination mechanisms,
+e.g., elementwise addition or multiplication, concatenation, while
+others combine features using neural networks with bilinear pooling or
+similar schemes. Other approaches consists in computing spatial
+attention maps based on question features for focusing on visual
+features, eventually, local features may also be scaled based on
+importance. A few works use Bayesian models that exploit relationship
+between question, image and answer distribution. Others instead break
+VQA task into a series of sub-problems.
