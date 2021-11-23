@@ -8,6 +8,8 @@ Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin moles
 
 \section{Phrase Grounding}
 
+\subsection{Weakly Supervised Works}
+
 Phrase grounding is the task that studies the mapping from noun
 phrases to regions of an image (Sec.~\ref{sec:visual-grounding}) and
 requires strong understanding of both visual and textual modalities,
@@ -27,52 +29,44 @@ between entities in image and sentence is done by C. Kont \etal{}
 computed from text and RGB-D imagery to reason about the class of the
 3D objects, the scene type, as well as to align the nouns/pronouns
 with the referred visual objects. They used complex sentences, but
-grounding is contrained to nouns of 21 object classes relevant to
+grounding is constrained to nouns of 21 object classes relevant to
 indoor scenes. In the same period, R. Hu \etal{} \cite{hu2016natural}
 moved to a sligtly different task that requires to localize a target
 object within a given image based on a natural language query of the
 object, named natural language object retrieval. It differs from
 text-based image retrieval task as it involves spatial information
 about objects within the scene and global scene context. To address
-this issue, they proposed a novel Spatial Context Recurrent ConvNet
-(SCRC) model as scoring function on candidate boxes for object
-retrieval, integrating spatial configurations and global scene-level
-contextual information into the network. In particular, their model
-processes query text, local image descriptors, spatial configurations
-and global context features through a recurrent network, outputs the
-probability of the query text conditioned on each candidate box as a
-score for the box, and can transfer visual-linguistic knowledge from
-image captioning domain to their task. The advent of Flickr30k
-Entities dataset collected and processed by B. Plummer \etal{}
-\cite{plummer2015flickr30k} (described in Sec.~\ref{subsec:flickr30k})
-boosted the development of morea accurate and general models, and
-allowed to face the problem phrase grounding without constraints.
-Along with the new dataset, they also provided a strong baseline for
-phrase grounding based on Canonical Correlation Analysis (CCA) for
-phrase grounding task. Their baseline consists in scoring each
+this issue, they proposed a new model that scores proposals from
+object retrieval by integrating information from contextual, spatial
+and global scene-level features by means of a recurrent neural
+network. The advent of Flickr30k Entities dataset collected and
+processed by B. Plummer \etal{} \cite{plummer2015flickr30k} (described
+in Sec.~\ref{subsec:flickr30k}) boosted the development of morea
+accurate and general models, and allowed to face the problem phrase
+grounding without constraints. Along with the new dataset, they also
+provided a strong baseline for phrase grounding based on Canonical
+Correlation Analysis (CCA). Their baseline consists in scoring each
 region-phrase correspondence separately, without taking into accont
 any context of performing any joint inference about the global
 correspondence between all regions in the image and all phrases in the
 sentence. On the countrary, L. Wang \etal{} in \cite{wang2016learning}
-proposed a method for learning joint embeddings of images and text
-using a two-branch neural network with multiple layers of linear
-projections followed by nonlinearities. The network is trained using a
-large margin objective that combines cross-view ranking constraints
-with within-view neighborhood structure preservation constraints
-inspired by metric learning literature. In
-\cite{rohrbach2016grounding}, A. Rohrbach \etal{}, authors developed a
-model able to reconstruct textual features in an encoder-decoder
-fashion, powered by an attention module which implements localization
-of regions of interest. Here, the attention is used to both ground and
-reconstruct. During training, the attention learns how to reconstruct
-given sentence describing the region to ground. During inference,
-attention localizes such region. The key motivation under this idea is
-that by training to reconstruct the text phrase, the model learn first
-to ground the phrase in the image. Moreover, their model is able to
-work with no, semi or full supervision. When no ground truth is
-available, the model simply learns to reconstruct the given sentence.
-Otherwise, the correct localization is enforced besides the
-reconstruction.
+inspired by metric learning designed a new method for preserving
+structure constraints while learning a joint embedding space for
+visual and textual features. Their model projects features using a
+two-branch multiple layers neural network, followed by nonlinearities.
+In \cite{rohrbach2016grounding}, A. Rohrbach \etal{}, authors
+developed a model able to reconstruct textual features in an
+encoder-decoder fashion, powered by an attention module which
+implements localization of regions of interest. Here, the attention is
+used to both ground and reconstruct. During training, the attention
+learns how to reconstruct given sentence describing the region to
+ground. During inference, attention localizes such region. The key
+motivation under this idea is that by training to reconstruct the text
+phrase, the model learn first to ground the phrase in the image.
+Moreover, their model is able to work with no, semi or full
+supervision. When no ground truth is available, the model simply
+learns to reconstruct the given sentence. Otherwise, the correct
+localization is enforced besides the reconstruction.
 
 As A. Rohrbach \etal{} proved \cite{rohrbach2016grounding}, phrase
 grounding problem can be addressed even with some or no ground truth,
@@ -87,39 +81,40 @@ already available. Otherwise, even the collection of a new dataset
 with shallow information like the link between an image and its
 caption is relatively easy to collect. On this wave, many researches
 tried to tackle phrase grounding in weak supervised settings.  For
-example, F. Xiao \etal{} in \cite{xiao2017weakly} proposed a a
-weakly-supervised approach that takes image-sentence pairs as input
-and learns to visually ground arbitrary linguistic phrases, in the
-form of spatial attention masks. To this end, they introduce an
-end-to-end model which learns visual groundings of phrases with two
-types of loss functions. In addition to the standard discriminative
-loss, which enforces that attended image regions and phrases are
-consistently encoded, they propose a novel structural loss which makes
-use of the parse tree structures induced by the sentences. In
-particular, they ensure complementarity among the attention masks that
-correspond to sibling noun phrases, and compositionality of attention
-masks among the children and parent phrases, as defined by the
-sentence parse tree. Technically speaking, their model encodes a
-sentence through a two-layers RNN with LSTM cells and a Dropout model
-to prevent overfitting, obtaining $\phi_L(P)$ the language code. The
-visual code $\phi_V(I)$ is computed insted by an embedding module,
-i.e., a two-layer perceptron with Dropout, that projects features from
-VGG-16 convolutional layers to a latent space. Leveragin on weak
-annotations their discriminative loss enforces the codes to be similar
-when features belongs to linked examples, otherwise to be different.
-Formally, given $I_i$ an image and $\{ P^1_i, P^2_i, \ldots, P^n_i \}$
-a set of corresponging phrases (both positive and negative), 
+example, F. Xiao \etal{} in \cite{xiao2017weakly} proposed a weakly
+supervised approach that takes image-sentence pairs as input and
+learns to visually ground phrases in the form of spatial attention
+masks from linguistic structures. Their model first extract the
+structure from a sentence and then learns to ground the attention mask
+by preserving parent-sibling and sibling-sibling linguistic
+constraints. To this end, they combine a standard discriminative loss,
+which enforces that attended image regions and phrases are
+consistently encoded, and a structural loss which ensure
+complementarity among the attention masks that correspond to sibling
+noun phrases, and compositionality of attention masks among the
+children and parent phrases. Technically speaking, their model encodes
+a sentence through a two-layers RNN with LSTM cells and a Dropout
+model to prevent overfitting, obtaining $\phi_L(P)$ the language code.
+The visual code $\phi_V(I)$ is computed insted by an embedding module,
+i.e., a two-layer perceptron with Dropout, that projects object
+detector's convolutional layers features to a latent space. Leveraging
+on weak annotations their discriminative loss enforces the codes to be
+similar when features belongs to linked examples, otherwise to be
+different. Formally, given $I_i$ an image and $\{ P^1_i, P^2_i,
+\ldots, P^n_i \}$ a set of corresponging phrases (both positive and
+negative), 
 \begin{equation}
   L_{disc} = -Y^j_i \cdot Sigmoid(\phi_V(I_i) \cdot \phi_L(P^j_i))
 \end{equation}
-where $Y^j_i \in \{ -1, +1 \}$ is the indicator variable denoting
-whether $P^j_i$ s a negative/positive match to $I_i$. The structural
-loss instead heavily exploit relations on sentence structure to
-generate an attention mask for localization. A parser first extract
-parent-sibling (PC) and sibling-sibling (SIB) relation. Such
-constraints are then enforced on the attention mask throught the two
-structural loss components $L_{PC}$ and $L_{SIB}$. $L_{PC}$, defined
-as 
+where $Sigmoid(x) = \frac{e^x}{1 + e^x}$, $Y^j_i \in \{ -1, +1 \}$ is
+the indicator variable denoting whether $P^j_i$ is a negative/positive
+match to $I_i$, and $\phi_V(I)$ and $\phi_L(P)$ denote the visual and
+language code, respectively.. The structural loss instead heavily
+exploit relations on sentence structure to generate an attention mask
+for localization. A parser first extract parent-sibling (PC) and
+sibling-sibling (SIB) relation. Such constraints are then enforced on
+the attention mask throught the two structural loss components
+$L_{PC}$ and $L_{SIB}$. $L_{PC}$, defined as 
 \begin{equation}
   L_{PC} = \frac{1}{|P|} \sum_{k \in P} \mid A_k - \max_{l \in child(k)} A_l \mid ^ 2,
 \end{equation}
@@ -129,23 +124,27 @@ of all its children nodes to be close to one another, while
   L_{SIB} = - \frac{1}{|S|} \sum_{m \in S} \sum_{pixels \in A} W_m \cdot \log \frac{\max_n A_{m,n}}{\sum_n A_{m,n}}
 \end{equation}
 introduces competition such that the attention masks of sibling nodes
-are exclusive for every pixel.
+are exclusive for every pixel. Here, $A$ is the attention mask
+generated for a given phrase, $P$ denotes the set of valid parent
+nodes, $child(k)$ returns all children nodes of parent node $k$, $S$
+is the set of all siblings, $n$ indexes each node in sibling set $m$
+(i.e., nodes that are sibling to each other), $\max$ and $\log$ are
+computed per-pixel, and $(\cdot)$ is element-wise multiplication.
 
 A few months later, following the idea of attention mask, H. Akbari
 \etal{} in \cite{akbari2019multi} addressed the problem of phrase
-localization  by learning a multi-level common semantic space shared
-by the textual and visual modalities. We exploit multiple levels of
-feature maps of a Deep Convolutional Neural Network, as well as
-contextualized word and sentence embeddings extracted from a
-character-based language model. Following dedicated non-linear
-mappings for visual features at each level, word, and sentence
-embeddings, we obtain multiple instantiations of our common semantic
-space in which comparisons between any target text and the visual
-content is performed with cosine similarity. We guide the model by a
-multi-level multimodal attention mechanism which outputs attended
-visual features at each level. The best level is chosen to be compared
-with text content for maximizing the pertinence scores of
-image-sentence pairs of the ground truth.
+localization by learning a multi-level common semantic space shared by
+the textual and visual modalities. Their model use contextualized word
+and sentence embeddings recovered from a character-based language
+model and employs a Deep Convolutional Neural Network with multiple
+level of feature maps. They produce several instantiations of common
+semantic space in which comparisons between any target text and the
+visual content are performed with cosine similarity using specific
+non-linear mappings for visual characteristics at each level, word,
+and sentence embeddings. An attention mechanism that outputs attended
+visual information enables the grounding. To maximize the scores of
+image-sentence pairs, the best feature map level is picked to be
+compared with text content.
 
 S. A. Javed \etal{} in \cite{javed2018learning} proposed a different
 and interesting approach by learning to ground thought a proxy task.
@@ -197,164 +196,169 @@ shown in Fig.~\ref{fig:kac-example}.
   \centering
   \includegraphics[width=.8\textwidth]{figures/kac-example.png}
   \caption[Knowledge Aided Consistency high-level architecture
-  overview]{Knowledge Aided Consistency high-level architecture
-  overview \cite{chen2018knowledge}. KAC Net applies both visual and
-  language consistency and leverages complementary knowledge from
-  the visual feature extractor to facilitate weakly supervised
-  grounding.}
+  overview]{ Knowledge Aided Consistency high-level architecture
+  overview \cite{chen2018knowledge}. The model applies external
+  knowledge to downweight unrelated proposals, while it learns to
+  ground by means of both visual and language reconstruction loss. }
   \label{fig:kac-example}
 \end{figure}
 
 In \cite{liu2019adaptive}, X. Liu \etal{} proposed a reconstruction
 network based on attention map and optimized for the task of REG
-(Sec.~\ref{sec:visual-grounding}). They extract the subject, location
-and context features to represent the proposals and the query
-respectively. Then, they design the adaptive grounding module to
-compute the matching score between each proposal and query by a
-hierarchical attention model. Finally, based on attention score and
-proposal features, they reconstruct the input query with a
-collaborative loss of language reconstruction loss, adaptive
-reconstruction loss, and attribute classification loss. The key idea
-under their approach is that this adaptive mechanism helps alleviating
-the variance of different referring expressions.
+(Sec.~\ref{sec:visual-grounding}). They first extract subject,
+location and context features for both language and visual modalities.
+Language features are extracted by means of an attention mechanism
+applied on the sentence encoded with a Bi-LSTM network. Visual subject
+features are instead extracted from object detector convolutional
+layers, along with the position of proposal relative to the image for
+the location features and neighbors features for context features.
+Throught a reconstruction module they learn to ground by optimizing
+the reconstruction with respect to sentence, attributes and hidden
+features (subject, location and context). The language is
+reconstructed based on attentive proposal features encoded by the
+Bi-LSTM, while attributes, used to distinguish objects of same
+category, are reconstructed from plain proposal features. The adaptive
+reconstruction instead reconstruct attentive hidden features by
+combining the contribution of subject, location and context features
+from both visual and language modalities.
 
-S. Datta \textit{et al.} in \cite{datta2019align2ground} proposed a
-system able to learn phrase grounding by optimizing the model for the
-downstream task of caption-to-image retrieval. Their key contribution
-lies in building a sort of caption-conditioned image encoding which
-tightly couples both the tasks and allows the weak supervision to
-effectively guide visual grounding. Their method is composed by three
-modules. As a first step, it infers the latent correspondences between
+S. Datta \textit{et al.} in \cite{datta2019align2ground} proposed to
+learn to ground by optimizing the model for the downstream task of
+caption-to-image retrieval. Here, the assert is that learning
+caption-to-image retrieval intrinsically means learning to ground,
+i.e., the models learns to return the correct image given a caption if
+and only if it has understood to ground the caption with the image.
+Such change of paradigm allow them to exploit the weak supervision
+that in the proxy task becomes full supervision. Their model, outlined
+in Fig.~\ref{fig:align2ground-model}, follows three stages. Firstly,
+the model infers the latent correspondences between
 regions-of-interest (RoIs) and phrases in the caption and creates a
 discriminative image representation using these matched RoIs.
-Practically, they project both visual and textual features in a joint
+Basically, it project both visual and textual features in a joint
 embedding space by linear projection. Then, using a similarity
-function, they compute the similarity between each phrase and each
-RoI. For each phrase, the module returns a random proposal among top-k
-($k = 3$) similar proposals wrt the phrase. The intention here is to produce a list of caption-conditioned RoIs. In the second step, they build a global representation of previously matched RoIs with an order-invariant deep encoder. The encoder is imlemented as a two-layer MLP. Finally, they measure the similarity between the proposed image representation and the
-query caption by first embeddings the caption $c$, encoded
-by $\Phi_{RNN}$, in the same output space as the image representation  $I^c_{rois}$ by using a two-layer MLP $f_{enc}$:
+function, it computes the similarity between each phrase and each RoI.
+For each phrase, the module returns a random proposal among top-k ($k
+= 3$) similar proposals wrt the phrase. The intention here is to
+produce a list of caption-conditioned RoIs. In the second step, the
+model build a global representation of previously matched RoIs with an
+order-invariant deep encoder. The encoder is imlemented as a two-layer
+MLP. Finally, the model measure the similarity between the proposed
+image representation and the query caption by first embeddings the
+caption $c$, encoded by $\Phi_{RNN}$, in the same output space as the
+image representation $I^c_{rois}$ by using a two-layer MLP $f_{enc}$:
 \begin{equation}
   \hat{\bm{c}} = MLP (\Phi_{RNN} (c)) \qquad \hat{\bm{r}}_c = f_{enc} (I^c_{rois}).
 \end{equation}
-We then compute cosine
-similarity between the two multimodal representations.
+Then, it computes cosine similarity between the two multimodal
+representations:
 \begin{equation}
   S_{Ic} = \frac{ \hat{\bm{c}}^T \hat{\bm{r}}_c }{ || \hat{\bm{c}} ||_2 || \hat{\bm{r}}_c ||_2 }.
 \end{equation}
-where $S_{Ic}$ is the similarity between image $I$ and caption $c$. Thei model overview is shown in Fig.~\ref{fig:align2ground-model}.
-
+where $S_{Ic}$ is the similarity between image $I$ and caption $c$. 
 \begin{figure}
   \centering
   \includegraphics[width=.8\textwidth]{figures/align2ground-model.png}
   \caption[Align2Ground model overview]{Align2Ground model overview
-  \cite{datta2019align2ground}. The outputs from a Region Proposal
-  Network (RoIs) and the shallow parser (phrases) are fed into the
-  Local Matching module which infers the latent phrase-RoI
-  correspondences. The Local Aggregator module then digests these
-  matched RoIs to create a discriminative, caption-conditioned visual
-  representation -- which is then used to align the image-caption
-  pairs in the Global Matching module.}
+  \cite{datta2019align2ground}. The query is parsed into chunks that
+  are matched with image proposals by means of a similarity score
+  computed between chunks and proposals the lantent space. Matched
+  regions are then fed into the order-invariant deep encoder which
+  encodes this list of caption conditioned proposals. The global
+  matching module measures the similarity between the global image
+  representation made by caption-conditioned proposals and the input
+  query and align image-catpion pairs.}
   \label{fig:align2ground-model}
 \end{figure}
 
 An important contribution in phrase grounding comes from the work of
-J. Wang in \etal{} in \cite{wang2019phrase}. In contrast to other
-works which attempt to learn mappings between textual and visual
-information from examples of phrase-image region correspondences
-(strong supervision) or from phrase-image pairs (weak supervision),
-they propose the first method for the phrase localization problem
-where neither training procedure nor paired, task-specific data is
-required. They argue that such a ``non-paired'' setting better
+J. Wang in \etal{} in \cite{wang2019phrase}. Their approach is very
+different wrt other works because it operates with no supervision. In
+contrast to other works which usually leverage strong supervision or
+weak supervision to learn mappings from phrase-image regions or pairs,
+they do not use ground truth. Their approach is motivated by the
+following assertion: ``We argue that such a non-paired setting better
 reflects how humans localize objects in images -- not by memorizing
 paired examples, but by assembling prior knowledge from more general
 sources and tasks (e.g. recognizing concepts or attributes) to tackle
-a more specialized task (phrase localization). As a consequence, their
-model has the advantage of being simple and interpretable, acting as a
-strong baseline for the novel, non-paired settings. Their model is
-built on three steps, as Fig.~\ref{fig:phraseloc-model} shows. In the
-first stage, they employ many object detectors (tfcoco, tfcoco2,
-places365, yolo9000, colour) that vary in number and type of
-categories covered, training data and accuracy in order to explit
-their variance and redundancy to retrieve information on objects in
-images. Note that use pretrained models for detectors, hence, no
-training is performed. The second stage of our model bridges the query
-phrase to be localized and the output of detectors. It computes the
-semantic similarity between each phrase and the detector concept
-labels. The intuition is that the detected instance of a concept that
-is very similar or related to a word or phrase in the query is most
-likely to be the target object. Similarly to \cite{chen2018knowledge},
-they represent queries $q$ and labels $c$ as $300$-dimensional CBOW
-word2vec embeddings. The goal of this stage is to compute a ranked
-list of candidate bounding box detections based on their similarity to
-the aggregate query phrase. Such list is extracted by computing a
-similarity function $S(q, c)$ in the word embedding space between the
-aggregate emebdding of a query and the embedding of a label. They
-explore two approaches to aggregate the words in query phrases: as a
-single vector by summing the word vectors and normalizing to unit
-vector (w2v-avg), or by representing each word individually (w2v) and
-using only one of the words for localization. For the latter, they
-select the word with the highest semantic similarity to any detected
-concepts (w2v-max). Intuitively, they only consider one word from the
-phrase for localization, where this word has the highest similarity to
-a detected concept. Alternatively, they can use the last word for
-localization (w2v-last), assuming the last word is the head word.
-The third an last stage localizes the bounding box given the ranked
-list of candidates. The adopted localization approach is to select
-from candidate detections the concept most similar to the query
-phrase. Where multiple instances of the same concepts are detected,
-they experiment with different tie-breaking strate gies:
+a more specialized task (phrase localization)''. Their model is built
+on three steps, as Fig.~\ref{fig:phraseloc-model} shows. In the first
+stage, they employ many object detectors (tfcoco, tfcoco2, places365,
+yolo9000, colour) that vary in number and type of categories covered,
+training data and accuracy in order to exploit their variance and
+redundancy to retrieve information on objects in images. The second
+stage computes the semantic similarity between each phrase and the
+detector concept labels. Here, the underlying idea is that an object
+in the image is more likely to be the target object when the concept
+expressed in a phrase is similar to the concept expressed by the
+proposal, or better, by its class label. Similarly to
+\cite{chen2018knowledge}, they represent queries $q$ and labels $c$ as
+$300$-dimensional CBOW word2vec embeddings. The goal of this stage is
+to compute a ranked list of candidate bounding box detections based on
+their similarity to the aggregate query phrase. Such list is extracted
+by computing a similarity function $S(q, c)$ in the word embedding
+space between the aggregate emebdding of a query and the embedding of
+a label. Here, a strong assumption is made: the similarity between
+word emebeddings perfectly captures the semantic similarity between
+words, i.e, between representative word in phrase and label. The
+representative word in phrase can be computed either by summing the
+word vectors and normalizing to the unit vector (w2v-avg), or by
+expressing each word separately (w2v) and utilizing just one of the
+words for localization (w2v). In the latter case, the candidate could
+be the last word in the phrase (w2v-last). However, this heuristic
+highly depends on some assumption on data (e.g., the language).
+Another heuristic instead consider the word with the highest semantic
+similarity to any detected concepts (w2v-max). The third and last
+stage localizes the bounding box given the ranked list of candidates.
+At this point, given the target concept, the model only needs to
+disambiguate between the group of proposal with the same concept, if
+any. In this case they either
 \begin{enumerate*}[label=(\roman*)] 
-  \item selecting a random instance;
-  \item selecting the in- stance with the largest bounding box; 
-  \item selecting the instance with the highest class prediction
+  \item select a random instance;
+  \item select the intance with the largest bounding box; 
+  \item select the instance with the highest class prediction
   confidence;
-  \item generating a minimal bounding box enclosing all instances
+  \item generate a minimal bounding box enclosing all instances
   (union); and
-  \item using consensus from detectors. 
+  \item use a consensus strategy from detectors.
 \end{enumerate*} 
+The consensus strategy is slightly different wrt the other heuristics.
+In this case they select top-k ($k = 5$) concepts and generates an
+heatmap which reflect the votes from object detectors. The heatmap is
+generated by heating up proposal that represent more concepts. The
+hottest proposal is chosen. Even the proposed approach is very
+promising it is not exempt from problems. First of all it requires
+many object detectors to run, which in some case may be unfeasible.
+Secondly, it uses heuristics designed on purpose for data, which, even
+if very effective, hardly scale to other human languages or
+differently collected corpus. This effect can be seen looking at the
+unbalanced perfomance obtained on Flickr30k Entities (nearly 50\%
+accuracy) which contains good quality phrases, compared to ReferIt
+(nearly 26\% accuracy) that instead contains grammarly (and sometime
+semantically) erroneous queries. (For more on both dataset see
+Sec.~\ref{sec:datasets}). 
 
 \begin{figure}
   \centering
   \includegraphics[width=.8\textwidth]{figures/phraseloc-model.png}
-  \caption[Phrase Localization without Paired Training Examples
-  model overview]{Phrase Localization without Paired Training
-  Examples model overview \cite{wang2019phrase}. In the figure is
-  depicted the three stages of the proposed model for non-paired
-  phrase localization. The instance detection phase detects
-  instances of various concepts using pre-trained detectors. The
-  concept selection stage ranks these detected concepts against the
-  query phrase (using pre-trained word embeddings) and forwards the
-  best candidate concept instance(s) to the localization phase,
-  where the model predicts the final bounding box for the query
-  phrase.}
+  \caption[Phrase Localization without Paired Training Examples model
+  overview]{Phrase Localization without Paired Training Examples model
+  overview \cite{wang2019phrase}. The first stage is responsible to
+  retrieve information from proposals (class labels) and from text
+  (concept). The second stage select a concept, among the other, that
+  best matches proposals and query. The third stage localize a
+  bounding box given the detected concept in previous stage.}
   \label{fig:phraseloc-model}
 \end{figure}
 
-T. Gupta \etal{} in \cite{gupta2020contrastive} showed how to properly
-exploit weak annotations. They propose a model that learns phrase
-grounding by optimizing word-region attention to maximize a lower
-bound on mutual information between images and caption words.
-Basically, given pairs of images and captions, they maximize
-compatibility of the attention-weighted regions and the words in the
-corresponding caption, compared to non-corresponding pairs of images
-and captions. The key idea is to construct effective negative captions
-for learning through language model guided word substitutions.
-Technically, they first extract region and word features using an
-object detector and a language model respectively. Contrastive
-learning trains a word-region attention mechanism as part of a
-compatibility function $\phi_\theta$ between the set of region
-features from an image and individual contextualized word
-representations. The compatibility function is trained to maximize a
-lower bound on mutual information with two losses. For a given caption
-word, $\calL_{img}$ learns to produce a higher compatibility for the
-true image than a negative image in the mini-batch. $\calL_{lang}$
-learns to produce a higher compatibility of an image with a true
-caption-word than with a word in a negative caption. They construct
-negative captions by substituting a noun word like ``donut'' in the
-true caption like ``Chocolate donut in front of a computer'' with
-contextually plausible but untrue words like ``cookie'' using a
-language model.
+T. Gupta \etal{} in \cite{gupta2020contrastive} proposed that learns
+phrase grounding throught contrastive learning. In particular, their
+loss optimizes the model to learn a compatibility function by means of
+an attention map. The compatibility function is enforced to be higher
+on positive query and image (i.e., from the same example), while lower
+or other (negative) images and queries. Negative queries are build
+with a language model that substitutes noun words in true caption like
+``Chocolate donut in front of a computer'' with contextually plausible
+but untrue words like ``cookie''.
 
 Q. Wang \etal{} in \cite{wang2020maf} proposed a multimodal alignment
 framework (MAF), outlined in Fig.~\ref{fig:maf-model} that joins the
@@ -412,20 +416,20 @@ in the current batch as candidate (negative) examples.
   \label{fig:maf-model}
 \end{figure}
 
+\subsection{Supervised Works}
+
 In terms of quantitative evaluation, models developed under supervised
-settings show a strong boost in performance. Here, the information of
-which is the bounding box that grounds the query is available. During
-years, the scientific community devoted much effort solving the phrase
-localization problem, leading to the development of different very
-different strategies. Z. Yang \etal{} in \cite{yang2019fast} designed
-a novel one-stage model (Sec.~\ref{sec:two-stage-vs-one-stage}), whose
-goal is to outperform existing propose-and-rank two-stage methods
-where the performances are capped by the quality of the region
-candidates. ``if none of the candi dates could cover the ground truth
-region'', they argue, ``there is no hope in the second stage to rank
-the right region to the top''. To avoid this caveat, they propose a
-one-stage model that enables end-to-end joint optimization. The main
-idea is to fuse text query's embedding into the YOLOv3 object detector
+settings show a strong boost in performance: in such environment, the
+information of which is the bounding box that grounds the query is
+available. Z. Yang \etal{} in \cite{yang2019fast} designed a novel
+one-stage model (Sec.~\ref{sec:two-stage-vs-one-stage}), whose goal is
+to outperform existing propose-and-rank two-stage methods where the
+performances are capped by the quality of the region candidates. ``if
+none of the candi dates could cover the ground truth region'', they
+argue, ``there is no hope in the second stage to rank the right region
+to the top''. To avoid this caveat, they propose a one-stage model
+that enables end-to-end joint optimization. The main idea is to fuse
+text query's embedding into the YOLOv3 object detector
 (Sec.~\ref{subsec:yolo}), augmented by spatial features so as to
 account for spatial mentions in the query. In \cite{sadhu2019zero}, A.
 Sadhu \etal{} on the same line of \cite{yang2019fast} proposed a
