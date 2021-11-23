@@ -133,7 +133,8 @@ powerful object detection system we can recognize relevant objects in
 image and focus only on those proposals.
 
 Practically, we proved (Sec.~\ref{subsec:num-of-proposals}) that with
-$100$ bounding boxes and Faster-R CNN object detector, we obtain a
+$100$ bounding boxes and Faster-R CNN with Bottom-Up Attention
+\cite{sharma2020understanding} as object detector, we obtain a
 coverage which is greater than 90\% on both two major dataset in the
 field of study: Flickr30k and ReferIt.
 
@@ -141,7 +142,9 @@ The second problem instead is partially solvable because the system,
 in order to perform its classification task, needs to consider all the
 extracted proposal. However, the first stage can be precalculated and
 cached for the second stage, drastically reducing the required
-resources. 
+resources at training time. At inference time, instead, we need to run
+both the object detector and the model without the possibility to
+reduce computational time.
 
 \newthought{The one stage approach}, outlined in
 Fig.~\ref{fig:one-stage-approach} relies on a single step for
@@ -180,7 +183,10 @@ difficult to get strong supervision information like fully
 ground-truth labels due to the high cost of the data-labeling process.
 Visual grounding is a striking example of that. 
 
-In visual grounding, large amount of annotations are required. Think at the example in Fig.~\ref{fig:dog-playing-with-ball} along with the sentence "A collie plays with a white ball in a field of green grass", to perform phrase grounding task we need a lot of data: 
+In visual grounding, large amount of annotations are required. Think
+at the example in Fig.~\ref{fig:dog-playing-with-ball} along with the
+sentence "A collie plays with a white ball in a field of green grass",
+to perform phrase grounding task we need a lot of data: 
 \begin{itemize}
   \item The image;
   \item The sentence;
@@ -276,9 +282,9 @@ $\bm{q}_j \in \calQ$.
 
 Another form of supervision is the weak supervision. Broadly speaking,
 weakly supervised learning is an umbrella term covering a variety of
-studiesthat attemptto construct predictive models by learning with
-weak supervision \cite{zhou2018brief}. Typically, there are three
-types of weak supervision. 
+studies that attempt to construct predictive models by learning with
+weak supervision, and typically, three types of weak supervision are
+identified \cite{zhou2018brief}.
 
 \begin{itemize}
   \item The first is incomplete supervision (also known as semi
@@ -516,6 +522,7 @@ source and mdeks available pretrained models for all supported
 languages and datasets available for public download.
 
 \section{Recurrent Neural Network}
+\label{sec:rnn}
 
 A recurrent neural network (RNN) is a special type of an artificial
 neural network (ANN) adapted to work for time series data or data that
@@ -907,14 +914,31 @@ better word embeddings.
 
 \newthought{BERT} -- Bidirectional Encoder Representations from
 Transformers is a relatively recent language representation model,
-introduced by J. Devlin \etal{} in \cite{devlin2018bert},  designed to
+introduced by J. Devlin \etal{} in \cite{devlin2018bert}, designed to
 pretrain deep bidirectional representations from unlabeled text by
-jointly conditioning on both left and right context in all layer.
-BERT's key technical innovation is applying the bidirectional training
-of Transformer, a popular attention model, to language modelling. This
-is in contrast to previous efforts which looked at a text sequence
-either from left to right or combined left-to-right and right-to-left
-training.
+jointly conditioning on both left and right context in all layers. The
+underlying technology is a deep transformer istead of a traditional
+recurrent neural network.
+
+As outlined in \cite{gupta2020differences}, BERT has many difference
+wrt traditional word embeddings: for example, it differs from Word2Vec
+or GloVe because it is context dependent. More precisely, BERT
+produces multiple vector representations for the same word, based on
+the context in which the word is used. For example, in the sentences
+``We went to the river bank'' and ``I need to go to bank to make a
+deposit'', the word \textit{bank} produces different embeddings in
+BERT for each sentence by taking into account the context, while in
+Word2Vec or Glove, such word is represented by a single, unique 
+vector. Another key difference is that BERT explicitly takes as input
+the position (index) of each word in the sentence before calculating
+its embedding, i.e., it consider also the position of the word in
+sentece. Technically speaking, another difference is that since BERT
+generates contextual embeddings, the input to the model is a sentence
+rather than a single word. This is because the BERT model needs to
+know the context or the surrounding words before generating a word
+vector. Of course, BERT model can be used to get pre-computed static
+single-word vectors (similar to Word2Vec or GloVe), but it defeats the
+purpose of having contextualized embeddings.
 
 \section{Similarity Measures}
 
