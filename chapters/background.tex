@@ -12,7 +12,7 @@ Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin moles
 \label{sec:visual-grounding}
 
 Visual grounding is the general task of locating the components of a
-strucutred description in an image. Due to the ambiguous
+structured description in an image. Due to the ambiguous
 interpretation of the general problem, it is usually decomposed in two
 separated sub-problems, namely Referring Expression Grounding (REG)
 and Phrase Grounding (PG).
@@ -21,7 +21,7 @@ and Phrase Grounding (PG).
 locating the subject referred by an expression in given image.
 
 More formally, given in input an image $\bm{I}$ and a sentence
-$\mathrm{S}$, REG consists in learning a function $\delta$ from the
+$\sent$, REG consists in learning a function $\delta$ from the
 set $\calS$ of sentences to a set of bounding boxes $B$ defined on
 $\bm{I}$, i.e., $\delta: \calI \times \calS \rightarrow 2^{\calS
 \times \calB}$, where $\calI$ is the domain of images, $\calS$ is the
@@ -36,26 +36,27 @@ image and the components in the text, while after, the model needs to
 find the correct alignment among the nouns and the objects.
 
 More formally, given in input an image $\bm{I}$ and a sentence
-$\mathrm{S}$, phrase grounding consists in learning a mapping $\gamma$
-from the set $\calQ$ of noun phrases to a set of bounding box $\calB$
-defined on $\bm{I}$, i.e., $\gamma : \calI \times \calS \rightarrow
-2^{\calQ \times \calB}$. So, given an image $\bm{I}$ containing $e$
+$\sent$, phrase grounding consists in learning a mapping $\gamma :
+\calI \times \calS \rightarrow 2^{\calQ \times \calB}$, where $\gamma$
+is the set $\calQ$ of noun phrases and $\calB$ the set of bounding box
+defined on $\bm{I}$. So, given an image $\bm{I}$ containing $e$
 objects identified via the set of bounding boxes $B_\calI = \{ b_i
-\}^e_{i=1}$, where $b_i \in \Rset^4$ is the vector of coordinates
-identifying a bounding box in $\bm{I}$, and a sentence $\mathrm{S}$
-containing $m$ noun phrases gathered in the set $\calQ_S = \{ q_j
-\}^m_{j=1}$, where $q_j \in \Nset^2$ is a vector containing as
-coordinates the initial and final character positions in the sentence
-$\mathrm{S}$, $\gamma(\bm{I}, \mathrm{S})$ returns a set of couples
-$\{ (\bm{q}, \bm{b}) \mid \bm{q} \in \calQ_{\mathrm{S}}, \bm{b} \in
-B_{\bm{I}} \}$ where each couple $(\bm{q}, \bm{b})$ associates the
-noun phrase $\bm{q}$ to the bounding box $\bm{b}$. Please, notice that
-the same noun phrase can be associated to several different bounding
-boxes, as well as the same bounding box can be associated to many
-different noun phrases. Following the current literature, in this
-paper we assume that each noun phrase is associated to one and only
-one bounding box. Bounding boxes, however, can identify more objects,
-e.g. several persons in the case the noun phrase is ``people''.
+\}^e_{i=1}$ and a sentence $\sent$ with $m$ noun phrases from set
+$\calQ_S = \{ q_j \}^m_{j=1}$, $\gamma(\bm{I}, \sent)$ returns a set
+of couples $\{ (\bm{q}, \bm{b}) \mid \bm{q} \in \calQ_{\sent}, \bm{b}
+\in B_{\bm{I}} \}$ where each couple $(\bm{q}, \bm{b})$ associates the
+noun phrase $\bm{q}$ to the bounding box $\bm{b}$. Here, each bounding
+box is expressed by coordinates for top left and bottom right 2D
+points: $b_i \in \Rset^4$. A query $q_j \in \Nset^2$ instead is a
+vector made by two indices: the coordinates of the initial and final
+character positions in the sentence $\sent$.
+
+Such definition allows to associate the same noun phrase with several
+different bounding boxes, as well as the same bounding box with many
+different noun phrases. Following the current literature, we assume
+that each noun phrase is associated to one and only one bounding box.
+A single bounding box, however, may identify more objects in image,
+e.g. crowd with the phrase ``people''.
 
 \section{Two Stage vs One Stage}
 \label{sec:two-stage-vs-one-stage}
@@ -64,7 +65,7 @@ Visual grounding is a challenging task which requires the semantic
 understanding of the image content and its textual description. In
 order to lower the complexity of the whole task, visual grounding is
 generally formulated as an object detection task followed by a
-classification task in which, given an input image and sentece, the
+classification task in which, given an input image and sentence, the
 goal is to return only the detected object(s) that represents the best
 semantic match with the sentence. This approach was extensively used
 by many researchers in visual grounding field
@@ -72,7 +73,7 @@ by many researchers in visual grounding field
 due to its simplicity. On the other hand, some recent works started
 introducing the one stage approach \cite{yang2019fast,sadhu2019zero}
 in which the object detection and the classification problem are
-solved joinly, arguing this new architecture may lead to faster and
+solved jointly, arguing this new architecture may lead to faster and
 more accurate models.
 
 \newthought{The two stage approach} is a simple approach to the visual
@@ -87,11 +88,11 @@ multibox Detector (SSD) \cite{liu2016ssd}, or YOLO
 candidate regions, which hopefully capture the semantic context,
 conditioned on a language query about the image. Practically, this
 means that the model predicts, for each proposal bounding box, a score
-that represents how much the content of the bounidng box is likely to
+that represents how much the content of the bounding box is likely to
 be referred by the sentence. Sometimes, models predict also new
-coordintas for the best predicted proposal, in order to better fit the
-visual content accordingly to the sentence semantic information. The
-two stage method is outlined in Fig.~\ref{fig:two-stage-approach}.
+coordinates for the best predicted proposal, in order to better fit
+the visual content accordingly to the sentence semantic information.
+The two stage method is outlined in Fig.~\ref{fig:two-stage-approach}.
 
 \begin{figure}
   \centering
@@ -147,21 +148,19 @@ both the object detector and the model without the possibility to
 reduce computational time.
 
 \newthought{The one stage approach}, outlined in
-Fig.~\ref{fig:one-stage-approach} relies on a single step for
-computing the solution. The model receives in input an image and a
-textual sentence, and it should learn how to extract and fuse all the
-visual and textual information in order to predict the best bounidng
-box in output, according to the input sentence. 
+Fig.~\ref{fig:one-stage-approach} relies on a single stage for
+computing the solution. The model should learn to both extract and
+fuse visual and textual information in order to predict the best
+bounding box in output, given in input an image and a sentence. 
 
-The thight coupling provided by this approach may lead to higher
+The tight coupling provided by this approach may lead to higher
 results with lower computational resources \cite{yang2019fast} and can
 be used when there is no fixed set of categories \cite{sadhu2019zero},
-but it raises some major issues. First of all not all the visual
-grounding datasets are suitable for training an object detector, due
-to lack of images and/or because they are not densely annotated.
-Secondly, the model requires an high number of parameters, and because
-of that the training requires significant computing resources
-\cite{rigoni2021better}.
+but it raises some major issues. The main problem is the lack of data:
+not all the visual grounding datasets are suitable for training an
+object detector. Secondly, the model requires an high number of
+parameters, and because of that the training requires significant
+computing resources \cite{rigoni2021better}.
 
 \begin{figure}
   \centering
@@ -176,12 +175,12 @@ of that the training requires significant computing resources
 
 \section{Fully/Weakly/Self/Un-Supervised Settings}
 
-Machine learning has achieved great success in various tasks,
-particularly in supervised learning tasks such as classification and
-regression, but it is noteworthy that in many other tasks it is
-difficult to get strong supervision information like fully
-ground-truth labels due to the high cost of the data-labeling process.
-Visual grounding is a striking example of that. 
+Supervised classification and regression are two example of tasks that
+in machine learning have archived great success. This happens because
+machine learning models learn from ground truth annotation, however,
+it is noteworthy that in many other tasks, like visual grounding, it
+is difficult to get strong supervision due to the high cost of the
+data-labeling process.
 
 In visual grounding, large amount of annotations are required. Think
 at the example in Fig.~\ref{fig:dog-playing-with-ball} along with the
@@ -199,7 +198,7 @@ to perform phrase grounding task we need a lot of data:
   which are $\calO(mk)$ (fortunately, usually lower than that) where
   $m$ is the number of queries and $k$ the number of bounding box.
 \end{itemize}
-The collection of such amout of data needs a lot of effort and human
+The collection of such amount of data needs a lot of effort and human
 work to be carried out. Furthermore, because of the requirement of
 human annotators, gathered data can be erroneous and biased. In
 Sec.~\ref{sec:datasets} we extensively discuss two experiments (among
@@ -217,7 +216,7 @@ a key information is available: the link between the query and the
 correct box to ground. Under weakly supervised scenario instead, such
 annotations are not available: we only know whether a query is linked
 to an image, involving all its bounding box but not which is the
-correct one. Under the unsupervised settings insteat we do not have
+correct one. Under the unsupervised settings instead we do not have
 access to ground truth, we have a corpus of text and a set of images
 without link between them.
 
@@ -226,19 +225,18 @@ without link between them.
   \includegraphics[width=.8\textwidth]{figures/full-weak-no-supervision.png}
   \caption[Differences between full, weak and no supervision]{
     Differences between full, weak and no supervision
-    \cite{wang2019phrase}. Conventional settings require phrase and
-    image localization annotations (fully supervised) or phrase and
-    image pairs (weakly supervised) at training time. In contrast, the
-    non-paired setting does not provide such annotations for training.
-  }
+    \cite{wang2019phrase}. Full supervision makes available the ground
+    truth annotation on localization, while in weak supervision the
+    ground truth involves only image-phrase pairs. Unsupervised
+    settings instead do not provide ground truth.}
   \label{fig:full-weak-no-supervision}
 \end{figure}
 
-A simpler way to think at differnt supervision settings for phrase
+A simpler way to think at different supervision settings for phrase
 grounding is by analogy with the ``match the shape'' game shown in
 Fig.~\ref{fig:match-the-shape-game}, a game for children that make
 them learn to recognize shapes like cube, cylinder, sphere and so on.
-The gameplay is very simple: we are provided some pieces and we win
+The game play is very simple: we are provided some pieces and we win
 when all pieces fit in the hole on the board. Here, the model is
 represented by the kid, and the input that in phrase grounding would
 have been an image made by bounding box proposals and some queries are
@@ -248,7 +246,7 @@ for geometric shapes (cube, cylinder, sphere, etc.), while the second
 has holes for tiny wooden animals (cow, cat, dog, fish, etc.). The
 goal is to learn learn to fit pieces on boards. He starts without
 knowledge, so he just tries. Pieces that fit in the holes will not
-fall, so the kid undestand whether a try is correct or not. After some
+fall, so the kid understand whether a try is correct or not. After some
 time of playing he has learnt where to put the cube and where to put a
 cow. This is how the kid (or a grounding model) learns in fully
 supervised scenario. Consider instead the scenario where the kid plays
@@ -282,24 +280,24 @@ $\bm{q}_j \in \calQ$.
 
 Another form of supervision is the weak supervision. Broadly speaking,
 weakly supervised learning is an umbrella term covering a variety of
-studies that attempt to construct predictive models by learning with
-weak supervision, and typically, three types of weak supervision are
-identified \cite{zhou2018brief}.
+architectures, all joint by the lack, degradation, or poorness of
+data. Typically, three types of weak supervision are identified
+\cite{zhou2018brief}.
 
 \begin{itemize}
   \item The first is incomplete supervision (also known as semi
-supervision \cite{rohrbach2016grounding}), i.e. only a (usually small)
-subset of training data is given with labels while the other data
-remain unlabeled. Given an example $(\bm{I}, S, G)$, $G = \{
-(\bm{q}^{gt}_j, \bm{b}^{gt}_j) \}^{m'}_{j=1}$ where $m' \leq m$ with
-$m$ the number of noun phrases, in incomplete supervision we may lack
-some ground truth in $G$.
+supervision \cite{rohrbach2016grounding}). Here, the ground truth is
+available only for a (usually small) subset of training data, while
+the other data remain unlabeled. Given an example $(\bm{I}, S, G)$, $G
+= \{ (\bm{q}^{gt}_j, \bm{b}^{gt}_j) \}^{m'}_{j=1}$ where $m' \leq m$
+with $m$ the number of noun phrases, in incomplete supervision we may
+lack some ground truth in $G$.
   \item The second type is inexact supervision (also known as weak
-supervision), i.e. only coarse-grained labels are given. In phrase
-grounding inexact supervision means we have weak ground truth, that
-is, we are given the pair $(\bm{I}, S)$ where we know only the link
-between image and sentence but not the link between bounding boxes and
-queries.
+supervision), i.e. only coarse-grained ground truth are given. In
+phrase grounding inexact supervision means we have weak ground truth,
+that is, we are given the pair $(\bm{I}, S)$ where we know only the
+link between image and sentence but not the link between bounding
+boxes and queries.
   \item The third type is inaccurate supervision, i.e. the given
 labels are not always ground truth. In other words, some label
 information may suffer from errors.
@@ -307,83 +305,73 @@ information may suffer from errors.
 
 Inaccurate supervision is usually mixed with other settings because
 the labelling procedure is carried out by human annotators which can
-introduct errors.
+introduce errors.
 
 \section{NLP and Part of Speech Tagging}
 
 Part of Speech (POS) Tagging is a very basic and well known Natural
 Language Processing (NLP) problem which consists of assigning to each
 word of a text the proper morphosyntactic tag in its context of
-appearance \cite{marquez2000machine}. It is very useful for a number
-of NLP applications: as a preprocessing step to syntactic parsing,
+appearance \cite{marquez2000machine}. It found applications in a wide
+variety of of NLP tasks: as a preprocessing step to syntactic parsing,
 in information extraction and retrieval (e.g. document classification
 in internet searchers), text to speech systems, corpus linguistics,
-etc. The base of POS tagging is that many words being ambiguous
-regarding their POS, in most cases they can be completely
-disambiguated by taking into account an adequate context. Furthermore,
-there are even cases in which the ambiguity is non-resolvable using
-only morphosyntactic features of the context, and require semantic
-and/or pragmatic knowledge. For instance, in the sample sentence
-``Yesterday I read the paper'' the word \textit{read} is disambiguated
-as a past simple because the word \textit{yesterday} at the beginning
-of the sentence. Without context, the POS tagger can tag \textit{read}
-also as a present or past participle.
+etc. Due to intrinsic properties of languages, morphosyntactic tags
+assigned to words highly depends on context in which words appear,
+that is, in most cases words can be completely disambiguated  
+by taking into account an adequate context. Furthermore, there are
+even cases in which the ambiguity is non-resolvable using only
+morphosyntactic features of the context, and require semantic and/or
+pragmatic knowledge. For instance, in the sample sentence ``Yesterday
+I read the paper'' the word \textit{read} is disambiguated as a past
+simple because the word \textit{yesterday} at the beginning of the
+sentence. Without context, the POS tagger can tag \textit{read} also
+as a present or past participle.
 
 Starting with the pioneer tagger \textsc{Taggit} developed by B. B.
 Greene \etal{} in 1971, used for an initial tagging of the Brown
 Corpus (BC), a lot of effort has been devoted to improving the quality
-of the tagging process in terms of accuracy and efficiency. Existing
-taggers can be classified into three main groups according to the kind
-of knowledge they use: linguistic, statistic and machine-learning
-family. Of course some taggers are difficult to classify into these
-classes and hybrid approaches must be considered. Within the
-linguistic approach most systems codify the knowledge involved as a
-set of rules (or constraints) written by linguists. The linguistic
-models range from a few hundreds to several thousand rules, and they
-usually require years of labor.
+of the tagging process in terms of accuracy and efficiency. The
+variety of existing taggers boils down to three main categories
+according to the kind of knowledge they use. 
 
-The most extended approach nowadays is the statistical family
-(obviously due to the limited amount of human effort involved).
-Basically it consists of building a statistical model of the language
-and using this model to disambiguate a word sequence. The language
-model is coded as a set of co-occurrence frequencies for different
-kinds of linguistic phenomena. This statistical acquisition is usually
-found in the form of n-gram collection, that is, the probability of a
-certain sequence of length $n$ is estimated from its occurrences in
-the training corpus. In the case of POS tagging, usual models consist
-of tag bi-grams and tri-grams (possible sequences of two or three
-consecutive tags, respectively). Once the n-gram probabilities have
-been estimated, new examples can be tagged by selecting the tag
-sequence with highest probability. This is roughly the technique
-followed by the widespread Hidden Markov Model taggers. Although the
-form of the model and the way of determining the sequence to be
-modeled can also be tackled in several ways, most systems reduce the
-model to unigrams, bi-grams or tri-grams. Moreover, some taggers try
-to reduce the amount of training data needed to estimate the model,
-and use the Baum-Welch re-estimation algorithm. Other works that can
-be placed in the statistical family performs energy-function
-optimization using neural nets. Recent works in this field try not to
-limit the model to a fixed order n-gram by combining different order
+Systems that hardcode a set of rules (or constraints) written by
+linguists belongs to the linguistic approach. The number of rules used
+by such systems may vary from few hundreds to several thousand, and
+their design usually requires years of labor. Moreover, they are hard
+to scale to different set of data. For these reason, such systems did
+not have a great diffusion and led to the development of other families that involves limited amount of human effort.
+
+One of the most explored approach is the statistical family.
+Basically, it disambiguates words by applying a statistical model
+built on language. The model encodes information as a set of
+co-occurrence frequencies for different kinds of linguistic phenomena.
+For the acquisition of statistical data usually is used the n-gram
+model, where the probability of sequence of length $n$ is estimated
+from its occurrences in the training corpus. Usual models involved in
+POS tagging instance $n$ to 2 or 3, i.e., possible sequences of two or
+three consecutive tags (bi-grams or tri-grams). The tagging of new
+example is done by estimating the tag sequence with high probability
+based on the statistical model. This is roughly the technique followed
+by the widespread Hidden Markov Model taggers. Based on similar idea,
+the Baum-Welch re-estimation algorithm tries to reduce the amount of
+training data needed to estimate the model. Recent works in this
+field, instead of using a single n-gram model, combine different order
 n-grams, morphological information, long-distance n-grams, or
-triggering pairs. These are some approaches that we may see
-incorporated to POS tagging tasks in the short term.
+triggering pairs.
 
-Although the statistical approach involves some kind of learning,
-supervised or unsupervised, of the parameters of the model from a
-training corpus, we place in the machine learning family only those
-systems that include more sophisticated information than a n-gram
-model. Many approaches were explored in literature: some works tried
-to automatically learn a set of transformation rules which best repair
-the errors committed by a most-frequent-tag tagger. Others acquire
-Constraint Grammar rules from tagged corpora or apply instance-based
-learning. Promosing approaches explore decision trees induced from
-tagged corpora, which are exploited, together with other statistical
-and linguistic information, in a hybrid environment that applies
-relaxation techniques over a set of constraints.
+According to \cite{marquez2000machine}, machine learning family
+includes models which exploit more complex information than a n-gram
+model. For example, Brill \etal{} learn in a machine learning fashion
+a set of transformation rules with the goal to repair errors committed
+by a most-frequent-tag tagger. Others acquire Constraint Grammar rules
+from tagged corpora or apply instance-based learning. Promising
+approaches explore decision trees induced from tagged corpora combined
+with other statistical and linguistic information.
 
 \subsection{POS tags}
 
-POS tags were originially defined in \cite{marcus1993building} on the
+POS tags were originally defined in \cite{marcus1993building} on the
 Penn Treebank corpus as a comprehensive list of tags for words,
 including noun, adjective, verb tenses and also symbols. The
 Fig.~\ref{fig:pos-tags} shows the tags along with their description.
@@ -451,34 +439,17 @@ its development are:
 \end{itemize}
 It tries to overcome problems of existing systems such us UIMA
 \cite{ferrucci2004uima} and GATE \cite{cunningham2002gate} by allowing
-the user to get ready in few minutes only knowning a little Java. For
+the user to get ready in few minutes only knowing a little Java. For
 example, Standford CoreNLP makes available an intuitive command line
 interface and an easy way to write text annotators. Moreover, it
-provides a simple concrete API which enables its usage from extenal,
+provides a simple concrete API which enables its usage from external,
 existing systems. However, it does not attempt to provide multiple
 machine scale-out (though it does provide multi-threaded processing on
 a single machine).
 
 Out of the box, Standford CoreNLP comes with many annotators and
 supports all language encodings and various human languages like
-English, Cinese, German, Franch and Arabic.
-
-\subsubsection{Flair}
-
-\textsc{Flair} \cite{akbik2019flair} is an NLP framework designed to
-facilitate training and distribution of state-of-the-art sequence
-labeling, text classification and language models. The core idea of
-the framework is to present a simple, unified interface for
-conceptually very different types of word and document embeddings.
-This effectively hides all embedding-specific engineering complexity
-and allows researchers to ``mix and match'' various embeddings with
-little effort. The framework also implements standard model training
-and hyperparameter selection routines, as well as a data fetching
-module that can download publicly available NLP datasets and convert
-them into data structures for quick set up of experiments.
-\textsc{Flair} also comes with a collection of pre-trained models to
-allow researchers to use state-of-the-art NLP models in their
-applications.
+English, Chinese, German, French and Arabic.
 
 \subsubsection{SpaCy}
 
@@ -493,7 +464,7 @@ systems, or to pre-process text for deep learning.
 SpaCy implements many core features like tokenization, POS tagging,
 dependency parsing, lemmatization, Sentence Boundary Detection (SBD),
 Named Entity Recognition (NER), Entity Linking (EL), similarity, text
-classification and rule-based matching. Pratically, it is a swiss-army
+classification and rule-based matching. Practically, it is a swiss-army
 knife for NLP pipelines.
 
 \subsubsection{Stanza}
@@ -533,88 +504,77 @@ information of previous inputs to generate the next output of the
 sequence by sharing weights.
 
 An ANN with recursion can be easily modeled by the Eq.\ref{eq:rnn}:
-
 \begin{equation}
   \label{eq:rnn}
   \bm{h}^{(t)} = f ( \bm{h}^{(t - 1)}, \bm{x}^{(t)} ; \bm{\theta} ),
 \end{equation}
-
 where $\bm{x}^{(1)}, \ldots, \bm{x}^{(\tau)}$ is the input sequence,
 $f$ is the function that maps hidden units at time step $t - 1$ to
 time step $t$ and $\bm{\theta}$ the parameters of $f$. The equation is
-recurrent because the deﬁnition of $\bm{h}$ at time $t$ refers back to
-the same deﬁnition at time $t - 1$. The process is visually depicted
-in Fig.\ref{fig:rnn-with-unfold} \emph{(Left)} where the black square
-indicates a delay of a single time step. At this point the problem is:
-how do we propagate our input throught the RNN? Here comes in the idea
-of unfolding. To unfold an RNN basically means to unroll the cyclic
-circuit in a graph by explicitly applying the function $f$ on
-$\bm{x}^{(t)}$, the input at time $t$, and $\bm{h}^{(t-1)}$, the
-hidden state at time $t - 1$. RNN unfolding is visually explained in
-Fig.\ref{fig:rnn-with-unfold} \emph{(Right)}.
+recurrent because the definition of $\bm{h}$ at time $t$ refers back
+to the same definition at time $t - 1$. The process is visually
+depicted in Fig.\ref{fig:rnn-with-unfold} \emph{(Left)}, where the
+black square indicates a delay of a single time step. At this point
+the problem is: how do we propagate our input through the RNN? Here
+comes in the idea of unfolding. To unfold an RNN basically means to
+unroll the cyclic circuit in a graph by explicitly applying the
+function $f$ on $\bm{x}^{(t)}$, the input at time $t$, and
+$\bm{h}^{(t-1)}$, the hidden state at time $t - 1$. RNN unfolding is
+visually explained in Fig.\ref{fig:rnn-with-unfold} \emph{(Right)}.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=.8\textwidth]{figures/rnn-with-unfold.png}
-  \caption[Recurrent network circuit diagram and unfolded computational graph]{
-    A recurrent network with no outputs. This recurrent network just
-    processes information from the input $x$ by incorporating it into
-    the state $\bm{h}$ that is passed forward through
-    time.\cite{goodfellow2016deep} \textit{(Left)} Circuit diagram.
-    The black square indicates a delay of a single time step.
-    \textit{(Right)} The same network seen as an unfolded
-    computational graph, where each node is now associated with one
-    particular time instance.
-  }
+  \caption[Recurrent network circuit diagram and unfolded
+    computational graph]{ A recurrent neural network with no outputs
+    (typically RNNs add extra architectural features such as output
+    layers that use information from the hidden state $\bm{h}$ to make
+    predictions) \cite{goodfellow2016deep}. The left side of the
+    picture shows an RNN that processes information from the input $x$
+    by incorporating it into the state $\bm{h}$, that is passed
+    forward through time. The black square indicates a delay of a
+    single time step. In the right side the same RNN is shown, but
+    here each node is now associated with one particular time
+    instance. }
   \label{fig:rnn-with-unfold}
 \end{figure}
 
-Tipycal RNNs add extra architectural features such as output layers
-that read information out of the state $\bm{h}$ to make predictions.
+When a RNN is trained to make predictions about the future with past
+data, the network typically learns to use $\bm{h}^{(t)}$ as a lossy
+summary, focusing on the relevant aspects of the past sequence of
+inputs up to $t$. Such encoding of information, in general, is lossy
+because an arbitrary sequence (with arbitrary length) $( \bm{x}^{(t)},
+\bm{x}^{(t-1)}, \bm{x}^{(t-2)} , \ldots , \bm{x}^{(2)}, \bm{x}^{(1)}
+)$ is mapped to a fixed length vector $\bm{h}^{(t)}$. The encoding may
+selectively keep some insights of the past sequence with more
+precision than other, depending on the training criterion. For
+example, consider statistical language modelling, if the RNN is
+required to predict next word from just read words, then not all
+information in the input require to be memorized.
 
-When the recurrent network is trained to perform a task that requires
-predicting the future from the past, the network typically learns to
-use $\bm{h}^{(t)}$ as a kind of lossy summary of the task-relevant
-aspects of the past sequence of inputs up to t. This summary is in
-general necessarily lossy, since it maps an arbitrary length sequence
-$( \bm{x}^{(t)}, \bm{x}^{(t-1)}, \bm{x}^{(t-2)} , \ldots ,
-\bm{x}^{(2)}, \bm{x}^{(1)} )$ to a ﬁxed length vector $\bm{h}^{(t)}$ .
-Depending on the training criterion, this summary might selectively
-keep some aspects of the past sequence with more precision than other
-aspects. For example, if the RNN is used in statistical language
-modeling, typically to predict the next word given previous words, it
-may not be necessary to store all of the information in the input
-sequence up to time $t$, but rather only enough information to predict
-the rest of the sentence.
-
-Recurrent neural networks can be built in many diﬀerent ways with
+Recurrent neural networks can be built in many different ways with
 varying architecture. In literature emerged some successful RNNs
 architecture with a well defined and non-casual structure, such us
-Bidirection RNN (Bi-RNN), Long Short-Term Memory (LSTM) and Gated
+Bidirectional RNN (Bi-RNN), Long Short-Term Memory (LSTM) and Gated
 Recurrent Unit (GRU). Each RNN architecture has some pro and cons and
 can be applied successfully to specific tasks.
 
 \subsection{Bidirectional RNN}
 
-As the name suggests, bidirectional RNNs combine an RNN that moves
-forward through time beginning from the start of the sequence with
-another RNN that moves backward through time beginning from the end of
-the sequence. Those networks have been applied successfully when the
-output we want to predict depetnds on the whole input sequence. For
-example, in speech recognition, the correct interpretation of the
-current sound as a phoneme may depend on the next few phonemes because
-of co-articulation and potentially may even depend on the next few
-words because of the linguistic dependencies between nearby words: if
-there are two interpretations of the current word that are both
-acoustically plausible, we may have to look far into the future (and
-the past) to disambiguate them. This is also true of handwriting
-recognition and many other sequence-to-sequence learning tasks such us
-bioinformatics.
+Bidirectional RNNs are a combination of two RNNs, where one reads the
+sequence from start to end wrt time, while the other is reversed,
+i.e., it moves backwards. Those networks have been applied
+successfully when the output we want to predict depends on the whole
+input sequence. A striking example of successful application for this
+technique is speech recognition. Here, the correct interpretation of a
+phoneme from sound may depend on the next few phonemes and potentially
+may even depend on the next few words. The disambiguation of some
+words may require past and future information. The same holds for
+handwriting recognition and bioinformatics.
 
-The Bi-RNNs convoy an intrisic advantage and drawback at the same
-time: it requires the full sequence, so it cannot work with real-time
-input sequences, but for the same reason it can better infer the
-output from the past and future kwown context.
+Such ability to work with past and future information implies that
+Bi-RNNs cannot work with real-time sequences as future input are not
+available.
 
 \subsection{Gated RNN (LSTM and GRU)}
 \label{subsec:gated-rnn}
@@ -625,84 +585,76 @@ remember previous parts of the speech on order to keep on with the
 dialogue.
 
 Unfortunately, RNNs and long term dependencies yield a mathematical
-challenge. The basic problem is that gradients propagated over many
-stages tend to either vanish (most of the time) or explode (rarely,
-but with much damage to the optimization). Moreover, I. Goodfellow
-\etal{} in \cite{goodfellow2016deep}, states also that:
+challenge, namely gradient vanishing or gradient exploding. I.
+Goodfellow \etal{} in \cite{goodfellow2016deep}, highlight this
+problem:
 
 \begin{quote}
   Even if we assume that the parameters are such that the recurrent
   network is stable (can store memories, with gradients not
-  exploding), the diﬃculty with long-term dependencies arises from the
-  exponentially smaller weights given to long-term interactions
+  exploding), the difficulty with long-term dependencies arises from
+  the exponentially smaller weights given to long-term interactions
   (involving the multiplication of many Jacobians) compared to
   short-term ones.
 \end{quote}
 
-One way to deal with long-term dependencies is to design a model that
-operates at multiple time scales, so that some parts of the model
-operate at ﬁne-grained time scales and can handle small details, while
-other parts operate at coarse time scales and transfer information
-from the distant past to the present more eﬃciently. Various
-strategies for building both ﬁne and coarse time scales are possible.
-These include the addition of skip connections across time, ``leaky
-units'' that integrate signals with diﬀerent time constants, and the
-removal of some of the connections used to model ﬁne-grained time
-scales.
+One way to tackle this problem is to word at with multiple resolution
+on time. Long-term dependencies mey be handled designing a model that
+operates in some parts on fine-grained time scales and deals with
+small details, while other parts works at coarse time scales. In this
+settings, information from the distant past can flow more efficiently
+to the present.
+
+In literature, many ways are available for working both fine and
+coarse time scales. These include the addition of 
+\begin{enumerate*}[label=(\roman*)]
+  \item special connections with the ability to skip steps in time, 
+  \item new units, namely ``leaky units'', that integrate signals with
+  different time constants, and 
+  \item the removal of some of the connections used to model
+  fine-grained time scales.
+\end{enumerate*}
 
 Like leaky units, gated RNNs are based on the idea of creating paths
 through time that have derivatives that neither vanish nor explode.
-Leaky units did this with connection weights that were either manually
-chosen constants or were parameters. Gated RNNs generalize this to
-connection weights that may change at each time step.
+For leaky units connection weights remain fixed for each time step,
+while Gated RNNs generalize this to connection weights and allow them
+to change over time.
 
-Leaky units allow the network to accumulate information (such as
-evidence for a particular feature or category) over a long duration.
-However, once that information has been used, it might be useful for
-the neural network to forget the old state. For example, if a sequence
-is made of sub-sequences and we want a leaky unit to accumulate
-evidence inside each sub-subsequence, we need a mechanism to forget
-the old state by setting it to zero. Instead of manually deciding when
-to clear the state, we want the neural network to learn to decide when
-to do it.
+The architecture of leaky units enables the accumulation of
+information (such as evidence for a particular feature or category)
+over a long duration. However, once that information has been used, it
+might be useful for the neural network to forget the old state. When
+to forget the old state can be automatically learned by the network.
 
 LSTM basically integrates the idea of self-loops to produce paths
-where the gradient can ﬂow for long durations with the addition to
+where the gradient can flow for long durations with, the addition to
 control weight on this self-loop conditioned on the context, rather
-than ﬁxed. By making the weight of this self-loop gated (controlled by
-another hidden unit), the time scale of integration can be changed
-dynamically. LSTM recurrent networks have ``LSTM cells'' that have an
-internal recurrence (a self-loop), in addition to the outer recurrence
-of the RNN. Fig.~\ref{fig:lstm} illustrate the LSTM block diagram. In
-an LSTM cell, the self-loop controls the flow of information from
-input to output through three key components: a forget gate, an
-external input gate and an output gate.
+than fixed. Moreover, the self-loop gate is controlled by another
+hidden unit, thus, adding the ability to the network to change the
+time scale dynamically. Fig.~\ref{fig:lstm} illustrate the LSTM block
+diagram. In an LSTM cell, the self-loop controls the flow of
+information from input to output through three key components: a
+forget gate, an external input gate and an output gate.
 
 \begin{figure}
   \centering
   \includegraphics[width=.6\textwidth]{figures/lstm.png}
-  \caption[Block diagram of the LSTM recurrent network cell]{
-    Block diagram of the LSTM recurrent network ``cell''
-    \cite{goodfellow2016deep}. Cells are connected recurrently to each
-    other, replacing the usual hidden units of ordinary recurrent
-    networks. An input feature is computed with a regular artiﬁcial
-    neuron unit. Its value can be accumulated into the state if the
-    sigmoidal input gate allows it. The state unit has a linear
-    self-loop whose weight is controlled by the forget gate. The
-    output of the cell can be shut oﬀ by the output gate. All the
-    gating units have a sigmoid nonlinearity, while the input unit can
-    have any squashing nonlinearity. The state unit can also be used
-    as an extra input to the gating units. The black square indicates
-    a delay of a single time step.
-  }
+  \caption[Block diagram of the LSTM recurrent network cell]{ Block
+    diagram of the LSTM recurrent network ``cell''
+    \cite{goodfellow2016deep}. The state accumulates input stimuli
+    which are conditioned by the input gate, while the forget gate
+    controls whether to let slip the state. The output of the cell can
+    be shut off by the output gate. The black square indicates a delay
+    of a single time step. }
   \label{fig:lstm}
 \end{figure}
 
 Along with LSTM architecture, a simpler version was recently proposed
 with the aim to simplify cells and speed-up computations: the gated
-recurrent units (GRU). The behaviour wrt LSTM is very similar, the
-only difference is that a single gating unit simultaneously controls
-the forgetting factor and the decision to update the state unit.
+recurrent units (GRU). The behavior wrt LSTM is very similar, the only
+difference is that a single gating unit simultaneously controls the
+forgetting factor and the decision to update the state unit.
 
 \section{Object Detection and Recognition Systems}
 \label{sec:object-detection-recognition}
@@ -711,19 +663,19 @@ Object detection (OD) and object recognition (OR) systems are crucial
 in a wide variety of everyday tasks such us face detection, image and
 video databases information retrieval, surveillance applications,
 driver assistance, self drive, robotics, automation and, specially in
-vision tasks, it is a foundamental building block used to extract
+vision tasks, it is a fundamental building block used to extract
 information from images.
 
 The primary essence of those systems can be broken down into two
 parts: to locate objects in a scene such us by drawing a bounding box
 around the object (object detection) and later to classify the objects
-based on the classes it was trained on (obejct recognition). OD and OR
+based on the classes it was trained on (object recognition). OD and OR
 are Often used together and for this reason the name of two tasks is
 usually used interchangeably. As for visual grounding
 (Sec.~\ref{sec:two-stage-vs-one-stage}), we can group the
 state-of-the-art detection systems in two main approaches: one stage
-methods (YOLO -- You Only Look Once \cite{redmon2016you}, SSD -- Single
-Shot Detection \cite{liu2016ssd}) and two stage methods (R-CNN
+methods (YOLO -- You Only Look Once \cite{redmon2016you}, SSD --
+Single Shot Detection \cite{liu2016ssd}) and two stage methods (R-CNN
 \cite{girshick2014rich}, Fast R-CNN \cite{girshick2015fast}, Faster
 R-CNN \cite{ren2015faster}). 
 
@@ -735,35 +687,27 @@ discussing their main idea nd highlighting pro and cons.
 
 YOLO \cite{redmon2016you} is a state-of-the-art, real-time object
 detection system which offers extreme levels of speed and accuracy.
-YOLO reframes object detection as a regression problem to spatially
-separated bounding boxes and associated class probabilities. A single
-neural network predicts bounding boxes and class probabilities
-directly from full images in one evaluation. Since the whole detection
-pipeline is a single network, it can be optimized end-to-end directly
-on detection performance. This architecture offers some advantages wrt
-to other methods: first, YOLO is extremely fast and second, it reasons
-globally about the image when making prediction implicitly encoding
-contextual information about classes as well as their appearance. Last
-but not least, YOLO is more likely to learn generalizable
-representations of objects because of its global reasoning on image.
+YOLO treats object detection as a regression problem. It predicts
+predicts both bounding boxes and class probabilities from full images
+in a single pass, using a neural network. The process is optimized
+directly on detection performance, in an end-to-end manner. Main
+advantages over other architecture are the extreme speed and the
+global image reasoning which allows to implicitly encode contextual
+information about classes as well as their appearance. Hence, YOLO is
+more likely to learn generalizable representations of objects because
+of its global reasoning on image.
 
 \subsection{SSD -- \emph{Single Shot Detection}}
 
 SSD \cite{liu2016ssd} is another state-of-the-art method for detecting
-objects in images using a single deep neural network. SSD discretizes
-the output space of bounding boxes into a set of default boxes over
-different aspect ratios and scales per feature map location and, at
-prediction time, the network generates scores for the presence of each
-object category in each default box and produces adjustments to the
-box to better match the object shape. Additionally, the network
-combines predictions from multiple feature maps with diﬀerent
-resolutions to naturally handle objects of various sizes. Also, SSD
-offers high speed performance due its single network and for this
-reason it is easy to train and straightforward to integrate into
-systems that require a detection component. In terms of accuracy,
-experimental results conﬁrm that SSD has competitive accuracy also in
-low resolution compared to methods that utilize an additional object
-proposal step.
+objects in images using a single deep neural network. SSD divides the
+image using a grid at multiple resolution and scale, then, for each
+grid cell it detects objects in that region of the image. The
+detection is performed by predicting the class and location of an
+object within given cell by means of a convolutional and a
+classification network. SSD obtains comparable results to other state
+of the art detection system, while being able to run in little time as
+its single pass on images. 
 
 \subsection{R-CNN -- \emph{Regions with CNN}}
 
@@ -776,8 +720,8 @@ proposal using a CNN (hence the name R-CNN), and then classifies each
 region with category-specific linear SVMs. The method shows
 interesting results and can be applied also with scarce data
 availability: the system can be pretrained and the fine-tuned. In
-temrs of computation time, R-CNN performs some expensive operations
-required for greedy non-maximum suppression, amogn others, but on
+terms of computation time, R-CNN performs some expensive operations
+required for greedy non-maximum suppression, among others, but on
 relatively small inputs.
 
 \subsection{Fast R-CNN}
@@ -815,7 +759,7 @@ retrieval \cite{sanderson2010christopher}, document classification
 Instead of treating words as atomic units where there is no notion of
 similarity between words, as these are represented as indices in a
 vocabulary, natural language information can be represented as
-real-valued feature vectors throught a semantic vector space, where
+real-valued feature vectors through a semantic vector space, where
 representation of words are learned for a predefined fixed sized
 vocabulary from a corpus of text and the intrinsic quality of such a
 set of word is evaluated by the distance or angle between pairs of
@@ -829,52 +773,31 @@ formulate the definition for word embedding:
 \end{quote}
 
 With the years, literature explored different approaches for learning
-good words representation: either joint with the neural network model
-on some task, such as document classification, or using document
-statistics throught unsupervised settings such us Latent Semanti
-Analysis. Both families suffer significant drawbacks. While methods
-like LSA efficiently leverage statistical information, they do
-relatively poorly on the word analogy task, indicating a sub-optimal
-vector space structure. Methods like skip-gram may do better on the
-analogy task, but they poorly utilize the statistics of the corpus
-since they train on separate local context windows instead of on
-global co-occurrence counts.
-
-\subsection{Indexing by Latent Semantic Analysis}
-
-A first approach for learning representative word embeddings was first
-introduced by S. Deerwester \etal{} in \cite{deerwester1990indexing},
-exploiting global matrix factorization by means of latent semantic
-analyis (LSA). The proposed approach tries to overcome the
-deficiencies of term-matching retrieval by treating the unreliability
-of observed term-document association data as a statistical problem.
-Indeed, they take advantage of a particular version of LSA that uses
-singular-value decomposition. First, a large matrix of term-document
-association data is crteated and then a semantic space wherein terms
-and documents that are closely associated are placed near one another
-is constructed. Singular-value decomposition allows the arrangement of
-the space to reflect the major associative patterns in the data, and
-ignore the smaller, less important influences.
+good words representation: either using machine learning or
+statistical approaches such us Latent Semantic Analysis. Both families
+suffer significant drawbacks. LSA methods efficiently exploit
+statistical information, but are unable to capture word analogies,
+indicating a sub-optimal vector space structure. Methods like
+skip-gram may do better on the analogy task, but suffer the lack of
+statistical information since they train on separate local context
+windows instead of on global co-occurrence counts.
 
 \subsection{Word2Vec}
 
 Word2Vec, introduced by T. Mikolov in \cite{mikolov2013efficient} and
-then updated and revisioned in \cite{mikolov2013distributed,
-mikolov2013linguistic}, is a statistical method for efficiently
-learning a standalone word embedding from a text corpus. One of the
-goal of Word2Vec is to learn distributed representations of words by
-neural networks, in particular, they introduced two different learning
-models that can be used as part of the word2vec approach to learn the
-word embedding: Continuous ag-of-Words (CBOW) and Continuous Skip-Gram
-Model. The CBOW model learns the embedding by predicting the current
-word based on its context. The continuous skip-gram model learns by
-predicting the surrounding words given a current word. Both models,
-shown in Fig.~\ref{fig:word2vec-learning-models} are focused on
-learning about words given their local usage context, where the
-context is defined by a window of neighboring words. This window is a
-configurable parameter of the model. The quality of these
-representations is measured in a
-word similarity task.
+then updated in \cite{mikolov2013distributed, mikolov2013linguistic},
+is a statistical method for efficiently learning a standalone word
+embedding from a text corpus. Word2Vec aims to learn significative
+representations of words that capture semantic information. For this
+reason, two different approaches are used: Continuous Bag-of-Words
+(CBOW) and Continuous Skip-Gram Model. The CBOW model learns the
+embedding by predicting the current word based on its context. The
+continuous skip-gram model learns by predicting the surrounding words
+given a current word. Both models, shown in
+Fig.~\ref{fig:word2vec-learning-models} learn word representation
+given their local usage scene. The context is defined by a window of
+neighboring words and can be configured or fine-tuned. The quality of
+these representations is measured in a word similarity task.
 
 \begin{figure}
   \centering
@@ -902,43 +825,39 @@ large data sets.
 
 GloVe is an extension to the Word2Vec method for efficiently learning
 word vectors, developed by J. Pennington \etal{} in
-\cite{pennington2014glove}, that wants to to marry both the global
-statistics of matrix factorization techniques like LSA with the local
-context-based learning in Word2Vec. Rather than using a window to
-define local context, GloVe constructs an explicit word-context or
-word co-occurrence matrix using statistics across the whole text
-corpus. The result is a learning model that may result in generally
-better word embeddings.
+\cite{pennington2014glove}. The main goal of GloVe is to overcome
+Word2Vec problems related to the lack of statistical information.
+Rather than using a window to define local context, GloVe constructs
+an explicit word-context or word co-occurrence matrix using statistics
+across the whole text corpus. The result is a learning model that may
+result in generally better word embeddings.
 
 \subsection{Other methods}
 
 \newthought{BERT} -- Bidirectional Encoder Representations from
 Transformers is a relatively recent language representation model,
 introduced by J. Devlin \etal{} in \cite{devlin2018bert}, designed to
-pretrain deep bidirectional representations from unlabeled text by
-jointly conditioning on both left and right context in all layers. The
-underlying technology is a deep transformer istead of a traditional
+pretrain deep bidirectional word representations from unlabeled text.
+BERT exploit a deep transformer architecture instead of a traditional
 recurrent neural network.
 
 As outlined in \cite{gupta2020differences}, BERT has many difference
 wrt traditional word embeddings: for example, it differs from Word2Vec
-or GloVe because it is context dependent. More precisely, BERT
-produces multiple vector representations for the same word, based on
-the context in which the word is used. For example, in the sentences
-``We went to the river bank'' and ``I need to go to bank to make a
-deposit'', the word \textit{bank} produces different embeddings in
-BERT for each sentence by taking into account the context, while in
-Word2Vec or Glove, such word is represented by a single, unique 
-vector. Another key difference is that BERT explicitly takes as input
-the position (index) of each word in the sentence before calculating
-its embedding, i.e., it consider also the position of the word in
-sentece. Technically speaking, another difference is that since BERT
-generates contextual embeddings, the input to the model is a sentence
-rather than a single word. This is because the BERT model needs to
-know the context or the surrounding words before generating a word
-vector. Of course, BERT model can be used to get pre-computed static
-single-word vectors (similar to Word2Vec or GloVe), but it defeats the
-purpose of having contextualized embeddings.
+or GloVe because it produces multiple vector representations for the
+same word, based on the context in which the word is used. For
+example, in the sentences ``We went to the river bank'' and ``I need
+to go to bank to make a deposit'', the word \textit{bank} produces
+different embeddings in BERT for each sentence by taking into account
+the context, while in Word2Vec or Glove, such word is represented by a
+single, unique vector. Another key difference is that BERT explicitly
+leverages on information involving the position of the word in the
+sentence, which enhances the context dependence. Also, the input given
+to the BERT model for predicting word embeddings needs to be a
+sentence rather than a single word. This is because the BERT model
+needs to know the context or the surrounding words before generating a
+word vector. BERT can be used also in single-word mode to get
+pre-computed static word vector (similar to Word2Vec or GloVe), but
+this breaks the advantage of generating context dependent embeddings.
 
 \section{Similarity Measures}
 
@@ -959,7 +878,7 @@ defined as:
 where $| \bbox_i \inters \bbox_j |$ is the area of the box obtained by
 the intersection of boxes $\bbox_i$ and $\bbox_j$ , while $| \bbox_i
 \union \bbox_j |$ is the area of the box obtained by the union of
-boxes $\bbox_i$ and $\bbox_j$. A conceptual explaination is given in
+boxes $\bbox_i$ and $\bbox_j$. A conceptual explanation is given in
 Fig.~\ref{fig:iou}. It is invariant to the bounding boxes sizes, and
 it returns values that are strictly contained in the interval $[0, 1]
 \in \Rset$, where $1$ means that the two bounding boxes refer to the
@@ -979,7 +898,7 @@ boxes do not overlap at all.
 The pointing game can be considered an human evaluation metric
 \cite{petsiuk2018rise} and was first introduced by J. Zhang \etal{} in
 \cite{zhang2018top}. Given $(\bm{b}_i , \bm{b}_j)$ a pair of bounding
-box, the ponting game metric defines a hit the highest saliency point
+box, the pointing game metric defines a hit the highest saliency point
 of $\bm{b}_i$ lies inside the $\bm{b}_j$, otherwise it is a miss.
 
 The highest saliency point of a bounding box is usually defined
