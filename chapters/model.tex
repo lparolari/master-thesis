@@ -1,13 +1,7 @@
 %!TEX root = ../dissertation.tex
-\begin{savequote}[75mm]
-This is some random quote to start off the chapter.
-\qauthor{Firstname lastname}
-\end{savequote}
 
 \chapter{Model and approach}
 \label{ch:model}
-
-\todo{rivedere il titolo del capitolo}
 
 \section{Model}
 
@@ -20,8 +14,6 @@ with the prediction and loss modules in
 Sec.~\ref{subsec:prediction-module} and \ref{sec:loss}. We then
 conclude highlighting the training and inference protocol in
 Sec.~\ref{sec:training-and-inference}.
-
-TODO \todo{CAMBIARE IMMAGINE, QUESTA é QUELLA SBAGLIATA}
 
 \begin{figure}
   \centering
@@ -49,7 +41,7 @@ TODO \todo{CAMBIARE IMMAGINE, QUESTA é QUELLA SBAGLIATA}
 
 Given an image $\bm{I}$, we extract a set of $k$ bounding box
 proposals $\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$ by means of a
-pre-trained object detector where $p_i \in \Rset^4$, jointly with
+pre-trained object detector where $\bm{p}_i \in \Rset^4$, jointly with
 features $H^v = \{ \bm{h}^v_i \}^k_{i=1}$, where $\bm{h}^v_i \in
 \Rset^v$. The features represent the internal object detector
 activation values before the classification layers and regression
@@ -68,7 +60,7 @@ a set of new vectorial representations $H^{||} = \{ \bm{h}^{||}_{jz}
 \}_{j \in [1, \ldots, m], z \in [1, \ldots, k]}$, where vectors
 $\bm{h}^{||}_{jz}$ are defined as:
 \begin{equation}
-  \bm{h}^{||}_{jz} = \bm{W}^{||} \left( \bm{h}^s_z || L1(\bm{h}^v_z) \right) + \bm{b}^{||}
+  \bm{h}^{||}_{jz} = \bm{W}^{||} \big( \bm{h}^s_z || L1(\bm{h}^v_z) \big) + \bm{b}^{||}
   \label{eq:h-par-jz}
 \end{equation}
 where $||$ indicates the concatenation operator, $\bm{h}^{||}_{jz} \in
@@ -88,13 +80,12 @@ detectors, and it will be used in Sec.~\ref{subsec:similarity-branch} to define 
 
 Regarding the textual features extraction, given a noun phrase
 $\bm{q}_j$, initially all its words $W^{\bm{q}_j} = \{ w^{\bm{q}_j}_i
-\}^l_{i=1}$ are embedded in a set of vectors $E^{\bm{q}_j} =
-\{e^{\bm{q}_j}_i \}^l_{i=1}$ where $e^{\bm{q}_j}_i \in \Rset^w$, where
-$w$ is the size of the embedding. Then, our model applies a LSTM
-neural network (Sec.~\ref{subsec:gated-rnn}) to generate from the
-sequence of word embeddings only one new embedding $\bm{h}^*_j$ for
-each phrase $\bm{q}_j$. This textual features extraction is defined
-as:
+\}^l_{i=1}$ are embedded in a set of vectors $E^{\bm{q}_j} = \{ \eqj_i
+\}^l_{i=1}$ where $\eqj_i \in \Rset^w$, where $w$ is the size of the
+embedding. Then, our model applies a LSTM neural network
+(Sec.~\ref{subsec:gated-rnn}) to generate from the sequence of word
+embeddings only one new embedding $\bm{h}^*_j$ for each phrase
+$\bm{q}_j$. This textual features extraction is defined as:
 \begin{equation}
   \bm{h}^*_j = L1(LSTM(E^{\bm{q}_j}))
   \label{eq:h-star}
@@ -126,11 +117,16 @@ way that it can express the content of a proposal. This information is
 made available by the object detector, which usually return a
 probability distribution over a set of labels, for each proposal
 (Sec.~\ref{subsec:visual-branch}). We can easily gather the label that
-best express proposal's content by simply taking label looking for the
-one with maximum probability. This label is just a word (or, in some
-case a combination of words), that can be naturally embedded in the
-word embeddings space. The word embedding that express phrase concept,
-instead, can be a word from the phrase or a combination of words.
+best express proposal's content by simply taking the label with
+maximum probability. Such label is just a word (or, in few cases a
+combination of words), that can be naturally embedded in the word
+embeddings space. The word embedding that express phrase concept,
+instead, can be a single word selected from the phrase or a
+combination of words. Following a similar idea of
+\cite{javed2018learning} where they perform concept selection
+filtering out non-noun words, we select the concept among heads of
+phrase. Heads are extracted trough an off-the-shelf parser
+(Sec.~\ref{subsec:nlp-tools}). 
 
 Formally, we define $\EPI = \{\ePI_i \}^{k}_{i=1}$ the set of labels
 embeddings build on the set of proposal $\calP^{\bm{I}}$. Each
@@ -139,17 +135,17 @@ maximum probability by the object detector for the $i$-th proposal.
 Then, given a noun phrase $\bm{q}_j$ along with $E^{\bm{q}_j}$, we
 compute the concept similarity score for each proposal $\bm{p}_i$ as:
 \begin{equation}
-  \bm{S}^c_{ji} = \fsim \left( \xi_j, \ePI_i \right),
+  \bm{S}^c_{ji} = \fsim \left( \erqj_j, \ePI_i \right),
 \end{equation}
-where $\fsim$ is a similarity measure such us the cosine similarity,
-and $\xi_j$ is the embedding representing the concept of the noun
-phrase $\qj$. The new embedding $\xi_j$ can be computed with various
-strategies, and we can group these into two main groups. The first is
-the group where we can find operators that take into account the
+where $\fsim$ is a similarity measure (such us the cosine similarity),
+and $\erqj_j$ is the embedding representing the concept of the noun
+phrase $\qj$. The new embedding $\erqj_j$ can be computed with various
+strategies, and we can group these into two main categories. The first
+is the group where we can find operators that take into account the
 entire phrase to generate a representative. A widely used strategy is
 to generate a new embedding by averaging phrase's word embeddings:
 \begin{equation}
-  \xi_j = \frac{\sum^l_{i=1} \eqj_i}{| \Eqj |},
+  \erqj_j = \frac{\sum^l_{i=1} \eqj_i}{| \Eqj |},
 \end{equation}
 however, there is an evidence that such averaging operations can
 compromise the discriminativeness
@@ -165,19 +161,20 @@ different dataset: on Flickr30k Entities it is the second best
 strategy while in ReferIt it doesn't even appear on the leaderboard.}
 More complex strategies, instead, take into account external
 information, such us the similarity wrt proposal class embeddings.
-Here, we compute the similarity between word in noun phrase and
-proposal class embeddings and then we select one word in the noun
-phrase with maximum similarity wrt the detected concept in proposal:
+Following \cite{wang2019phrase}, we compute the similarity between
+word in noun phrase and proposal class embeddings and then we select
+one word in the noun phrase with maximum similarity wrt the detected
+concept in proposal:
 \begin{equation}
-  \xi_j = \argmax_{\eqj \in \Eqj} \{ \max g(\eqj) \},
+  \erqj_j = \argmax_{\eqj \in \Eqj} \{ \max g(\eqj) \},
   \label{eq:concept-embedding-max-sim}
 \end{equation}
 where
 \begin{equation}
   g(\eqj) = \{ \fsim(\ePI, \eqj) \mid \ePI \in \EPI \}.
 \end{equation}
-The latter case is better explained by means of an example, such us
-the one in Fig.~\ref{fig:concept-selection-example}. For the sake of
+This strategy is better explained by means of an example, such us the
+one in Fig.~\ref{fig:concept-selection-example}. For the sake of
 presentation, we assume to deal with an object detector trained on two
 class labels $Cls = \{ \text{sky}, \text{animal} \}$. We are given an
 image (in figure) and the query ``the blue elephant''. As described in
@@ -283,47 +280,41 @@ contrastive objective $\calL$ aims to learn the visual and textual
 features by maximizing the similarity score between paired
 image-caption elements and minimizing the score between the negative
 samples (i.e., other irrelevant captions). Formally, given $\bm{I}$
-the image, $Q_S = \{ \bm{q}_j \}^m_{j=1}$ the set of noun phrases
-built on the sentence $S$ that describes $\bm{I}$ and $Q'_S = \{
-\bm{q}_h \}^{m'}_{h=1}$ the set of noun phrases built on $S'$ that do
-not describe $\bm{I}$, we define $\calL$ as:
+the image, $S$ a sentence that describes $\bm{I}$ and $S'$ a sentence
+that do not describe $\bm{I}$, we define $\calL$ as:
 \begin{equation}
-  \calL = - \frac{1}{m} \sum^m_{j=1} \calL_j,
+  \calL =  - \fmmsim(\bm{I}, S) + \fmmsim(\bm{I}, S'),
 \end{equation}
 where
+$\fmmsim$ is the multimodal image-sentence similarity function, defined as:
 \begin{equation}
-  \calL_j = \log \frac{e^{\fmmsim(\bm{I}, \bm{q}_j)}}{\sum^{m'}_{h = 1} e^{\fmmsim'(\bm{I}, \bm{q}_{h})}}.
+  \fmmsim(\bm{I}, S) = \frac{1}{m} \sum_j \max_z \bm{P}_{jz}
 \end{equation}
-Here, $\fmmsim$ and $\fmmsim'$ are the multimodal similarity functions
-between image and positive/negative queries, respectively. We define
-\begin{equation}
-  \fmmsim(\bm{I}, \bm{q}_j) = \max_{z} \bm{P}_{jz}, \qquad \text{and} \qquad \fmmsim'(\bm{I}, \bm{q}_h) = \max_z \bm{P}_{hi}
-\end{equation}
-where $\bm{P}_{jz}$ is the predicted similarity between query
-$\bm{q}_j$ and proposal $\bm{p}_z$ with $\bm{p}_z \in \calP_{\bm{I}}$,
-while $i = \argmax_z \bm{P}_{hz}$. Basically, the model optimizes the
-similarity between each positive query $\bm{q}_j$ and the image
-$\bm{I}$ to be higher, while the similarity between negative queries
-$\bm{q}_h$ and image $\bm{I}$ to be smaller. Moreover, the similarity
-function on negative queries $\fmmsim'$ bounds the model to consider
-only bounding boxes affected by positive queries.
+where $m$ is the number of noun phrases in $S$ and $\bm{P}_{jz}$ is
+the predicted similarity between query $\bm{q}_j$ and proposal
+$\bm{p}_z$. Basically, the goal of $\fmmsim$ is to express an averaged
+representation of queries wrt the image.
+
+In contrast of what done in \cite{wang2020maf} where they gather
+negative sentences from batch, we randomly sample a single negative
+sentence from the dataset.
 
 \section{Training and Inference}
 \label{sec:training-and-inference}
 
-At training stage, we are given the example $(\bm{I}, S)$ with
-$\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$ are bounding box proposal
-built on $\bm{I}$ and $\bm{q}_j$ are queries in $S$. As noted in
-Sec.~\ref{subsec:visual-branch} we use extra information from object
-detector such us the probability distribution on bounding box class
-labels $Pr_{Cls}(\bm{p}_i)$. Following \cite{chen2018knowledge} we fix
-$k = 100$ proposals. (We studied how $k$ can affect results in
-Sec.~\ref{sec:data-analysis}). The parameters to be optimized include
-parameters in encoding LSTM (Eq.~\ref{eq:h-star}) and projection
-parameters (Eq.~\ref{eq:h-par-jz}). We use the cosine similarity as
-similarity measure $\fsim$ between vectors. Our network is trained
-end-to-end using Adam optimizer with gradient clipping set to $1$ and
-learning rate $0.001$.
+At training stage, we are given the example $(\bm{I}, S)$ where
+$\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$ is the set of bounding box
+proposals built on $\bm{I}$ and $\bm{q}_j$ are queries in $S$. As
+noted in Sec.~\ref{subsec:visual-branch} we use extra information from
+object detector such us the probability distribution on bounding box
+class labels $Pr_{Cls}(\bm{p}_i)$. Following \cite{chen2018knowledge}
+we fix $k = 100$ proposals. (We studied how $k$ can affect results in
+Sec.~\ref{sec:data-analysis}). We optimize parameter of the LSTM
+network (Eq.~\ref{eq:h-star}) and projection network
+(Eq.~\ref{eq:h-par-jz}). We use the cosine similarity as similarity
+measure $\fsim$ between vectors. Our network is trained end-to-end
+using Adam optimizer with gradient clipping set to $1$ and learning
+rate $0.001$.
 
 At test stage, we feed the $\bm{q}_j$ and $\calP_{\bm{I}}$ to the
 model. It predict a similarity score from $-1$ to $1$ for each
@@ -331,3 +322,17 @@ bounding box. The grounded proposal is defined as:
 \begin{equation}
   \bm{p}_{z^*} \quad \text{s.t.} \quad z^* = \argmax_z \bm{P}_{jz}.
 \end{equation}
+According to \cite{wang2019phrase}, for some experiments we select the
+grounded proposal as the union box of the proposal with the same class
+label as the box predicted with maximum confidence $\bm{p}_{z^*}$:
+\begin{equation}
+  \bm{p}^u_{z^*} = \bigcup P_{z^*}
+\end{equation}
+where we intend $\bigcup$ on set of proposal as the union box
+operator, $P_{z^*}$ is the set of proposal with same class label as
+$\bm{p}_{z^*}$, thus:
+\begin{equation}
+  P_{z^*} = \{ \bm{p} \mid \bm{p} \in \calP_{\bm{I}} \land cls(\bm{p}) = cls(\bm{p}_{z^*}) \},
+\end{equation}
+where $cls(\bm{p}) = Cls_{\argmax_z Pr_{Cls}(\bm{p})}$ is the function
+that returns the class label of a proposal.
