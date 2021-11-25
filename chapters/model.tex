@@ -40,40 +40,46 @@ Sec.~\ref{sec:training-and-inference}.
 \label{subsec:visual-branch}
 
 Given an image $\bm{I}$, we extract a set of $k$ bounding box
-proposals $\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$ by means of a
-pre-trained object detector where $\bm{p}_i \in \Rset^4$, jointly with
-features $H^v = \{ \bm{h}^v_i \}^k_{i=1}$, where $\bm{h}^v_i \in
+proposals $\calP_{\bm{I}} = \{ \bm{p}_z \}^k_{z=1}$ by means of a
+pre-trained object detector where $\bm{p}_z \in \Rset^4$, jointly with
+features $H^v = \{ \bm{h}^v_z \}^k_{z=1}$, where $\bm{h}^v_z \in
 \Rset^v$. The features represent the internal object detector
 activation values before the classification layers and regression
 layer for bounding boxes. Moreover, our model extracts the spatial
-features $H^s = \{ \bm{h}^s_i \}^k_{i=1}$, where $\bm{h}^s_i \in
+features $H^s = \{ \bm{h}^s_z \}^k_{z=1}$, where $\bm{h}^s_z \in
 \Rset^s$ from all the bounding boxes proposals, with the spatial
-features for the proposal $\bm{p}_i$ defined as:
+features for the proposal $\bm{p}_z$ defined as:
 \begin{equation}
-  \bm{h}^s_i = \left[ \frac{x1}{wt}, \frac{y1}{ht}, \frac{x2}{wt}, \frac{y2}{ht}, \frac{(x2 - x1) \times (y2 - y1)}{wt \times ht}  \right]
+  \bm{h}^s_z = \left[ \frac{x1}{wt}, \frac{y1}{ht}, \frac{x2}{wt}, \frac{y2}{ht}, \frac{(x2 - x1) \times (y2 - y1)}{wt \times ht}  \right]
 \end{equation}
 where $(x1, y1)$ refers to the top-left bounding box corner, $(x2,
 y2)$ refers to the bottom-right bounding box corner, $wt$ and $ht$ are
-the width and height of the image, respectively. Both visual and
-spatial features are then concatenated and projected, thus leading to
-a set of new vectorial representations $H^{||} = \{ \bm{h}^{||}_{jz}
-\}_{j \in [1, \ldots, m], z \in [1, \ldots, k]}$, where vectors
-$\bm{h}^{||}_{jz}$ are defined as:
+the width and height of the image, respectively. At this point, for
+each $\bm{p}_z \in \calP_{\bm{I}}$ we are given $\bm{h}^v_z$ the
+object detector internal activation features and $\bm{h}^s_z$ the
+spacial features that encode proposal coordinates in the image. We
+also assume that the object detector returns, for each $\bm{p}_i$, a
+probability distribution $Pr_{Cls}(\bm{p}_i)$ over a set $Cls$ of
+predefined classes, i.e. the probability for each class $\zeta \in
+Cls$ that the content of the bounding box $\bm{p}_i$ belongs to
+$\zeta$. This information is typically returned by most of the object
+detectors, and it will be used in Sec.~\ref{subsec:similarity-branch}
+to define the concept similarity.
+
+Both visual and spatial features are then concatenated and projected,
+thus leading to a set of new vectorial representations $H^{||} = \{
+\bm{h}^{||}_{z} \}_{z \in [1, \ldots, k]}$, where vectors
+$\bm{h}^{||}_{z}$ are defined as:
 \begin{equation}
-  \bm{h}^{||}_{jz} = \bm{W}^{||} \big( \bm{h}^s_z || L1(\bm{h}^v_z) \big) + \bm{b}^{||}
+  \bm{h}^{||}_{z} = \bm{W}^{||} \big( \bm{h}^s_z || L1(\bm{h}^v_z) \big) + \bm{b}^{||},
   \label{eq:h-par-jz}
 \end{equation}
-where $||$ indicates the concatenation operator, $\bm{h}^{||}_{jz} \in
+where $||$ indicates the concatenation operator, $\bm{h}^{||}_{z} \in
 \Rset^c$, $\bm{W}^{||} \in \Rset^{c \times (s + v)}$ is a matrix of
 weights, $\bm{b}^{||} \in \Rset^c$ is a bias vector, and $L1$ is the
 L$1$ normalization function.
 
-We also assume that the object detector returns, for each $\bm{p}_i$,
-a probability distribution $Pr_{Cls}(\bm{p}_i)$ over a set $Cls$ of
-predefined classes, i.e. the probability for each class $\zeta \in
-Cls$ that the content of the bounding box $\bm{p}_i$ belongs to
-$\zeta$. This information is typically returned by most of the object
-detectors, and it will be used in Sec.~\ref{subsec:similarity-branch} to define the concept similarity.
+
 
 \subsection{Textual Branch}
 \label{subsec:textual-branch}
@@ -112,21 +118,28 @@ representation (Sec.~\ref{sec:word-embeddings}). Based on this
 assumption, the similarity score can be trivially expressed as a
 distance measure between two vectors in a space. Thus, we define the
 concept similarity as a distance measure between to two word
-embeddings, i.e., concepts. The first word embedding is extracted in a
-way that it can express the content of a proposal. This information is
-made available by the object detector, which usually return a
-probability distribution over a set of labels, for each proposal
-(Sec.~\ref{subsec:visual-branch}). We can easily gather the label that
-best express proposal's content by simply taking the label with
-maximum probability. Such label is just a word (or, in few cases a
-combination of words), that can be naturally embedded in the word
-embeddings space. The word embedding that express phrase concept,
-instead, can be a single word selected from the phrase or a
-combination of words. Following a similar idea of
-\cite{javed2018learning} where they perform concept selection
-filtering out non-noun words, we select the concept among heads of
-phrase. Heads are extracted trough an off-the-shelf parser
-(Sec.~\ref{subsec:nlp-tools}). 
+embeddings, i.e., concepts. The word embedding that express proposal
+concept is extracted from predicted proposal class, usually returned
+from object detector as a probability distribution over a set of
+labels (Sec.~\ref{subsec:visual-branch}). We can easily gather the
+label that best express proposal's content by simply taking the label
+with maximum probability. Such label is just a word (or, in few cases
+a combination of words), that can be naturally embedded in the word
+embeddings space. However, we noticed many misspells and confusion
+among class labels. For example, some labels are made by more than one
+word (``christmas tree'', ``rock wall''), while some other contains
+many different versions of the same word (``microwave, microwave
+oven'', ``tennis racket, tennis racquet''). Thus, following
+\cite{wang2019phrase} we fix misspells by an external spell correction
+system,\footnote{\href{https://pypi.org/project/pyspellchecker/}{https://pypi.org/project/pyspellchecker/}}
+while for compound and multi-version words, we first split them by
+punctuation (space, column and dot) and we average over single-word
+embeddings. Instead, the word embedding that express phrase concept
+can be a single word or a combination of words from the phrase.
+Following a similar idea of \cite{javed2018learning} where they
+perform concept selection filtering out non-noun words, we select the
+concept among heads of phrase. Heads are extracted trough an
+off-the-shelf english language parser (Sec.~\ref{subsec:nlp-tools}). 
 
 Formally, we define $\EPI = \{ \ePI_i \}^{k}_{i=1}$ where $\ePI_i \in
 \Rset^w$ the set of labels embeddings build on the set of proposal
@@ -150,22 +163,30 @@ to generate a new embedding by averaging phrase's word embeddings:
 \end{equation}
 however, there is an evidence that such averaging operations can
 compromise the discriminativeness
-\cite{wang2019phrase,datta2019align2ground}. In the second group we
-find operators that consider a single word as a representative for the
-phrase. A common strategy employed in literature is to select the last
-word in the phrase \cite{wang2019phrase}. Specially in English
-language, the last word of a noun phrase is usually the head of the
-phrase. However, this strategy relies on strong assumptions on
-language and how dataset is built.\footnote{In \cite{wang2019phrase},
-they show how the \textit{last} strategy differs in performance on
-different dataset: on Flickr30k Entities it is the second best
-strategy while in ReferIt it doesn't even appear on the leaderboard.}
-More complex strategies, instead, take into account external
-information, such us the similarity wrt proposal class embeddings.
-Following \cite{wang2019phrase}, we compute the similarity between
-word in noun phrase and proposal class embeddings and then we select
-one word in the noun phrase with maximum similarity wrt the detected
-concept in proposal:
+\cite{wang2019phrase,datta2019align2ground}. Averaging over all words
+means to implicitly consider even irrelevant words for grounding,
+which, on average, may impact on the representation of the concept.
+This problem is partially reduced by model which extracts concept on
+phrase by considering only phrase's head.
+
+In the second group we find operators that consider a single word as a
+representative for the phrase. A common strategy employed in
+literature is to select the last word in the phrase
+\cite{wang2019phrase}. Specially in English language, the last word of
+a noun phrase is usually the head of the phrase. However, this
+strategy relies on strong assumptions on language and how dataset is
+built.\footnote{In \cite{wang2019phrase}, they show how the
+\textit{last} strategy differs in performance on different dataset: on
+Flickr30k Entities it is the second best strategy while in ReferIt it
+doesn't even appear on the leaderboard.} More complex strategies,
+instead, take into account additional information, such us the
+similarity wrt proposal class embeddings. Here, a possible strategy
+consists in choosing the phrase representative as the word with
+maximum similarity wrt detected concepts among proposals. Following
+\cite{wang2019phrase}, we compute the similarity between all words in
+noun phrase and proposal class embeddings, and then we select one word
+in the noun phrase with maximum similarity wrt the detected concept in
+proposal:
 \begin{equation}
   \erqj_j = \argmax_{\eqj \in \Eqj} \{ \max g(\eqj) \},
   \label{eq:concept-embedding-max-sim}

@@ -361,6 +361,7 @@ exposing data through the unified interface.
 \end{lstlisting}
 
 \section{Implementation Details}
+\label{sec:impl-details}
 
 We started from the codebase provided by D. Rigoni \etal{}
 \cite{rigoni2021better} where they implement a phrase localization
@@ -472,7 +473,7 @@ The Tab.~\ref{tab:bb-coverage} summarizes the outcome.
 
 \subsection{Upperbound Accuracy Removing Background Class}
 
-As stated in Sec.~\todo{REF: section} we remove proposal where
+As stated in Sec.~\cite{sec:impl-details} we remove proposal where
 predicted class is ``background''. ``Background'' is a special class
 and represents the absence of a classification. In many supervised
 works the removal of such potential candidate proposals may impact on
@@ -485,7 +486,7 @@ similarity of the phrase with the proposal class label whether the
 label is ``background''?
 
 To remove this kind of boxes, as mentioned above, may reduce the
-maximum achievable accuracy. We analyzed this phenomenom and we
+maximum achievable accuracy. We analyzed this phenomenon and we
 surprisingly noticed that even removing on average one proposal over
 two, the upperbound accuracy remains comparable to the version without
 background removal. In particular, we obtained a relative loss of
@@ -495,7 +496,7 @@ accuracy without background removal. Analytics details are reported in
 Tab.~\ref{tab:bb-coverage-no-background}.
 
 Such results allow us to apply the background removal with translates
-in noise removal without any relevant drop in performace.
+in noise removal without any relevant drop in performance.
 
 \begin{table}
     \centering
@@ -520,7 +521,7 @@ in noise removal without any relevant drop in performace.
 \subsection{Distribution of Class Labels on Proposals}
 
 For a good comprehension of object detector information, we study the
-distribution of number of examples per label. We perfomed the analysis
+distribution of number of examples per label. We performed the analysis
 on both dataset but for presentation purposes, here we show
 qualitative data from Flickr30k; ReferIt shows comparable insights.
 The distribution, shown in
