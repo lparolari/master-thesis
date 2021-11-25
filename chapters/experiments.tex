@@ -1,22 +1,7 @@
 %!TEX root = ../dissertation.tex
-\begin{savequote}[75mm]
-Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin molestie tortor eu velit. Aliquam erat volutpat. Nullam ultrices, diam tempus vulputate egestas, eros pede varius leo.
-\qauthor{Quoteauthor Lastname}
-\end{savequote}
 
 \chapter{Experiment and results}
 \label{ch:experiments}
-
-SCALETTA
-
-* datasets
-  * flickr
-  * referit
-* evaluation metric
-* impl details
-* model selection
-* results
-* qualitative results
 
 \section{Datasets}
 \label{sec:datasets}
@@ -35,24 +20,21 @@ Flickr30K or simply as Flickr and, compared to the original Flickr30K
 dataset, it focuses on the task of grounding textual mentions of
 entities in image by augmenting data with extra annotations.
 
-Annotations consists of cross-caption coreference chains linking
-mentions of the same entities together with bounding boxes localizing
-those entities in the image, and are collected throught a
-crowdsourcing protocol. These annotations are highly structured and
-vary in complexity from image to image, since images vary in the
-numbers of clearly distinguishable entities they contain, and
-sentences vary in the extent of their detail. Further, there are
-ambiguities involved in identifying whether two mentions refer to the
-same entity or set of entities, how many boxes (if any) these entities
-require, and whether these boxes are of sufficiently high quality. To
-tackle this problem, compounded by the unreliability of crowdsourced
-judgments, they administer a pipeline of simple and atomic tasks which
-can be grouped into two main stages: coreference resolution, or
-forming coreference chains that refer to the same entities, and
-bounding box annotation for the resulting chains. This workflow
-provides two advantages: first, identifying coreferent mentions helps
-reduce redundancy and save box-drawing effort; and second, coreference
-annotation is intrinsically valuable. In
+Flickr30K Entities consists in highly structured annotations collected
+through crowdsourcing with different complexity from image to image,
+because the variance in the number of objects per image. Annotations
+are made of mentions of the same entities between different captions,
+and bounding boxes that localized those entities in the image.
+Flickr30K Entities is developed under a strict pipeline of simple and
+atomic tasks to tackle the ambiguity in identifying whether two
+mentions refer to the same entity or how many boxes (if any) each
+entity requires. Moreover, such task are carried out by humans, so
+there is also the problem of unreliability of crowdsourced judgments
+problems. For this reason, the pipeline is structure into two main
+stages: coreference resolution and bounding box annotation. The goals
+of the pipeline are to reduce redundancy in annotations and save
+box-drawing effort while keeping the process valuable through
+coreference annotation, which convoy this property intrinsically. In
 Fig.~\ref{fig:flickr30k-example} \cite{plummer2015flickr30k}, are
 shown the interfaces used to gather annotations with respect to tasks
 described next.
@@ -95,41 +77,36 @@ described next.
     \caption{Box coverage interface}
     \label{fig:flickr30k-example-box-coverage}
   \end{subfigure}
-  \caption{Examples of the interfaces used in TODO CITE FLICKR annotation system.}
+  \caption{Examples of the interfaces used in \cite{plummer2015flickr30k} annotation system.}
   \label{fig:flickr30k-example}
 \end{figure}
 
 The coreference resolution task is solved by first chunking
 information given in Flickr captions to identify potential entity
 mentions. Each chunk, i.e., noun phrase (NP), is a potential entity
-mention. For example, the frase ``A man in an orange hat'' is chunked
+mention. For example, the phrase ``A man in an orange hat'' is chunked
 in two noun phrases, namely ``A man'' and ``an orange hat'', which are
 the two mentions. Given $M$ a document containing noun phrases
 originated from captions of an image, a worker is required to specify
 whether two given mentions $m$ and $m'$ refer to the same entity. If
-the answer is positive, a link between the two mentions is addded,
-creating a coreference chain. Tipically, this would require $O(|M|^2)$
+the answer is positive, a link between the two mentions is added,
+creating a coreference chain. Typically, this would require $O(|M|^2)$
 which is the cost of all pairwise links. But since $M$ usually
 contains multiple mentions that refer to the same set of entities, the
 number of coreference chains is bounded by a number much smaller than
-$|M|$, on average. Also, the bound is lowered by making two assumptions.
-First, they assume that mentions from the same captions cannot be
-coreferent; second, they categorize each mention into eight
-coarse-grained types using manually constructed dictionaries (people,
-body parts, animals, clothing/color, instruments, vehicles, scene, and
-other), and assume mentions belonging to different categories cannot
-be coreferent. The goodnees of the strategy is empirically shown by a
-small-scale test on 200 images and the coreference chains are verified
-by another task which asks to a worker whether given mentions in
-coreference chain refer to the same entity. Their results shows that
-only $9.8\%$ of all coreference chains are not correct.
+$|M|$, on average. Moreover, the bound is lowered by making two extra
+assumption: first, mentions from the same captions cannot be
+coreferent, and second, mention belonging to different categories
+cannot be coreferent. They define eight coarse-grained types, such us:
+people, body parts, animals, clothing/color, instruments, vehicles,
+scene, and other.
 
 Bounding box annotation is carried out with a workflow composed by
 four tasks administered to workers, namely: box requirement, box
 drawing, box quality and box coverage. In box requirement, a worker
 needs to specify, whether at least one bounding box can be drawn in
 image for given mention. If the response is negative, the mention
-leaves the workflow, otherwise it goes throught the box drawing stage.
+leaves the workflow, otherwise it goes through the box drawing stage.
 Here, a worker should draw a box as tight as possible around the
 mentioned entity. The main source of difficulty in this stage is due
 to mentions that refer to multiple entities. If a box is drawn, then
@@ -178,7 +155,7 @@ Fig.~\ref{fig:flickr30k-technical-data-representation}.
     Entities document specification. Each image is identified by a
     number that is identical for textual and visual annotations. The
     txt file describe five captions, each one containing one or more
-    noun phrases. The xml file descibes the ground truth bounding box
+    noun phrases. The xml file describes the ground truth bounding box
     annotations. }
   \label{fig:flickr30k-technical-data-representation}
 \end{figure}
@@ -194,18 +171,19 @@ training, validation and test split that we use in our work, following
 current literature.
 
 \subsection{ReferIt}
+\label{subsec:referit}
 
 ReferIt \cite{kazemzadeh2014referitgame} is another popular dataset.
 The reason that led to developing this dataset is to study how people
 refer to objects in complex photographs of a real-world cluttered
-scenese. Thus, the focus is on referring expression grounding task.
+scenes. Thus, the focus is on referring expression grounding task.
 However, due to the heterogeneity of data, it can be employed also in
 phrase grounding.
 
-ReferIt contains very challenging examples from phrase groudning point
+ReferIt contains very challenging examples from phrase grounding point
 of view, because the dataset is collected entirely in an unsupervised
-context by crowd throught a game. Examples vary from ``a man'' and
-``the person in red'' to ``buildings'' or more degenrative ones like
+context by crowd through a game. Examples vary from ``a man'' and
+``the person in red'' to ``buildings'' or more degenerative ones like
 ``i don't think that was trash, lol. anyway, wall just above heads''.
 In ReferIt many phrases uses spatial relations among objects, such as
 ``building on right behind guys'' or ``window top 2nd left''.
@@ -214,25 +192,21 @@ Referring expressions are collected through \textit{ReferItGame},
 which is a two-player online game. The game is the key point of the
 whole dataset, because it allow to collect large-scale dataset
 containing natural language expressions referring to objects in
-photographs of real world scenes in an inexpansive way.
+photographs of real world scenes in an inexpensive way.
 
 The game is a simple two player game where players alternate between
 generating expressions referring to objects in images of natural
 scenes, and clicking on the locations of described objects.
 Fig.~\ref{fig:referitgame-example}, from
 \cite{kazemzadeh2014referitgame} shows an example of the game. The
-game play is straightforward: an image with an object outlined in red
-and a text box is show to Player 1. Player 2 instead receives, the
-same image and the referring expression written by Player 1 and must
-click on the location of the described object (note, Player 2 does not
-see the object segmentation). If Player 2 clicks on the correct
-object, then both players receive game points and the Player 1 and
-Player 2 roles swap for the next image. If Player 2 does not click on
-the correct object then no points are received and the players remain
-in their current roles. When there are no players available for a
-player vs player match, then a canned match is started where the
-missing player is replaced by a CPU palyer. In this way, by design the
-referring expression are provided and also verificated. 
+game play is straightforward: Player 1 is given an image with an
+object outlined in red and and he has to write a caption. Player 2
+receives the same image without outlined object and the referring
+expression written by Player 1, his goal is to localize the described
+object. Both players receive game points whether Player 2 correctly
+localize the object instead no points are earned. When there are no
+players available for a player vs player match, then a canned match is
+started where the missing player is replaced by a CPU player.
 
 \begin{figure}
   \centering
@@ -257,7 +231,7 @@ website
 while instructions and data are provided at Licheng Yu's GitHub
 repository.\footnote{\href{https://github.com/lichengunc/refer}{https://github.com/lichengunc/refer}}
 Images are stored in JPG files, while annotations are described
-throught two structured file. One is a JSON file containing the
+through two structured file. One is a JSON file containing the
 bounding box annotations along with a list of images and their $id$,
 the other is a PICKLE
 file\footnote{\href{https://docs.python.org/3/library/pickle.html}{https://docs.python.org/3/library/pickle.html}}
@@ -271,7 +245,7 @@ depict described structure.
   \caption[ReferIt document specification]{ReferIt document
   specification. Each image is identified by a number. This identifier
   is used to link visual and textual annotations in the two json file.
-  Particularly, ``ref(xxx).json'' contains a list of sencences along
+  Particularly, ``ref(xxx).json'' contains a list of sentences along
   with their annotations, while in ``instances.json'' there are two
   list. The first is an index of all images (with some properties),
   while the second contains annotation for ground truth bounding
@@ -296,10 +270,10 @@ already preprocessed in a grossly way.
 
 In the next section we describe our preprocessing pipeline, focusing
 on data representation which can be quite confusing due to the
-etherogeneity of representations. In particular,
+heterogeneity of representations. In particular,
 Sec.~\ref{subsec:data-preparation} describes transformation and
 augmentations applied to data, while Sec.~\ref{subsec:data-interface}
-descibes the interface we used to represent heterogeneous data.
+describes the interface we used to represent heterogeneous data.
 
 \subsection{Data Preparation}
 \label{subsec:data-preparation}
@@ -316,14 +290,14 @@ In the first place, we run an object detector
 (Sec.~\ref{sec:object-detection-recognition}) to extract features. The
 proposal extractor generates a list of bounding box and the object
 detector computes $2048$ features per bounding along with two
-probability distributions, repspectively for classes and attributes.
+probability distributions, respectively for classes and attributes.
 For each bounding box $\bm{b}_i$, the object returns a probability
 distribution over a set of classes $Cls$, i.e., $Pr_{Cls}(\bm{b}_i)$
 and a probability distribution over a set of attributes $Attr$, i.e.,
 $Pr_{Attr}(\bm{b}_i)$. In contrast to classes, each bounding box can
 be represented by more than one attribute: attributes can be
 considered present if their probability is above a predefined
-treshold.
+threshold.
 
 Then, we process ground truth bounding boxes annotated in the dataset
 in order to match them with object detector proposals. For each ground
@@ -339,17 +313,17 @@ bounding box, we remove it from the dataset.
 
 We use the standard split for training, validation, and test set as
 defined in  \cite{plummer2015flickr30k}, consisting of 30K, 1K,
-and 1K images, respectively. \todo{MAY BE MOVED TO IMPL DETAILS!}
+and 1K images, respectively.
 
 \subsubsection{Data Interface}
 \label{subsec:data-interface}
 
 The data interface is designed to be as flexible and complete as
 possible, allowing the adaptation of other datasets with low effort.
-In particular our interface includes the follwoing.
+In particular our interface includes the following.
 
 \begin{itemize}
-  \item An postive integer used as identifier for the example.
+  \item An positive integer used as identifier for the example.
   \item A sentence, i.e, the caption of the image.
   \item A list of phrases, i.e., noun phrases in sentence.
   \item A list of coordinates, representing, for each phrase, the
@@ -367,9 +341,9 @@ In particular our interface includes the follwoing.
 \end{itemize}
 
 The Fig.~\ref{lst:data-interface-dict} shows a real word example
-exposing data throught the unified interface.
+exposing data through the unified interface.
 
-\begin{lstlisting}[style=simplepython,caption=TODO,label={lst:data-interface-dict}]
+\begin{lstlisting}[style=simplepython,caption=Example of our data structure for as interface to row data,label={lst:data-interface-dict}]
 {
     id: '3359636318', 
     sentence: 'Two people are talking outside of the video game shop next door to the mobile phone store .', 
@@ -386,7 +360,52 @@ exposing data throught the unified interface.
 }
 \end{lstlisting}
 
-TODO: discutere operations on single element e varie trasformazioni + il padding e la creazione del batch in un'altra sezione! (più collegata a impl. techine) \todo{VEDERE QUI}
+\section{Implementation Details}
+
+We started from the codebase provided by D. Rigoni \etal{}
+\cite{rigoni2021better} where they implement a phrase localization
+system with the ability to include information from knowledge graph,
+\footnote{\href{https://github.com/drigoni/VTKEL-solver}{https://github.com/drigoni/VTKEL-solver}}
+thus solving the VTKEL task (Sec.~\ref{sec:vtkel}). For this reason,
+some implementation details are inherited from their work. For
+example, we use the same pre-trained object detector Faster R-CNN
+(Sec.~\ref{subsec:faster-rcnn}) pre-trained on Visual Genome
+\cite{krishna2017visual} dataset, with ResNet-101 as backbone model
+pre-trained on COCO for initialization. Bounding box features matches
+the ResNet-101 layer \textit{pool5\textunderscore flat} for a total of
+$v = 2048$ features. Moreover, for each proposal we extract a
+probability distribution over $1600$ classes $Cls$. Please note that
+the implementation in \cite{anderson2018bottom} returns $1600 + 1$
+classes. The extra label is the ``background'' class, used as a
+default for proposals whose label cannot be predicted with good
+confidence. In our work, we ignore proposals labeled with as
+background because under weak supervision we cannot rely such a noisy
+information. As an example, with $100$ proposals per image, we removed
+$47.6$\% proposals on average on Flickr30K Entities while $51.1$\% on
+ReferIt.\footnote{Along with classes information, the object detector
+makes available also attributes information on proposals. On the same
+way of classes, they return a probability distribution on $400 + 1$
+attributes. Unfortunately, the implementation of attributes prediction
+for the object detector in \cite{anderson2018bottom} is erroneous. As
+they state in Sec. 6.1, the probability for each attribute should be a
+number between $0$ and $1$ and an attribute is considered when its
+probability is over $0.2$. Instead, the current implementation returns
+a softmax over the labels, i.e., $400 + 1$ attributes label. The extra
+label is the ``background'' attribute. Probably this error is due to
+careless copy-pase from class prediction branch. For this reason, we
+do not include this information in our model.} We use SpaCy
+\cite{honnibal2020spacy} parser in order to extract words vocabulary
+from both datasets. In contrast to \cite{rigoni2021better}, we
+initialize word embeddings with pre-trained Word2Vec
+\cite{mikolov2013efficient} weights instead of GloVe
+\cite{pennington2014glove}, but we keep the same settings: embeddings
+are freezed (we do not train them) and out-of-vocabulary words are
+initialized according to Xavier \cite{glorot2010understanding}. The
+size of the embedding is $w = 300$.
+
+During our work, we trained the model on the training set, while we
+performed model selection onto the validation set. The comparison with
+other works is done on the test set. 
 
 \section{Data Analysis}
 \label{sec:data-analysis}
@@ -394,52 +413,42 @@ TODO: discutere operations on single element e varie trasformazioni + il padding
 Data analysis is another crucial task of data processing pipeline and
 it is not only important to process and manipulate data, but also to
 analyze the relationships and correlations between data sets and to
-identify patterns and trends for results interpretation. \todo{CITE:
-Understanding Data Analysis Step-By-Step} Data analysis can be
-decisive also in the phase of model design, because it can outline
-problems or instrisic traits that belongs to data and must be taken
-into account.
+identify patterns and trends for results interpretation
+\cite{sharma2020understanding}. Data analysis can be decisive also in
+the phase of model design, because it can outline problems or
+intrinsic traits that belongs to data and must be taken into account.
 
-Within the folllwing sections we outline our shallow data analysis,
-performed on-demand while designing the model in order to develop
-winning strategies.
+Within the following sections we outline our shallow data analysis,
+performed on-demand while designing the model in overcome problems.
 
-\subsection{Number of Bounding Box per Image}
+\subsection{Number of Bounding Box per Image and Upperbound Accuracy}
 \label{subsec:num-of-proposals}
 
 Each image in the dataset is different and vary wrt number of objects
 in it, type of scene, dimensions and so on. Thus, by nature of images,
-the object detector can extract a variable number of bounding boxex
+the object detector can extract a variable number of bounding boxes
 and usually, only a variable subset of these are relevant. However,
-for implementation purposes we need to fix a number $k$ of proposal
-per example. Then, how to chose $k$? 
+for implementation reason we are required to fix a number $k$ of
+proposal per example. So, how to choose $k$? If $k$ is too low we
+cannot reach good coverage wrt ground truth bounding boxes, while if
+$k$ is too big we have to deal with many similar boxes and we require
+more resources to run the model. It's a tradeoff problem.
 
 Following literature we initially fixed the upper-threshold to $k =
 100$ proposals, and then we performed an analysis on both dataset
 aimed to detect the distribution of proposals per image. We discovered
-that the object detector can detect maximum number of proposal for
-almost every example except to some degenerative images.
+that for almost every example the object detector can detect maximum
+number of proposal, except to some degenerative images. For example,
+the object detector extracted less than $100$ proposals for XX images
+over XXXX in Flickr30k and YY over YY in ReferIt.
 
-Such metric allowed us to conclude that even if some boxes are
-artifacts (generated with $0$-coords only to fill the vector), they
-are pretty rare: XX in Flickr30k and YY in ReferIt \todo{ADD: numbers}
-and we can keep $k = 100$ to reach maximum objects coverage.
-
-\subsection{Upperbound Accuracy}
-
-Model performance depends on the degree of overlap between predicted
-bounding box and ground truth bounding box (see
-Sec.~\ref{sec:evaluation-metric}). However, our model deals with
-proposal given by object detector and it has no power in moving them
-around. This means that, without the ability to tune proposal
-coordinates, the model obtains good performace only if a bounding box
-that overlap the ground truth by a certain value exists. So, do the
-object detector's proposals cover the ground truth?
-
-We analyzed the data and we discovered that, with $k = 100$ bounding
-box the coverage is good enough (nearly $93$-$91$\%), however, by
-decreasing $k$ upperbound accuracy drops by a large margin (nearly
-$54$-$51$\%) . Results are shown in Tab.~\ref{tab:bb-coverage}.
+What remains to prove is whether we can reach a good upperbound
+accuracy given $100$ proposals wrt the ground truth bounding box. We
+analyzed the data and we discovered that with $k = 100$ bounding box
+the coverage is good enough (nearly $93$\% on Flickr30k Entities and
+$91$\% on ReferIt), while decreasing $k$ resulted in an upperbound
+accuracy drop (nearly $54$\% Flickr30k Entities and $51$\% ReferIt).
+The Tab.~\ref{tab:bb-coverage} summarizes the outcome.
 
 \begin{table}
   \centering
@@ -607,3 +616,11 @@ falling inside the ground truth bounding box to consider the grounding
 as a hit, while the standard accuracy requires, depending on a
 parameter, that at least some fraction of the area overlaps the ground
 truth bounding box.
+
+\section{Results}
+
+TODO
+
+\section{Model Selection}
+
+TODO

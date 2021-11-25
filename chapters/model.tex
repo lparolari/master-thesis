@@ -128,12 +128,13 @@ filtering out non-noun words, we select the concept among heads of
 phrase. Heads are extracted trough an off-the-shelf parser
 (Sec.~\ref{subsec:nlp-tools}). 
 
-Formally, we define $\EPI = \{\ePI_i \}^{k}_{i=1}$ the set of labels
-embeddings build on the set of proposal $\calP^{\bm{I}}$. Each
-$\ePI_i$ is a feature vector representing the label predicted with
-maximum probability by the object detector for the $i$-th proposal.
-Then, given a noun phrase $\bm{q}_j$ along with $E^{\bm{q}_j}$, we
-compute the concept similarity score for each proposal $\bm{p}_i$ as:
+Formally, we define $\EPI = \{ \ePI_i \}^{k}_{i=1}$ where $\ePI_i \in
+\Rset^w$ the set of labels embeddings build on the set of proposal
+$\calP^{\bm{I}}$. Each $\ePI_i$ is a feature vector representing the
+label predicted with maximum probability by the object detector for
+the $i$-th proposal. Then, given a noun phrase $\bm{q}_j$ along with
+$E^{\bm{q}_j}$, we compute the concept similarity score for each
+proposal $\bm{p}_i$ as:
 \begin{equation}
   \bm{S}^c_{ji} = \fsim \left( \erqj_j, \ePI_i \right),
 \end{equation}

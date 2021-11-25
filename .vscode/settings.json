@@ -179,6 +179,9 @@
         "compositionality",
         "convolutional",
         "coreference",
+        "coreferent",
+        "crowdsourced",
+        "crowdsourcing",
         "Datta",
         "Deerwester",
         "Devlin",
@@ -194,6 +197,7 @@
         "Javed",
         "Kont",
         "lemmatization",
+        "Licheng",
         "LSTM",
         "Mikolov",
         "morphosyntactic",
@@ -217,9 +221,11 @@
         "UIMA",
         "UIMA's",
         "UPOS",
+        "Upperbound",
         "VTKEL",
         "Xiao",
         "yolo",
+        "Yu's",
         "Zhang"
     ]
 }
