@@ -178,7 +178,8 @@ strategy relies on strong assumptions on language and how dataset is
 built.\footnote{In \cite{wang2019phrase}, they show how the
 \textit{last} strategy differs in performance on different dataset: on
 Flickr30k Entities it is the second best strategy while in ReferIt it
-doesn't even appear on the leaderboard.} More complex strategies,
+doesn't even appear on the
+leaderboard.} More complex strategies,
 instead, take into account additional information, such us the
 similarity wrt proposal class embeddings. Here, a possible strategy
 consists in choosing the phrase representative as the word with
@@ -191,12 +192,10 @@ proposal:
   \erqj_j = \argmax_{\eqj \in \Eqj} \{ \max g(\eqj) \},
   \label{eq:concept-embedding-max-sim}
 \end{equation}
-where
-\begin{equation}
-  g(\eqj) = \{ \fsim(\ePI, \eqj) \mid \ePI \in \EPI \}.
-\end{equation}
-This strategy is better explained by means of an example, such us the
-one in Fig.~\ref{fig:concept-selection-example}. For the sake of
+where $\quad g(\eqj) = \{ \fsim(\ePI, \eqj) \mid \ePI \in \EPI \}$ and
+$\fsim$ is the similarity measure between vectors. This strategy is
+better explained by means of an example, such us the one in
+Fig.~\ref{fig:concept-selection-example}. For the sake of
 presentation, we assume to deal with an object detector trained on two
 class labels $Cls = \{ \text{sky}, \text{animal} \}$. We are given an
 image (in figure) and the query ``the blue elephant''. As described in
@@ -214,25 +213,32 @@ proposals.
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{figures/concept-selection-example.png}
-  \caption[Concept selection example]{ TODO }
+  \caption[How concept selection on phrases works]{How concept
+  selection on phrases works. In the example we are given two
+  proposals along with their labels, i.e., ``sky'' and ``animal'', and
+  the phrase ``the blue elephant''. Both labels and phrase's words are
+  embedded and, for each word embedding in phrase, we compute its
+  similarity with the label embedding. The selected concept in the
+  phrase is the word with maximum similarity wrt labels. }
   \label{fig:concept-selection-example}
 \end{figure}
 
 \subsection{Prediction Module}
 \label{subsec:prediction-module}
 
-Finally, the model predicts the probability $\bm{P}_{jz}$ that a given
-noun phrase $\qj$ is referrred to a proposal bounding box $\bm{p}_z$
-as:
+Starting from $\bm{h}^{||}_{jz}$ and $\bm{h}^*_{jz}$ features from
+visual and textual branches respectively, we can predict the
+probability $\bm{P}_{jz}$ that a given noun phrase $\qj$ is referred
+to a proposal bounding box $\bm{p}_z$ as:
 \begin{equation}
   \bm{P}_{jz} = \fsim ( \bm{h}^{||}_{jz} , \bm{h}^*_j ),
 \end{equation}
-where $\fsim$ is a similarity measure and $\bm{h}^{||}_{jz}$,
-$\bm{h}^*_j$ are features extracted by visual and textual branch,
-respectively.
+where $\fsim$ is a similarity measure between vectors. Please note
+that $\bm{h}^{||}_{jz} \in \Rset^c$ and $\bm{h}^*_{jz} \in \Rset^t$,
+where $c = t$, i.e., both are vectors in the same embedding space.
 
 As noted in \cite{chen2018knowledge}, concept similarity is a direct
-consequence of the intrinsic knwoledge convoyed by the object
+consequence of the intrinsic knowledge convoyed by the object
 detector. Such score can be useful to downweight unrelated proposals.
 Its effectiveness is due to the fact that the word embedding usually
 captures the semantic similarity between concept in phrase and the
@@ -251,16 +257,16 @@ little similarity is found. However, this relies on the assumption
 that the embedding space and similarity measure we are using for words
 perfectly captures the semantic similarity between them, and this is
 not true. Also, we assume that proposals are classified with no error
-by the object detector, neither this is true. Under those hypotesis,
+by the object detector, neither this is true. Under those hypothesis,
 such application of concept similarity cannot be fruitful. 
 
-An example my clarify our statement. We are given $\bm{S}^c \in
-\Rset^{1 \times 2}$, $\bm{S}^c = [0.1, 0.2]$ for an example composed by a
-phrase and two proposal, and we know that the bounding box to ground
-with our prhrase is the first. The only way the model has to output
-the first proposal as the best bounding box, i.e., the bounding box to
-ground, is to predict a score $p_{0}$ which is at least the double of
-$p_{1}$, because
+An example my clarify our statement.  We are given $\bm{S}^c \in
+\Rset^{1 \times 2}$, $\bm{S}^c = [0.1, 0.2]$ for an example composed
+by a phrase and two proposal, and we know that the bounding box to
+ground with our phrase is the first. Assuming $\fsim = \cosinesim$,
+the only way the model has to output the first proposal as the best
+bounding box, i.e., the bounding box to ground, is to predict a score
+$p_{0}$ which is at least the double of $p_{1}$, because
 \begin{equation}
   \bm{\hat{P}} = [0.1 * p_{0}, 0.2 * p_{1}]
 \end{equation}
@@ -288,32 +294,33 @@ contributions. Formally:
 \end{equation}
 The major benefit of this approach is that model predictions are not
 constrained to values defined by concept similarity: they co-work for
-the final predictions.
+the final predictions. For this reason, concept similarity is applied
+to our model following the latter method.
 
 \section{Loss Function}
 \label{sec:loss}
 
 In this section we present our loss function. Please note that in
-weakly supervised settings, for a training example $\left( \bm{I}, S
-\right)$ we are not given the query-proposal pair set $\{ ( q^{gt}_j,
-p^{gt}_j ) \}^m_{j=1}$, where $m$ is the number of noun phrases.
-Inspired by \cite{wang2020maf}, we adopt a contrastive loss. The
-contrastive objective $\calL$ aims to learn the visual and textual
-features by maximizing the similarity score between paired
+weakly supervised settings, for a training example $\left( \bm{I},
+\sent \right)$ we are not given the query-proposal pair set $\{ (
+\bm{q}^{gt}_j, \bm{p}^{gt}_j ) \}^m_{j=1}$, where $m$ is the number of
+noun phrases. Inspired by \cite{wang2020maf}, we adopt a contrastive
+loss. The contrastive objective $\calL$ aims to learn the visual and
+textual features by maximizing the similarity score between paired
 image-caption elements and minimizing the score between the negative
 samples (i.e., other irrelevant captions). Formally, given $\bm{I}$
-the image, $S$ a sentence that describes $\bm{I}$ and $S'$ a sentence
-that do not describe $\bm{I}$, we define $\calL$ as:
+the image, $\sent$ a sentence that describes $\bm{I}$ and $\sent'$ a
+sentence that do not describe $\bm{I}$, we define $\calL$ as:
 \begin{equation}
-  \calL =  - \fmmsim(\bm{I}, S) + \fmmsim(\bm{I}, S'),
+  \calL =  - \fmmsim(\bm{I}, \sent) + \fmmsim(\bm{I}, \sent'),
 \end{equation}
 where
 $\fmmsim$ is the multimodal image-sentence similarity function, defined as:
 \begin{equation}
-  \fmmsim(\bm{I}, S) = \frac{1}{m} \sum_j \max_z \bm{P}_{jz}
+  \fmmsim(\bm{I}, \sent) = \frac{1}{m} \sum^m_{j=1} \max_z \bm{P}_{jz}
 \end{equation}
-where $m$ is the number of noun phrases in $S$ and $\bm{P}_{jz}$ is
-the predicted similarity between query $\bm{q}_j$ and proposal
+where $m$ is the number of noun phrases in $\sent$ and $\bm{P}_{jz}$
+is the predicted similarity between query $\bm{q}_j$ and proposal
 $\bm{p}_z$. Basically, the goal of $\fmmsim$ is to express an averaged
 representation of queries wrt the image.
 
@@ -324,9 +331,9 @@ sentence from the dataset.
 \section{Training and Inference}
 \label{sec:training-and-inference}
 
-At training stage, we are given the example $(\bm{I}, S)$ where
+At training stage, we are given the example $(\bm{I}, \sent)$ where
 $\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$ is the set of bounding box
-proposals built on $\bm{I}$ and $\bm{q}_j$ are queries in $S$. As
+proposals built on $\bm{I}$ and $\bm{q}_j$ are queries in $\sent$. As
 noted in Sec.~\ref{subsec:visual-branch} we use extra information from
 object detector such us the probability distribution on bounding box
 class labels $Pr_{Cls}(\bm{p}_i)$. Following \cite{chen2018knowledge}
