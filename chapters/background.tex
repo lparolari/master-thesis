@@ -63,28 +63,31 @@ this task, first, it is necessary to recognize all the objects in the
 image and the components in the text, while after, the model needs to
 find the correct alignment among the nouns and the objects.
 
-More formally, given in input an image $\bm{I}$ and a sentence
-$\sent$, phrase grounding consists in learning a mapping $\gamma :
-\calI \times \calS \rightarrow 2^{\calQ \times \calB}$, where $\calQ$
-is the set of noun phrases and $\calB$ the set of bounding box defined
-on $\bm{I}$. So, given an image $\bm{I}$ containing $e$ objects
-identified via the set of bounding boxes $B_\calI = \{ \bm{b}_i
-\}^e_{i=1}$ and a sentence $\sent$ with $m$ noun phrases from set
-$\calQ_{\sent} = \{ \bm{q}_j \}^m_{j=1}$, $\gamma(\bm{I}, \sent)$ returns a
-set of couples $\{ (\bm{q}, \bm{b}) \mid \bm{q} \in \calQ_{\sent},
-\bm{b} \in B_{\bm{I}} \}$ where each couple $(\bm{q}, \bm{b})$
-associates the noun phrase $\bm{q}$ to the bounding box $\bm{b}$.
-Here, each bounding box is expressed by coordinates for top left and
-bottom right 2D points: $\bm{b}_i \in \Rset^4$. A query $\bm{q}_j \in
-\Nset^2$ instead is a vector made by two indices: the coordinates of
-the initial and final character positions in the sentence $\sent$.
-
-Such definition allows to associate the same noun phrase with several
-different bounding boxes, as well as the same bounding box with many
-different noun phrases. Following the current literature, we assume
-that each noun phrase is associated to one and only one bounding box.
-A single bounding box, however, may identify more objects in image,
-e.g. crowd with the phrase ``people''.
+Thus, given in input an image $\bm{I}$ and a sentence $\sent$, phrase
+grounding consists in learning a mapping $\gamma : \calI \times \calS
+\rightarrow 2^{\calQ \times \calB}$, where $\calQ$ is the set of noun
+phrases and $\calB$ the set of bounding box defined on $\bm{I}$. So,
+given an image $\bm{I}$ containing $e$ objects identified via the set
+of bounding boxes $B_\calI = \{ \bm{b}_i \}^e_{i=1}$ and a sentence
+$\sent$ with $m$ noun phrases from set $\calQ_{\sent} = \{ \bm{q}_j
+\}^m_{j=1}$, $\gamma(\bm{I}, \sent)$ returns a set of couples $\{
+(\bm{q}, \bm{b}) \mid \bm{q} \in \calQ_{\sent}, \bm{b} \in B_{\bm{I}}
+\}$ where each couple $(\bm{q}, \bm{b})$ associates the noun phrase
+$\bm{q}$ to the bounding box $\bm{b}$. Here, each bounding box is
+expressed by coordinates for top left and bottom right 2D points:
+$\bm{b}_i \in \Rset^4$. A query $\bm{q}_j \in \Nset^2$ instead is a
+vector made by two indices: the coordinates of the initial and final
+character positions in the sentence $\sent$. Such definition allows to
+associate the same noun phrase with several different bounding boxes,
+as well as the same bounding box with many different noun phrases.
+Following the current literature, we assume that each noun phrase is
+associated to one and only one bounding box. A single bounding box,
+however, may identify more objects in image, e.g. crowd with the
+phrase ``people''. We then define a training set of $n$ examples as $D
+= \{ (\bm{I}_i, \sent_i) \}^n_{i=1}$. Please notice that at training
+stage we do not have the set of ground truth pairs $\{ (\bm{q}^{gt},
+\bm{b}^{gt}) \}_i$, i.e., $\gamma(\bm{I}_i, \sent_i) = \{ (\bm{q}^{gt},
+\bm{b}^{gt}) \}_i$ because we operate in weakly supervised learning.
 
 \section{Two Stage vs One Stage}
 \label{sec:two-stage-vs-one-stage}
@@ -317,9 +320,10 @@ data. Typically, three types of weak supervision are identified
   supervision \cite{rohrbach2016grounding}). Here, the ground truth is
   available only for a (usually small) subset of training data, while
   the other data remain unlabeled. Given an example $(\bm{I}, \sent,
-  G)$, $G = \{ (\bm{q}^{gt}_j, \bm{b}^{gt}_j) \}^{m'}_{j=1}$ where $m'
-  \leq m$ with $m$ the number of noun phrases, in incomplete
-  supervision we may lack some ground truth in $G$.
+  G)$, $G = \{ (\bm{q}^{gt}_j, \bm{b}^{gt}_j) \}^{m'}_{j=1}$ where $\{
+  (\bm{q}^{gt}, \bm{b}^{gt}) \}_j$, $m' \leq m$ with $m$ the number of
+  noun phrases, in incomplete supervision we may lack some ground
+  truth in $G$.
   \item The second type is inexact supervision (also known as weak
   supervision), i.e. only coarse-grained ground truth are given. In
   phrase grounding inexact supervision means we have weak ground
