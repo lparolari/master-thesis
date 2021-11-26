@@ -1,12 +1,40 @@
 %!TEX root = ../dissertation.tex
 
-\begin{savequote}[75mm]
-Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin molestie tortor eu velit. Aliquam erat volutpat. Nullam ultrices, diam tempus vulputate egestas, eros pede varius leo.
-\qauthor{Quoteauthor Lastname}
-\end{savequote}
-
 \chapter{Background}
 \label{ch:background}
+
+In this section, we first introduce problem in
+Sec.~\ref{sec:visual-grounding}, distinguishing between visual
+grounding and referring expression grounding. In
+Sec.~\ref{sec:two-stage-vs-one-stage} we describe the two main
+architectural approaches to visual grounding: two-stage and one-stage
+methods, providing also a simple comparison. In
+Sec.~\ref{sec:supervision} we distinguish between different training
+protocols by grouping them according to the time of ground truth that
+can benefit on. We then introduce the NLP field of study in
+Sec.~\ref{sec:nlp-pos}, and in particular the Part Of Speech tagging
+(POS tagging) along with some State-of-the-Art tools that allows to
+detect the morphosyntactic category of a word disambiguating it based
+on context. In Sec.~\ref{sec:rnn} we introduce the theoretical
+background of an important component used in our model that allows to
+deal with (long) sequences like sentences. The
+Sec.~\ref{sec:object-detection-recognition} describe the essence of an
+object detection or recognition system and lists different successful
+systems. We discuss the representation of words (word embeddings) in
+Sec.~\ref{sec:word-embeddings}, given a little overview of the main
+State-of-the-Art tools. In Sec.~\ref{sec:similarity-measures} we
+conclude outlining two crucial similarity measures for our model.
+
+\newthought{Notation.} For an easier comprehension of the formalisms,
+we define the mathematical notation we will use through the document,
+similar to \cite{rigoni2021better}. We use lower case symbols for
+scalars and indexes, e.g. $n$; sets are represented by italics upper
+case symbols, e.g. $A$; sentences by upper case symbols, e.g. $\sent$;
+vectors by bold lower case symbols, e.g. $\bm{a}$; while bold upper
+case symbols for matrices, e.g. $\bm{A}$; the position within vector
+or tensor is identified by numeric subscripts, e.g., $\bm{A}_{ij}$
+with $i, j \in \Nset^+$. We use calligraphic symbols for domains, e.g.
+$\calQ$.
 
 \section{Visual Grounding}
 \label{sec:visual-grounding}
@@ -37,19 +65,19 @@ find the correct alignment among the nouns and the objects.
 
 More formally, given in input an image $\bm{I}$ and a sentence
 $\sent$, phrase grounding consists in learning a mapping $\gamma :
-\calI \times \calS \rightarrow 2^{\calQ \times \calB}$, where $\gamma$
-is the set $\calQ$ of noun phrases and $\calB$ the set of bounding box
-defined on $\bm{I}$. So, given an image $\bm{I}$ containing $e$
-objects identified via the set of bounding boxes $B_\calI = \{ b_i
+\calI \times \calS \rightarrow 2^{\calQ \times \calB}$, where $\calQ$
+is the set of noun phrases and $\calB$ the set of bounding box defined
+on $\bm{I}$. So, given an image $\bm{I}$ containing $e$ objects
+identified via the set of bounding boxes $B_\calI = \{ \bm{b}_i
 \}^e_{i=1}$ and a sentence $\sent$ with $m$ noun phrases from set
-$\calQ_S = \{ q_j \}^m_{j=1}$, $\gamma(\bm{I}, \sent)$ returns a set
-of couples $\{ (\bm{q}, \bm{b}) \mid \bm{q} \in \calQ_{\sent}, \bm{b}
-\in B_{\bm{I}} \}$ where each couple $(\bm{q}, \bm{b})$ associates the
-noun phrase $\bm{q}$ to the bounding box $\bm{b}$. Here, each bounding
-box is expressed by coordinates for top left and bottom right 2D
-points: $b_i \in \Rset^4$. A query $q_j \in \Nset^2$ instead is a
-vector made by two indices: the coordinates of the initial and final
-character positions in the sentence $\sent$.
+$\calQ_{\sent} = \{ \bm{q}_j \}^m_{j=1}$, $\gamma(\bm{I}, \sent)$ returns a
+set of couples $\{ (\bm{q}, \bm{b}) \mid \bm{q} \in \calQ_{\sent},
+\bm{b} \in B_{\bm{I}} \}$ where each couple $(\bm{q}, \bm{b})$
+associates the noun phrase $\bm{q}$ to the bounding box $\bm{b}$.
+Here, each bounding box is expressed by coordinates for top left and
+bottom right 2D points: $\bm{b}_i \in \Rset^4$. A query $\bm{q}_j \in
+\Nset^2$ instead is a vector made by two indices: the coordinates of
+the initial and final character positions in the sentence $\sent$.
 
 Such definition allows to associate the same noun phrase with several
 different bounding boxes, as well as the same bounding box with many
@@ -99,7 +127,7 @@ The two stage method is outlined in Fig.~\ref{fig:two-stage-approach}.
   \includegraphics[width=.8\textwidth]{figures/two-stage-approach.png}
   \caption[Two stage approach]{
     The two stage approach. The grounding system receives a set of
-    proposel extracted by a proposal generation system and, given the
+    proposed extracted by a proposal generation system and, given the
     query, it aligns entities in query with (fixed) set of proposal.
   }
   \label{fig:two-stage-approach}
@@ -110,13 +138,10 @@ problems. As reported in \cite{yang2019fast} ``the propose-and-rank
 two stage framework is flawed in at least two major ways''. First of
 all, if none of the region candidates of the first stage hits the
 ground truth region, the whole framework fails no matter how good the
-second ranking stage could perform. Note that a hit is considered
-successful if any of the proposals overlap the ground truth by more
-than fifty percent in term of intersection over union (IoU). Secondly,
-they argue that the process can be optimized by focusing on relevant
-bounding boxes which are often a small number (2-5), instead of waste
-lot of resources by computing thousands of proposal and then rank them
-down to a list.
+second ranking stage could perform. Secondly, they argue that the
+process can be optimized by focusing on relevant bounding boxes which
+are often a small number (2-5), instead of waste lot of resources by
+computing thousands of proposal and then rank them down to a list.
 
 However, the highlighted problems highly depends on chosen proposal
 extractor/object detector. Consider, for example, the problem of
@@ -125,7 +150,7 @@ image $\bm{I}$ and $\bm{b}'$ a ground truth bounding box, if we
 employee a very simple (yet extremely inefficient) proposal extractor
 such us the one who generates $\calP^*_{\bm{I}}$ the set of all
 possible bounding boxes in $\bm{I}$, then, by construction we have
-that $b' \in \bm{B}$. Hence, the more proposals we consider, the
+that $\bm{b}' \in \bm{B}$. Hence, the more proposals we consider, the
 better we overlap with $\bm{b}'$. However, this solution is bound by
 time and memory constraints, but fortunately we do not need to
 generate all possible proposals. Indeed, only a small subset of all
@@ -136,12 +161,14 @@ image and focus only on those proposals.
 Practically, we proved (Sec.~\ref{subsec:num-of-proposals}) that with
 $100$ bounding boxes and Faster-R CNN with Bottom-Up Attention
 \cite{sharma2020understanding} as object detector, we obtain a
-coverage which is greater than 90\% on both two major dataset in the
-field of study: Flickr30k and ReferIt.
+coverage which is greater than 90\% on both Flickr30k and ReferIt, two
+of the major datasets for visual grounding. In this case, a hit is
+considered successful when the IoU between proposal and ground truth
+is at least 50\%.
 
 The second problem instead is partially solvable because the system,
 in order to perform its classification task, needs to consider all the
-extracted proposal. However, the first stage can be precalculated and
+extracted proposals. However, the first stage can be precalculated and
 cached for the second stage, drastically reducing the required
 resources at training time. At inference time, instead, we need to run
 both the object detector and the model without the possibility to
@@ -174,13 +201,14 @@ computing resources \cite{rigoni2021better}.
 \end{figure}
 
 \section{Fully/Weakly/Self/Un-Supervised Settings}
+\label{sec:supervision}
 
 Supervised classification and regression are two example of tasks that
 in machine learning have archived great success. This happens because
 machine learning models learn from ground truth annotation, however,
 it is noteworthy that in many other tasks, like visual grounding, it
 is difficult to get strong supervision due to the high cost of the
-data-labeling process.
+data-labeling process \cite{zhou2018brief}.
 
 In visual grounding, large amount of annotations are required. Think
 at the example in Fig.~\ref{fig:dog-playing-with-ball} along with the
@@ -206,19 +234,20 @@ the others) that successfully collected such data and are became
 State-of-the-Art datasets in phrase grounding.
 
 It's straightforward to see that this approach cannot scale: larger
-sets of annotations are exponentially difficult and expansive to
+sets of annotations are exponentially difficult and expensive to
 build. For this reason, researches usually redefine the phrase
 grounding task under harder settings where less data are involved.
 This is the case of weakly-supervised, or even, unsupervised visual
-grounding. The Fig.~\ref{fig:full-weak-no-supervision} shows the
-differences between the three supervised settings. In the first case,
-a key information is available: the link between the query and the
-correct box to ground. Under weakly supervised scenario instead, such
-annotations are not available: we only know whether a query is linked
-to an image, involving all its bounding box but not which is the
-correct one. Under the unsupervised settings instead we do not have
-access to ground truth, we have a corpus of text and a set of images
-without link between them.
+grounding. The Fig.~\ref{fig:full-weak-no-supervision} (from
+\cite{wang2019phrase}) shows the differences between the three
+supervised settings. In the first case, a key information is
+available: the link between the query and the correct box to ground.
+Under weakly supervised scenario instead, such annotations are not
+available: we only know whether a query is linked to an image,
+involving all its bounding box but not which is the correct one. Under
+the unsupervised settings instead we do not have access to ground
+truth, we have a corpus of text and a set of images without link
+between them.
 
 \begin{figure}[H]
   \centering
@@ -278,29 +307,28 @@ Projected in phrase grounding this means knowing the map $\gamma :
 ground truth bounding box $\bm{b}_i \in \calB$ with its query
 $\bm{q}_j \in \calQ$.
 
-Another form of supervision is the weak supervision. Broadly speaking,
-weakly supervised learning is an umbrella term covering a variety of
+In weakly supervised learning instead we can identify a variety of
 architectures, all joint by the lack, degradation, or poorness of
 data. Typically, three types of weak supervision are identified
-\cite{zhou2018brief}.
+\cite{zhou2018brief}:
 
 \begin{itemize}
   \item The first is incomplete supervision (also known as semi
-supervision \cite{rohrbach2016grounding}). Here, the ground truth is
-available only for a (usually small) subset of training data, while
-the other data remain unlabeled. Given an example $(\bm{I}, S, G)$, $G
-= \{ (\bm{q}^{gt}_j, \bm{b}^{gt}_j) \}^{m'}_{j=1}$ where $m' \leq m$
-with $m$ the number of noun phrases, in incomplete supervision we may
-lack some ground truth in $G$.
+  supervision \cite{rohrbach2016grounding}). Here, the ground truth is
+  available only for a (usually small) subset of training data, while
+  the other data remain unlabeled. Given an example $(\bm{I}, \sent,
+  G)$, $G = \{ (\bm{q}^{gt}_j, \bm{b}^{gt}_j) \}^{m'}_{j=1}$ where $m'
+  \leq m$ with $m$ the number of noun phrases, in incomplete
+  supervision we may lack some ground truth in $G$.
   \item The second type is inexact supervision (also known as weak
-supervision), i.e. only coarse-grained ground truth are given. In
-phrase grounding inexact supervision means we have weak ground truth,
-that is, we are given the pair $(\bm{I}, S)$ where we know only the
-link between image and sentence but not the link between bounding
-boxes and queries.
+  supervision), i.e. only coarse-grained ground truth are given. In
+  phrase grounding inexact supervision means we have weak ground
+  truth, that is, we are given the pair $(\bm{I}, \sent)$ where we
+  know only the link between image and sentence but not the link
+  between bounding boxes and queries.
   \item The third type is inaccurate supervision, i.e. the given
-labels are not always ground truth. In other words, some label
-information may suffer from errors.
+  labels are not always ground truth. In other words, some label
+  information may suffer from errors.
 \end{itemize}
 
 Inaccurate supervision is usually mixed with other settings because
@@ -308,15 +336,16 @@ the labelling procedure is carried out by human annotators which can
 introduce errors.
 
 \section{NLP and Part of Speech Tagging}
+\label{sec:nlp-pos}
 
-Part of Speech (POS) Tagging is a very basic and well known Natural
+Part of Speech (POS) tagging is a very basic and well known Natural
 Language Processing (NLP) problem which consists of assigning to each
 word of a text the proper morphosyntactic tag in its context of
 appearance \cite{marquez2000machine}. It found applications in a wide
-variety of of NLP tasks: as a preprocessing step to syntactic parsing,
-in information extraction and retrieval (e.g. document classification
-in internet searchers), text to speech systems, corpus linguistics,
-etc. Due to intrinsic properties of languages, morphosyntactic tags
+variety of NLP tasks: as a preprocessing step to syntactic parsing, in
+information extraction and retrieval (e.g. document classification in
+internet searchers), text to speech systems and corpus linguistics.
+Due to intrinsic properties of languages, morphosyntactic tags
 assigned to words highly depends on context in which words appear,
 that is, in most cases words can be completely disambiguated  
 by taking into account an adequate context. Furthermore, there are
@@ -333,14 +362,15 @@ Greene \etal{} in 1971, used for an initial tagging of the Brown
 Corpus (BC), a lot of effort has been devoted to improving the quality
 of the tagging process in terms of accuracy and efficiency. The
 variety of existing taggers boils down to three main categories
-according to the kind of knowledge they use. 
+according to the kind of knowledge they use \cite{marquez2000machine}. 
 
 Systems that hardcode a set of rules (or constraints) written by
 linguists belongs to the linguistic approach. The number of rules used
-by such systems may vary from few hundreds to several thousand, and
+by such systems may vary from few hundreds to several thousands, and
 their design usually requires years of labor. Moreover, they are hard
 to scale to different set of data. For these reason, such systems did
-not have a great diffusion and led to the development of other families that involves limited amount of human effort.
+not have a great diffusion and led to the development of other
+families that involves limited amount of human effort.
 
 One of the most explored approach is the statistical family.
 Basically, it disambiguates words by applying a statistical model
@@ -351,7 +381,7 @@ model, where the probability of sequence of length $n$ is estimated
 from its occurrences in the training corpus. Usual models involved in
 POS tagging instance $n$ to 2 or 3, i.e., possible sequences of two or
 three consecutive tags (bi-grams or tri-grams). The tagging of new
-example is done by estimating the tag sequence with high probability
+examples is done by estimating the tag sequence with high probability
 based on the statistical model. This is roughly the technique followed
 by the widespread Hidden Markov Model taggers. Based on similar idea,
 the Baum-Welch re-estimation algorithm tries to reduce the amount of
@@ -429,10 +459,10 @@ tokenization through to coreference resolution. The motivations under
 its development are:
 \begin{itemize}
   \item To be able to quickly and painlessly get linguistic
-  annotations for a text.
-  \item To hide variations across components behind a common API.
+  annotations for a text;
+  \item To hide variations across components behind a common API;
   \item To have a minimal conceptual footprint, so the system is easy
-  to learn.
+  to learn;
   \item To provide a lightweight framework, using plain Java objects
   (rather than something of heavier weight, such as XML or UIMA's
   Common Analysis System (CAS) objects).
@@ -476,20 +506,20 @@ processing toolkit supporting many human languages. Its core features are:
   pipeline which takes raw text as input, and produces annotations
   including tokenization, multi-word token expansion, lemmatization,
   part-of-speech and morphological feature tagging, dependency
-  parsing, and named entity recognition.
+  parsing, and named entity recognition;
   \item Multilinguality. Its architectural design is language-agnostic
   and data-driven, which allows us to release models supporting 66
   languages, by training the pipeline on the Universal Dependencies
-  (UD) treebanks and other multilingual corpora
+  (UD) treebanks and other multilingual corpora;
   \item State-of-the-art performance. They evaluate Stanza on a total
   of 112 datasets, and find its neural pipeline adapts well to text of
   different genres, achieving state-of-the-art or competitive
-  performance at each step of the pipeline-
+  performance at each step of the pipeline.
 \end{itemize}
 Additionally, Stanza features a Python interface to the widely used
 Java CoreNLP package, allowing access to additional tools such as
 coreference resolution and relation extraction. It is fully open
-source and mdeks available pretrained models for all supported
+source and makes available pretrained models for all supported
 languages and datasets available for public download.
 
 \section{Recurrent Neural Network}
@@ -503,7 +533,7 @@ the concept of ``memory'' that helps them store the states or
 information of previous inputs to generate the next output of the
 sequence by sharing weights.
 
-An ANN with recursion can be easily modeled by the Eq.\ref{eq:rnn}:
+An ANN with recursion can be easily modeled by the Eq.~\ref{eq:rnn}:
 \begin{equation}
   \label{eq:rnn}
   \bm{h}^{(t)} = f ( \bm{h}^{(t - 1)}, \bm{x}^{(t)} ; \bm{\theta} ),
@@ -582,12 +612,10 @@ available.
 Being able to work with long term dependencies is crucial for many
 applications: think, for example, to a dialogue system which should
 remember previous parts of the speech on order to keep on with the
-dialogue.
-
-Unfortunately, RNNs and long term dependencies yield a mathematical
-challenge, namely gradient vanishing or gradient exploding. I.
-Goodfellow \etal{} in \cite{goodfellow2016deep}, highlight this
-problem:
+dialogue. Unfortunately, RNNs and long term dependencies yield a
+mathematical challenge, namely gradient vanishing or gradient
+exploding. I. Goodfellow \etal{} in \cite{goodfellow2016deep},
+highlight this problem:
 
 \begin{quote}
   Even if we assume that the parameters are such that the recurrent
@@ -598,15 +626,14 @@ problem:
   short-term ones.
 \end{quote}
 
-One way to tackle this problem is to word at with multiple resolution
-on time. Long-term dependencies mey be handled designing a model that
-operates in some parts on fine-grained time scales and deals with
-small details, while other parts works at coarse time scales. In this
-settings, information from the distant past can flow more efficiently
-to the present.
-
-In literature, many ways are available for working both fine and
-coarse time scales. These include the addition of 
+One way to tackle this problem is to operate at with multiple
+resolutions wrt time. Long-term dependencies may be handled designing
+a model that operates in some parts on fine-grained time scales and
+deals with small details, while other parts works at coarse time
+scales. In this settings, information from the distant past can flow
+more efficiently to the present. In literature, many ways are
+available for working both fine and coarse time scales. These include
+the addition of 
 \begin{enumerate*}[label=(\roman*)]
   \item special connections with the ability to skip steps in time, 
   \item new units, namely ``leaky units'', that integrate signals with
@@ -619,22 +646,19 @@ Like leaky units, gated RNNs are based on the idea of creating paths
 through time that have derivatives that neither vanish nor explode.
 For leaky units connection weights remain fixed for each time step,
 while Gated RNNs generalize this to connection weights and allow them
-to change over time.
-
-The architecture of leaky units enables the accumulation of
-information (such as evidence for a particular feature or category)
-over a long duration. However, once that information has been used, it
-might be useful for the neural network to forget the old state. When
-to forget the old state can be automatically learned by the network.
-
-LSTM basically integrates the idea of self-loops to produce paths
-where the gradient can flow for long durations with, the addition to
-control weight on this self-loop conditioned on the context, rather
-than fixed. Moreover, the self-loop gate is controlled by another
-hidden unit, thus, adding the ability to the network to change the
-time scale dynamically. Fig.~\ref{fig:lstm} illustrate the LSTM block
-diagram. In an LSTM cell, the self-loop controls the flow of
-information from input to output through three key components: a
+to change over time. The architecture of leaky units enables the
+accumulation of information (such as evidence for a particular feature
+or category) over a long duration. However, once that information has
+been used, it might be useful for the neural network to forget the old
+state. When to forget the old state can be automatically learned by
+the network. LSTM basically integrates the idea of self-loops to
+produce paths where the gradient can flow for long durations with, the
+addition to control weight on this self-loop conditioned on the
+context, rather than fixed. Moreover, the self-loop gate is controlled
+by another hidden unit, thus, adding the ability to the network to
+change the time scale dynamically. Fig.~\ref{fig:lstm} illustrate the
+LSTM block diagram. In an LSTM cell, the self-loop controls the flow
+of information from input to output through three key components: a
 forget gate, an external input gate and an output gate.
 
 \begin{figure}
@@ -670,10 +694,11 @@ The primary essence of those systems can be broken down into two
 parts: to locate objects in a scene such us by drawing a bounding box
 around the object (object detection) and later to classify the objects
 based on the classes it was trained on (object recognition). OD and OR
-are Often used together and for this reason the name of two tasks is
-usually used interchangeably. As for visual grounding
+are often used together and for this reason the name of two tasks
+usually collapse in one of the two depending on the relevance in the
+system. As for visual grounding
 (Sec.~\ref{sec:two-stage-vs-one-stage}), we can group the
-state-of-the-art detection systems in two main approaches: one stage
+State-of-the-Art detection systems in two main approaches: one stage
 methods (YOLO -- You Only Look Once \cite{redmon2016you}, SSD --
 Single Shot Detection \cite{liu2016ssd}) and two stage methods (R-CNN
 \cite{girshick2014rich}, Fast R-CNN \cite{girshick2015fast}, Faster
@@ -740,7 +765,7 @@ region.
 
 Unlike R-CNN and Fast R-CNN, Faster R-CNN \cite{ren2015faster} does
 not use Selective Search which is a slow process. Instead, it allows
-the network to learn the region proposals throught a separate network,
+the network to learn the region proposals through a separate network,
 able to predict the region proposals. The predicted proposals are then
 pooled into larger squares using the RoI pooling layer which is then
 finally used to classify the image.
@@ -764,7 +789,7 @@ representation of words are learned for a predefined fixed sized
 vocabulary from a corpus of text and the intrinsic quality of such a
 set of word is evaluated by the distance or angle between pairs of
 word vectors representations or by their various dimensions of
-difference\cite{mikolov2013linguistic}. In light of this we can
+difference \cite{mikolov2013linguistic}. In light of this we can
 formulate the definition for word embedding: 
 
 \begin{quote}
@@ -781,6 +806,9 @@ indicating a sub-optimal vector space structure. Methods like
 skip-gram may do better on the analogy task, but suffer the lack of
 statistical information since they train on separate local context
 windows instead of on global co-occurrence counts.
+
+In the following Sections we describe some famous and successful word
+embeddings.
 
 \subsection{Word2Vec}
 
@@ -860,6 +888,7 @@ pre-computed static word vector (similar to Word2Vec or GloVe), but
 this breaks the advantage of generating context dependent embeddings.
 
 \section{Similarity Measures}
+\label{sec:similarity-measures}
 
 \subsection{Intersection over Union (IoU)}
 \label{subsec:iou}
