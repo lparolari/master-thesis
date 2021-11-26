@@ -5,86 +5,92 @@
 In this work we focused on the problem of phrase grounding with weak
 supervision. The phrase grounding task is relevant for many other
 import tasks, as outlined in Ch.~\ref{ch:intro}, such us visual
-question answering, image retrieval, robotic navigation and more. The
+question answering, image retrieval and robotic navigation. The
 complexity of phrase grounding problem with weak supervision is
 partially due to its multimodal nature that involves textual and
-visual features, which, in turn, brings extra challenges as disccused
-in Ch.~\ref{ch:background}, and partially because the missing of
-ground truth which makes unfeasible the learning throught standard
-approaches. Being able to solve the pharse grounding problem under
-weakly supervised settings is extremely important both because we can
-overcome the bottleneck in collecting new and larger dataset which can
-improve even more grounding performance and it would constitute a
-strong baseline for fully supervised settings. At the light of this,
-we discussed in Ch.~\ref{ch:model} how to solve the problem thanks to
-free information offered by the object detector: a probability
-distribution over given set of labels for bounding box proposals. We
-integrated this form of prior knowledge in our model as a similarity
-score between the concept in query and the categorized content of a
-proposal by empowering the score of query related proposals while
-downscale other proposals' score. Finally, the model leanrs to
-maximize the multumodal similarity between query and proposals
-belonging to positive example, i.e., sentence with its own image,
-while minimizing the multimodal similarity on negative examples. We
-shown in Ch.~\ref{ch:experiments} that our approach is very promising
-and outperforms all previous approach except the excellent work by Q.
-Wang \etal{} \cite{wang2020maf}. In Sec.~\ref{TODO} we motivated our
-deficiency wrt their work. \todo{make the sec.}
+visual features, which, in turn, brings extra challenges related to
+components discussed in Ch.~\ref{ch:background}, and partially because
+the missing of ground truth which makes unfeasible the learning
+through standard approaches. Being able to solve the phrase grounding
+problem under weakly supervised settings is extremely important both
+because we can overcome the bottleneck in collecting new and larger
+dataset which can improve even more grounding performance and it would
+constitute a strong baseline for fully supervised settings. At the
+light of this, we discussed in Ch.~\ref{ch:model} how to solve the
+problem thanks to free information offered by the object detector: a
+probability distribution over given set of labels for bounding box
+proposals. We integrated this form of prior knowledge in our model as
+a similarity score between the concept in query and the categorized
+content of a proposal by empowering the score of query related
+proposals while downscale other proposals' score. Finally, the model
+learns to maximize the multimodal similarity between query and
+proposals belonging to positive example, i.e., sentence with its own
+image, while minimizing the multimodal similarity on negative
+examples. We shown in Ch.~\ref{ch:experiments} that our approach is
+very promising and outperforms all previous approach except the
+excellent work by Q. Wang \etal{} \cite{wang2020maf}. In
+Sec.~\ref{sec:quantitative-results} we motivated our deficiency wrt
+their work. \todo{make the sec.}
+
+As a take home message I would say that research is also made of
+failures: sometimes what seems a good idea may reveals inefficient or
+erroneous, the fun fact is that you cannot know it before trying. But
+science is made also of failures, and we must take out the best from
+them.
 
 \section{Encountered Problems}
 
-During this work we encountered many problems, both conceptual and
-thecnical. Not surprisingly, the trickies one was conceptual: we
-thought we could shift from weak supervision to unsupervision by means
-of concept similarity. We had just found out the (super)power of
-concept similarity, but, of course, not all that glitters is gold.
-More details are reported in Appendix~\ref{TODO}\todo{MAKE APPENDIX}.
-
-Another problem we encountered is a flaw in phrase grounding field of
-study: we found some publication to be uncomplete and not professional
-as other works on mainstream tasks. In particular, we noticed the
-inconsistency between the naming, task and problem definition.
-Moreover, many works do not allow the reproduction of results by
-omitting important implementation details: one a few works made their
-implementation available online. Furthermore, some works perform
-unfair comparison by mixing up different backbones for object detector
-or different word embeddings, or, even worse, they ignore works with
-good results. For the sake of science, we hope that this situation
-will be resolved as soon as possible.
+A problem we encountered during our researches is a flaw in phrase
+grounding field of study: we found some publications to be incomplete
+and not professional as other works on mainstream tasks. In
+particular, we noticed the inconsistency between the naming, task and
+problem definition. Moreover, many works do not allow the reproduction
+of results by omitting important implementation details: a few works
+made their implementation available online. Furthermore, some works
+perform unfair comparison by mixing up different backbones for object
+detector or different word embeddings, or, even worse, they ignore
+last published results. For the sake of science, we hope that this
+situation will be resolved as soon as possible.
 
 Many other problems instead were technical. As already pointed out,
 phrase grounding requires a strong knowledge of many components: from
 object detectors to word embeddings, from LSTM to similarity measures.
 Hence, also a solid technical skill is required to make the components
 interact each others, develop a maintainable codebase and implement
-the model with fewer bugs possibile. For this reason we devoted a good
+the model with fewest bugs possible. For this reason we devoted a good
 amount of effort in developing high-quality code, making use of main
 guidelines and principles from software engineering. Indeed, our model
-is covered by $137$ unit tests and $8$ integration tests.
+is covered by more than $130$ unit tests and $8$ integration tests.
 
 \section{Future Development}
 
 The multimodal fusion component component we adopted is a simple
-concatenation of features, we did not get further as it is out of
-scope for our work, but there are many good alternatives. For example
-\cite{datta2019align2ground} considers an order-invariant, deep
-encoder for feature fusion. In some other cases attention mechanism is
-used \todo{CITE}.
+concatenation of features, and there is large margin of improvement.
+For example \cite{datta2019align2ground} considers an encoder-decoder
+architecture for features fusion, other works employ instead an
+attention mechanism. Carefully choosing such tool may lead to better
+performance. On the same way, also for text we work with relatively
+simple and base tools. For word embeddings a good, recent alternative
+wrt what we used (Word2Vec) is BERT. For the encoding of sentences we
+used an RNN with LSTM cells, however, recent transformer architectures
+show promising performance in this task an may be successfully
+integrated also in a grounding system.
 
-There is a large margin of improvement for the multimodal similarities
-$\fmmsim$ and $\fmmsim'$ defined in Sec.~\ref{sec:loss}. In $\fmmsim$
-the similarity image-query is defined by the maximum score over
-proposals. This definition fly over important information and only
-consider the maxium. We could instead define a similarity that takes
-into account all proposals score in a weighted manner. Also $\fmmsim'$
-is very simple: in this case the similarity image-query is defined as
-the score of the maximum proposal fixed by the positive query over
-negative queries. Also in this case maximum could be a problem and we
-may consider also neighbors.
+There is also a large margin of improvement in our loss. First of all,
+to consider more negative examples as done in \cite{wang2020maf} may
+reduce the time needed for assimilating a representation and to learn
+robust and more discriminative features. Moreover, the multimodal
+similarity function $\fmmsim$, defined in Sec.~\ref{sec:loss}, is
+defined by the maximum score over proposals. An improvement that may
+lead to interesting results is to consider not only the proposal with
+maximum score per query, but instead to take into account all
+proposals score in a weighted manner.
 
 Another interesting deepening regards attributes. Some object
-detectors also return a probability distribution on a set of
-attributes, highlighting extra information over proposals. A good
-improvement would be to join the information from adjective in queries
-with attributes over proposals and up or down weight scores based on
-this attribute similarity measure.
+detectors (as the one we adopted, see Sec.~\ref{sec:impl-details})
+also return a probability distribution on a set of attributes,
+highlighting extra information over proposals. A good improvement
+would be to join the information from adjective in queries with
+attributes over proposals and up or down weight scores based on this
+attribute similarity measure. Such information may be precious to
+discriminate between similar proposals.
