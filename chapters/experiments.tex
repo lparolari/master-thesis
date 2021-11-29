@@ -644,16 +644,104 @@ We performed a dimensionality reduction through a MLP with $0$ hidden
 layers among $\{ 0, 1, 2 \}$, selecting the size of output which is
 equal to the size of code $c = 1000$ among $\{ 500, 1000, 2053 \}$.
 
-\section{Qualitative Results}
+\section{Results}
+\label{sec:results}
 
-TODO
+The Tab.~\ref{tab:results-flickr30k} reports results on Flickr30K
+Entities dataset with our approach and other State-of-the-Art works,
+sorted in a grossly temporal way. Our comparison metric is accuracy,
+but we report also pointing game accuracy because some works use only
+the latter. 
 
-\subsection{Flickr30K Entities}
+\begin{table}
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    Approach & Acc. (\%) & P. Acc. (\%) \\
+    \midrule
+    Top-Down Visual Saliency \cite{ramanishka2017top}        & -      & $50.1$ \\
+    KAC Net \cite{chen2018knowledge}                         & $37.7$ & -      \\
+    Semantic Self-Supervision \cite{javed2018learning}       & -      & $49.1$ \\
+    Anchored Transformer \cite{zhao2018weakly}               & $33.1$ & -      \\
+    Multi-level Multimodal \cite{akbari2019multi}            & -      & $57.9$ \\
+    Align2Ground \cite{datta2019align2ground}                & $11.5$ & $71.0$ \\
+    Multimodal Alignment Framework \cite{wang2020maf}        & $\bm{61.4}$ & -    \\
+    Contrastive Learning \cite{gupta2020contrastive}         & -      & $74.9$ \\
+    Grounding By Separation \cite{arbelle2021detector}       & -      & $70.5$ \\
+    \midrule
+    Ours                                                     & $50.2$ & $82.3$ \\
+    \bottomrule
+  \end{tabular}
+  \caption[Results on Flickr30K Entities test set]{Results on
+  Flickr30K Entities test set. \textit{Acc.} is the standard accuracy
+  metric in percentage, while \textit{P. Acc.} is the pointing game
+  accuracy metric.}
+  \label{tab:results-flickr30k}
+\end{table}
 
-\subsection{ReferIt}
+As results highlights, we outperformed all previous works except
+Multimodal Alignment Framework (MAF) \cite{wang2020maf}. MAF is work
+from 2020 which currently overcome new works like
+\cite{arbelle2021detector}, published in 2021. Their fundamental idea
+is closely related to our idea which, in turn, is inspired by
+\cite{wang2019phrase}: we must leverage the similarity between
+proposal label and the phrase, i.e., the concept similarity. Their
+work (described in Sec.~\ref{sec:related-grounding}), even if
+implements this common idea, shows some important differences. In the
+first place, given an image, they merge visual features with class and
+attributes labels features by a linear combination. Respect to our
+work, this is a key difference: they merge the proposal label
+information directly with visual features, while we treat such
+knowledge as a prior (concept similarity,
+Sec.~\ref{subsec:similarity-branch}) and we apply it after model
+predictions. Secondly, they use the dot product as similarity measure
+between modalities leading to values between in $[-\inf, +\inf]$
+instead of cosine similarity with values in $[-1, +1]$. Last but
+not least, they build a modulated representation of phrases using
+visual features, and hence, using information on the proposal class.
+Basically, they represent each noun phrase as an weighted average of
+word embeddings where weights are the best multimodal similarity, i.e.
+similarity between visual features and phrases embeddings, among
+proposals, for each word, for each noun phrase. 
 
+As they show, without training they compute the weights by using only
+proposal label features. Such move allows them to reach $56.0\%$
+accuracy on Flicker30K Entities, thus, showing a better strategy to
+employ concept similarity wrt our work. Training enables the
+introduction of visual features which lead to higher performances as
+their experiments show: $61.4\%$ accuracy on on Flicker30K Entities.
 
-\section{Quantitative Results}
-\label{sec:quantitative-results}
+The Tab.~\ref{TODO} shows results on ReferIt dataset. Here, some works
+are missing wrt Tab.~\ref{tab:results-flickr30k}, because ReferIt, as
+mentioned in Sec.~\ref{subsec:referit}, is a challenging dataset
+containing hard sentences, usually involving spacial relations. In
+this case, our approach shows comparable performance wrt recent works.
 
-TODO
+\begin{table}
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    Approach & Acc. (\%) & P. Acc. (\%) \\
+    \midrule
+    KAC Net \cite{chen2018knowledge}                         & 15.8 & -    \\
+    Semantic Self-Supervision \cite{javed2018learning}       & -    & 40.0 \\
+    Multi-level Multimodal \cite{akbari2019multi}            & -    & 48.4 \\
+    Localization w/o Training Examples \cite{wang2019phrase} & 26.5 & -    \\
+    Grounding By Separation \cite{arbelle2021detector}       & -    & 59.4 \\
+    \midrule
+    Ours                                                     & $\bm{35.2}$ & $59.2$ \\
+    \bottomrule
+  \end{tabular}
+  \caption[Results on ReferIt test set]{Results on
+  ReferIt test set. \textit{Acc.} is the standard accuracy
+  metric in percentage, while \textit{P. Acc.} is the pointing game
+  accuracy metric.}
+  \label{tab:results-referit}
+\end{table}
+
+A noteworthy addendum is the comparison with the unsupervised approach
+in \cite{wang2019phrase}. On Flickr30K Entities we obtain comparable
+performance, while on ReferIt our model shows a significative gain in
+accuracy. This proves what noted in Sec.~\ref{sec:related-grounding},
+i.e. such technique is difficult to scale to new data, thus, there is
+margin of improvement.
