@@ -11,33 +11,30 @@ datasets used for the experimental assessment. For both we discuss how
 they were collected, what are their purposes, some statistics and we
 highlight the data representation.
 
-\subsection{Flickr30K}
+\subsection{Flickr30K Entities}
 \label{subsec:flickr30k}
 
 Flickr30K Entities \cite{plummer2015flickr30k} is a dataset built on
-top of Flickr30K \cite{young2014image}. It is usually referred as
-Flickr30K or simply as Flickr and, compared to the original Flickr30K
-dataset, it focuses on the task of grounding textual mentions of
-entities in image by augmenting data with extra annotations.
+top of Flickr30K \cite{young2014image}, where the main focus is on the
+task of grounding textual mentions of entities in image with augmented
+data.
 
 Flickr30K Entities consists in highly structured annotations collected
-through crowdsourcing with different complexity from image to image,
-because the variance in the number of objects per image. Annotations
-are made of mentions of the same entities between different captions,
-and bounding boxes that localized those entities in the image.
-Flickr30K Entities is developed under a strict pipeline of simple and
-atomic tasks to tackle the ambiguity in identifying whether two
-mentions refer to the same entity or how many boxes (if any) each
-entity requires. Moreover, such task are carried out by humans, so
-there is also the problem of unreliability of crowdsourced judgments
-problems. For this reason, the pipeline is structure into two main
-stages: coreference resolution and bounding box annotation. The goals
-of the pipeline are to reduce redundancy in annotations and save
-box-drawing effort while keeping the process valuable through
-coreference annotation, which convoy this property intrinsically. In
-Fig.~\ref{fig:flickr30k-example} \cite{plummer2015flickr30k}, are
-shown the interfaces used to gather annotations with respect to tasks
-described next.
+through crowdsourcing with different number of objects per image, and
+thus, different complexity per example. Annotations are made of
+mentions of the same entities between different captions, and bounding
+boxes that localized those entities in the image. Flickr30K Entities
+is developed under a strict pipeline of simple and atomic tasks to
+tackle the ambiguity in identifying whether two mentions refer to the
+same entity or how many boxes (if any) each entity requires. Moreover,
+such task are carried out by humans, so there is also the problem of
+unreliability of crowdsourced judgments problems. For this reason, the
+pipeline is structure into two main stages: coreference resolution and
+bounding box annotation. The goals of the pipeline are to reduce
+redundancy in annotations and save box-drawing effort while keeping
+the process valuable. In Fig.~\ref{fig:flickr30k-example}
+\cite{plummer2015flickr30k}, are shown the interfaces used to gather
+annotations with respect to tasks described next.
 
 \begin{figure}
   \centering
@@ -83,7 +80,7 @@ described next.
 
 The coreference resolution task is solved by first chunking
 information given in Flickr captions to identify potential entity
-mentions. Each chunk, i.e., noun phrase (NP), is a potential entity
+mentions. Each chunk, i.e., noun phrase, is a potential entity
 mention. For example, the phrase ``A man in an orange hat'' is chunked
 in two noun phrases, namely ``A man'' and ``an orange hat'', which are
 the two mentions. Given $M$ a document containing noun phrases
@@ -95,11 +92,10 @@ which is the cost of all pairwise links. But since $M$ usually
 contains multiple mentions that refer to the same set of entities, the
 number of coreference chains is bounded by a number much smaller than
 $|M|$, on average. Moreover, the bound is lowered by making two extra
-assumption: first, mentions from the same captions cannot be
-coreferent, and second, mention belonging to different categories
-cannot be coreferent. They define eight coarse-grained types, such us:
-people, body parts, animals, clothing/color, instruments, vehicles,
-scene, and other.
+assumption: first, mentions from the same captions cannot or belonging
+to different categories be coreferent. Categories assigned to each
+mention are coarse-grained types, such us: people, body parts,
+animals, clothing/color, instruments, vehicles, scene, and other.
 
 Bounding box annotation is carried out with a workflow composed by
 four tasks administered to workers, namely: box requirement, box
@@ -311,11 +307,7 @@ bounding boxes, we merge the boxes and use their union region as its
 ground truth. On the contrary, if a noun phrase has no associated
 bounding box, we remove it from the dataset.
 
-We use the standard split for training, validation, and test set as
-defined in  \cite{plummer2015flickr30k}, consisting of 30K, 1K,
-and 1K images, respectively.
-
-\subsubsection{Data Interface}
+\subsection{Data Interface}
 \label{subsec:data-interface}
 
 The data interface is designed to be as flexible and complete as
@@ -441,7 +433,7 @@ aimed to detect the distribution of proposals per image. We discovered
 that for almost every example the object detector can detect maximum
 number of proposal, except to some degenerative images. For example,
 the object detector extracted less than $100$ proposals for XX images
-over XXXX in Flickr30k and YY over YY in ReferIt.
+over XXXX in Flickr30k and $120$ over $19995$ in ReferIt.
 
 What remains to prove is whether we can reach a good upperbound
 accuracy given $100$ proposals wrt the ground truth bounding box. We
@@ -467,28 +459,34 @@ The Tab.~\ref{tab:bb-coverage} summarizes the outcome.
      $20$ & $74.5$ & $70.5$ \\
      $10$ & $53.9$ & $51.0$ \\\hline
   \end{tabular}
-  \caption[TODO]{TODO}
+  \caption[Upperbound accuracy per number of proposals on Flickr30K Entities and ReferIt]{Upperbound accuracy per number of proposals on Flickr30K Entities and ReferIt.}
   \label{tab:bb-coverage}
 \end{table}
 
 \subsection{Upperbound Accuracy Removing Background Class}
 
-As stated in Sec.~\cite{sec:impl-details} we remove proposal where
-predicted class is ``background''. ``Background'' is a special class
-and represents the absence of a classification. In many supervised
-works the removal of such potential candidate proposals may impact on
-the performance, because every proposal should potentially be the one
-that maximize the overlapping with the ground truth and a supervised
-model can learn to identify it. Instead, under weakly supervised
-settings, this kind of proposals are a source of noise. How can the
-model discriminate a positive or negative example based on the
-similarity of the phrase with the proposal class label whether the
-label is ``background''?
+The implementation of object detector we are using
+\cite{anderson2018bottom} returns a distribution of probability over a
+set of $1600 + 1$ labels per proposal, identifying the semantic
+content of the box through a word. The extra label is the background
+class and it is used to represent the absence of classification.
 
-To remove this kind of boxes, as mentioned above, may reduce the
-maximum achievable accuracy. We analyzed this phenomenon and we
-surprisingly noticed that even removing on average one proposal over
-two, the upperbound accuracy remains comparable to the version without
+Proposals tagged with background class are very common. For example,
+by setting $k = 100$, we got $47.6$ and $51.1$\% background tagged
+proposals on Flickr30K Entities and ReferIt, respectively. We argue
+that in weakly supervised settings this may lead to noise, so as a
+preprocessing step we remove proposals labeled with background.
+
+Please note that setting a lower $k$ does not means keeping $k = 100$
+and removing proposals labeled with background class. In the first
+case, we keep a number $k$ of proposals based on the object detector's
+confidence, while in the second case we retrieve $k$ proposal and then
+we remove only the ones with background label.
+
+However, candidates removal may lower box coverage, and hence, maximum
+achievable accuracy. We analyzed this phenomenon and we surprisingly
+noticed that even removing nearly one proposal over two, the
+upperbound accuracy remains comparable to the version without
 background removal. In particular, we obtained a relative loss of
 $4.1$ and $6.6$\% on average and an absolute loss of $3.7$ and $5.8$\%
 on average, respectively for Flickr30k and ReferIt, wrt to upperbound
@@ -514,34 +512,34 @@ in noise removal without any relevant drop in performance.
        $20$ & $73.6$ & $10.8$ & $68.9$ & $15.0$ \\
        $10$ & $53.9$ &  $1.2$ & $50.8$ &  $3.8$ \\\hline
     \end{tabular}
-  \caption[TODO]{TODO}
+  \caption[Achievable upperbound accuracy by removing background labeled proposals on Flickr30K Entities and ReferIt]{Achievable upperbound accuracy by removing background labeled proposals on Flickr30K Entities and ReferIt.}
   \label{tab:bb-coverage-no-background}
 \end{table}
 
 \subsection{Distribution of Class Labels on Proposals}
 
-For a good comprehension of object detector information, we study the
-distribution of number of examples per label. We performed the analysis
-on both dataset but for presentation purposes, here we show
-qualitative data from Flickr30k; ReferIt shows comparable insights.
-The distribution, shown in
-Fig.~\ref{fig:flickr30k-label-distribution}, is a long-tail
+For a good comprehension of object detector information, we studied
+the distribution of number of examples per label. We performed the
+analysis on both dataset but for presentation purposes, here we show
+qualitative data from Flickr30k Entities; ReferIt shows comparable
+insights. The distribution, shown in
+Fig.~\ref{fig:flickr30k-label-distribution-top10}, is a long-tail
 distribution. This means that there are few labels with a very large
 population, while many other labels count little number of examples.
-We truncate the plot to top-100 labels with larger population and the
-phenomenon is clearly visible. In
+We truncate the plot to top-$100$ labels (among $1600$) with larger
+population and the phenomenon is clearly visible. In
 Tab.~\ref{tab:flickr30k-label-distribution-nobg-top10} we report the
-top-10 labels per number of examples. Except to the evident gender gap
-effect in data, we show that there is a great discrepancy in terms of
-number of examples for labels like \textit{man}, \textit{woman},
-\textit{people} and the others. Also, the special \textit{background}
-class is very popular: we show that removing it preserves order
-between most popular labels.
+top-$10$ labels per number of examples. Except to the evident gender
+gap whose implications are out of scope for this work, we show that
+there is a great discrepancy in terms of number of examples for labels
+like man, woman, people and the others (Right). Also, the special
+background class is very popular: we show that removing it preserves
+order between most popular labels (Left).
 
 \begin{figure}
   \includegraphics[width=0.8\textwidth]{figures/number-of-examples-per-label-over-top-100-most-popular-labels.png}
-  \caption[Number of examples per label over top-100 most popular labels on Flicker30k]{Distribution of examples ($y$ axis, log scaled) per label over top-100 most popular labeles ($x$ axis) on Flicker30k.}
-  \label{tab:flickr30k-label-distribution-top10}
+  \caption[Number of examples per label over top-100 most popular labels on Flicker30k]{Distribution of examples ($y$ axis, log scaled) per label over top-100 most popular labels ($x$ axis) on Flicker30k.}
+  \label{fig:flickr30k-label-distribution-top10}
 \end{figure}
 
 \begin{table}
@@ -577,7 +575,7 @@ between most popular labels.
       ground & $7547$  \\
     \end{tabular}
   \end{subtable} 
-  \caption{Distribution of examples over top-10 labels with larger population with (Left) and without (Right) \textit{backgorund} class.}
+  \caption{Distribution of examples over top-10 labels with larger population with (Left) and without (Right) background class.}
   \label{tab:flickr30k-label-data-top10}
 \end{table}
 
@@ -588,40 +586,54 @@ Aligned with the works in literature, we consider the standard
 accuracy metric. Given a noun phrase, it considers a bounding box
 prediction to be correct if and only if the intersection over union
 (Sec.~\ref{subsec:iou}) value between the predicted bounding box and
-the ground truth bounding box is at least $t$. Formally, accuracy
-between $B* = \{ b* | b = model(\bm{I}, S) \}$ the set of predicted
-bounding boxes and $B^{gt}$ the set of ground truth bounidng boxes,
-can be defined as
+the ground truth bounding box is at least $t$. Formally, given the
+image $\bm{I}$ and sentence $S$, the accuracy between $B^* = \{
+\bm{b}^* \}$ the set of predicted bounding boxes for $\bm{I}$ and $S$,
+with $|B^*| = m$ where $m$ is the number of noun phrases in $S$ and
+$B^{gt}$ the set of ground truth bounding boxes for $\bm{I}$ and $S$
+with $|B^{gt}| = m$, can be defined as
 \[
-  acc(B^*, B^{gt}) = \frac{\sum_{i = 1}^{n} \One (\iou (b_i^*, b_i^{gt}) \geq t)}{n}.
+  acc(B^*, B^{gt}) = \frac{\sum_{i = 1}^{m} \One (\iou (\bm{b}_i^*, \bm{b}_i^{gt}) \geq \alpha)}{m}.
 \]
-Again, following literature we chose $t = 0.5$.
+Again, following literature we chose $\alpha = 0.5$.
 
 Moreover, we also calculate the pointing game accuracy
-(Sec.~\ref{subsec:pointing-game-metric}) in order to evaluate model's
-performance localizing the correct bounding box in the space. Poiting
-game accuracy consider an example to be positive whether the center of
-predicted bounding box lies wherever inside the ground truth box. More
-formally,
+(Sec.~\ref{subsec:pointing-game-metric}) for comparison purposes.
+Pointing game accuracy consider an example to be positive whether the
+center of predicted bounding box lies wherever inside the ground truth
+box. More formally, given the image $\bm{I}$ and sentence $S$, we
+define pointing game accuracy as 
 \[
-  acc_{point}(B^*, B^{gt}) = \frac{\sum_{i = 1}^{n} \One (c_i^* \in  b_i^{gt})}{n},
+  acc_{point}(B^*, B^{gt}) = \frac{\sum_{i = 1}^{m} \One (c_i^* \in  \bm{b}_i^{gt})}{m},
 \]
-where $c^* = (x + \frac{w}{2}, y + \frac{h}{2})$ with $x, y$ the
-bounidng box top-left point and $w, h$ its width and height. Note that
-$c^* \in b^{gt}$ is an abuse of notation, we mean true when $c^*$ is
-inside the box boundaries.
+where $m$ the number of noun phrases in $S$, $c^*_i = (x +
+\frac{w}{2}, y + \frac{h}{2})$ is the center of box $\bm{b}^*_i$ with
+$x, y$ its top-left point coordinates and $w, h$ its width and height.
+Note that $c^*_i \in b^{gt}_i$ is an abuse of notation, we mean true
+when $c^*_i$ falls inside $b^{gt}_i$ boundaries.
 
-The pointing game accuracy is a very optimistic metric wrt the
-standard accuracy. This is because it requires at least a point
-falling inside the ground truth bounding box to consider the grounding
-as a hit, while the standard accuracy requires, depending on a
-parameter, that at least some fraction of the area overlaps the ground
-truth bounding box.
+The pointing game accuracy allows to evaluate the goodness of the
+model in spatially locating objects, but is a very optimistic metric
+wrt the standard accuracy. This is because it requires at least a
+point falling inside the ground truth bounding box to consider the
+grounding as a hit, while the standard accuracy requires, depending on
+$\alpha$, a certain fraction of area to overlap the ground truth
+bounding box.
 
-\section{Results}
+\section{Model Selection}
 
 TODO
 
-\section{Model Selection}
+\section{Qualitative Results}
+
+TODO
+
+\subsection{Flickr30K Entities}
+
+\subsection{ReferIt}
+
+
+\section{Quantitative Results}
+\label{sec:quantitative-results}
 
 TODO
