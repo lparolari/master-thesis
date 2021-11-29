@@ -623,7 +623,26 @@ bounding box.
 
 \section{Model Selection}
 
-TODO
+The model used in test set for both Flickr30K Entities and ReferIt
+datasets is chosen on the epoch that better performed in terms of
+accuracy in validation set. We carried out hyper-parameters selection
+only on Flickr30K Entities, while on ReferIt we applied best
+hyper-parameters selected on the former dataset. We used Adam
+optimizer with gradient clipping.
+
+In what follows, we summarize hyper-parameters selection. We selected
+$10^{-3}$ for the learning rate among $\{ 10^{-1}, 10^{-2}, 10^{-3},
+10^{-4}, 10^{-5} \}$. The word embeddings we selected is Word2Vec, but
+GloVe scores comparable performance. In both cases, the word embedding
+dimension was set to $w = 300$. For the sentence encoder we tried a
+plain RNN versus an RNN with LSTM cells. We found good performance in
+the latter with $1000$ as dimension for hidden units among $\{ 500,
+1000, 1500 \}$  and $1$ layer among $\{ 1, 2 \}$. For the image
+features we extracted $k = 100$ proposal along with $v = 2048$
+features from \textit{pool5\textunderscore flat} layer in ResNet-101.
+We performed a dimensionality reduction through a MLP with $0$ hidden
+layers among $\{ 0, 1, 2 \}$, selecting the size of output which is
+equal to the size of code $c = 1000$ among $\{ 500, 1000, 2053 \}$.
 
 \section{Qualitative Results}
 
