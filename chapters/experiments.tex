@@ -745,3 +745,36 @@ performance, while on ReferIt our model shows a significative gain in
 accuracy. This proves what noted in Sec.~\ref{sec:related-grounding},
 i.e. such technique is difficult to scale to new data, thus, there is
 margin of improvement.
+
+\section{Qualitative Results}
+
+The Fig.~\ref{fig:qualitative-results} shows a model prediction on the
+image in figure given the sentence ``A woman in a dark dress smiles
+while a woman across from her and a child sit in chairs''. The noun
+phrases are ``A woman'', ``a dark dress'', ``a woman'', ``a child'',
+``chairs''. The example is not a simple one because it involves
+spacial constraints and there are two ambiguous boxes (the two woman)
+with the same concept. 
+
+As reported in figure, ground truth specially for women is a bit
+confused: there is a first bounding box on the woman in right, while a
+large bounding box encompasses both two women and a lot of background.
+The model predictions for the two woman noun phrases fall on woman in
+right. This is aligned with the strategy of our model where the prior
+enforces to follow the concept in phrase by finding most similar
+proposal. Indeed, our model is missing a strategy to disambiguate
+similar proposals, but the correctness of the second ground truth is
+questionable.
+
+The predicted bounding box for dress focuses only on the skirt. This
+is probably due to the fact the dress bounding box is divided into
+two: the upper box whose class is t-shirt, and the lower box with
+class skirt. The similarity between dress and skirt is obviously
+higher that dress and t-shirt, so the second is chosen. Child and
+chairs are correctly localized instead.
+
+\begin{figure}
+  \includegraphics[width=0.8\textwidth]{figures/similing-woman.png}
+  \caption{TODO}
+  \label{fig:qualitative-results}
+\end{figure}
