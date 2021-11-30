@@ -295,10 +295,10 @@
 
 	\scshape{\Large{\bfseries{Università degli Studi di Padova}}} \\
 	\line(1, 0){400} \\
-	\scshape{\large{Department of Something}} \\
+	\scshape{\large{Dipartimento di Matematica ``Tullio Levi-Civita''}} \\
 
 	\vspace{5pt}
-	\small{\textit{Master Thesis in}}
+	% \small{\textit{Corso di Laurea Magistrale in}}
 	\@mastername
 
 	\setstretch{2.5}
