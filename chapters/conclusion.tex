@@ -27,10 +27,10 @@ learns to maximize the multimodal similarity between query and
 proposals belonging to positive example, i.e., sentence with its own
 image, while minimizing the multimodal similarity on negative
 examples. We shown in Ch.~\ref{ch:experiments} that our approach is
-very promising and outperforms all previous approach except the
-excellent work by Q. Wang \etal{} \cite{wang2020maf}. In
-Sec.~\ref{sec:results} we motivated our deficiency wrt
-their work. \todo{make the sec.}
+very promising and on Flickr30k Entities test set outperforms all
+previous approaches except the excellent work by Q. Wang \etal{}
+\cite{wang2020maf}. In Sec.~\ref{sec:results} we motivated our
+deficiency wrt their work.
 
 As a take home message I would say that research is also made of
 failures: sometimes what seems a good idea may reveals inefficient or
@@ -47,10 +47,9 @@ particular, we noticed the inconsistency between the naming, task and
 problem definition. Moreover, many works do not allow the reproduction
 of results by omitting important implementation details: a few works
 made their implementation available online. Furthermore, some works
-perform unfair comparison by mixing up different backbones for object
-detector or different word embeddings, or, even worse, they ignore
-last published results. For the sake of science, we hope that this
-situation will be resolved as soon as possible.
+perform unfair comparisons or ignore last published results. For the
+sake of science, we hope that this situation will be resolved as soon
+as possible.
 
 Many other problems instead were technical. As already pointed out,
 phrase grounding requires a strong knowledge of many components: from
@@ -63,6 +62,9 @@ guidelines and principles from software engineering. Indeed, our model
 is covered by more than $130$ unit tests and $8$ integration tests.
 
 \section{Future Development}
+
+We undertake the right way, but there is still a lot of work that can
+be done.
 
 The multimodal fusion component component we adopted is a simple
 concatenation of features, and there is large margin of improvement.
@@ -90,7 +92,7 @@ Another interesting deepening regards attributes. Some object
 detectors (as the one we adopted, see Sec.~\ref{sec:impl-details})
 also return a probability distribution on a set of attributes,
 highlighting extra information over proposals. A good improvement
-would be to join the information from adjective in queries with
+would be to join the information from adjectives in queries with
 attributes over proposals and up or down weight scores based on this
 attribute similarity measure. Such information may be precious to
 discriminate between similar proposals.
