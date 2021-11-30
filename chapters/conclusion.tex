@@ -63,9 +63,6 @@ is covered by more than $130$ unit tests and $8$ integration tests.
 
 \section{Future Development}
 
-We undertake the right way, but there is still a lot of work that can
-be done.
-
 The multimodal fusion component component we adopted is a simple
 concatenation of features, and there is large margin of improvement.
 For example \cite{datta2019align2ground} considers an encoder-decoder
@@ -88,11 +85,11 @@ lead to interesting results is to consider not only the proposal with
 maximum score per query, but instead to take into account all
 proposals score in a weighted manner.
 
-Another interesting deepening regards attributes. Some object
-detectors (as the one we adopted, see Sec.~\ref{sec:impl-details})
-also return a probability distribution on a set of attributes,
-highlighting extra information over proposals. A good improvement
-would be to join the information from adjectives in queries with
-attributes over proposals and up or down weight scores based on this
-attribute similarity measure. Such information may be precious to
-discriminate between similar proposals.
+Another interesting deepening regards a strategy for disambiguating
+similar proposals. Some object detectors (as the one we adopted, see
+Sec.~\ref{sec:impl-details}) also return a probability distribution on
+a set of attributes, highlighting extra information over proposals. A
+good improvement would be to join the information from adjectives in
+queries with attributes over proposals and up or down weight scores
+based on this attribute similarity measure. Such information may be
+precious to discriminate between similar proposals.

@@ -358,7 +358,6 @@ exposing data through the unified interface.
 We started from the codebase provided by D. Rigoni \etal{}
 \cite{rigoni2021better} where they implement a phrase localization
 system with the ability to include information from knowledge graph,
-\footnote{\href{https://github.com/drigoni/VTKEL-solver}{https://github.com/drigoni/VTKEL-solver}}
 thus solving the VTKEL task (Sec.~\ref{sec:vtkel}). For this reason,
 some implementation details are inherited from their work. For
 example, we use the same pre-trained object detector Faster R-CNN
@@ -405,11 +404,11 @@ other works is done on the test set.
 
 Data analysis is another crucial task of data processing pipeline and
 it is not only important to process and manipulate data, but also to
-analyze the relationships and correlations between data sets and to
-identify patterns and trends for results interpretation
-\cite{sharma2020understanding}. Data analysis can be decisive also in
-the phase of model design, because it can outline problems or
-intrinsic traits that belongs to data and must be taken into account.
+analyze the relationships and correlations and to identify patterns
+and trends for results interpretation \cite{sharma2020understanding}.
+Data analysis can be decisive also in the phase of model design,
+because it can outline problems or intrinsic traits that belongs to
+data and must be taken into account.
 
 Within the following sections we outline our shallow data analysis,
 performed on-demand while designing the model in overcome problems.
@@ -425,7 +424,9 @@ for implementation reason we are required to fix a number $k$ of
 proposal per example. So, how to choose $k$? If $k$ is too low we
 cannot reach good coverage wrt ground truth bounding boxes, while if
 $k$ is too big we have to deal with many similar boxes and we require
-more resources to run the model. It's a tradeoff problem.
+more resources to run the model. It's a tradeoff problem. Please note
+that, independently from $k$, proposals are always selected by maximum
+importance score \cite{ren2015faster}.
 
 Following literature we initially fixed the upper-threshold to $k =
 100$ proposals, and then we performed an analysis on both dataset
@@ -473,29 +474,25 @@ content of the box through a word. The extra label is the background
 class and it is used to represent the absence of classification.
 
 Proposals tagged with background class are very common. For example,
-by setting $k = 100$, we got $47.6$ and $51.1$\% background tagged
-proposals on Flickr30K Entities and ReferIt, respectively. We argue
-that in weakly supervised settings this may lead to noise, so as a
-preprocessing step we remove proposals labeled with background.
+by setting $k = 100$, we got $47.6$ and $51.1\%$ background tagged
+proposals on Flickr30K Entities and ReferIt, respectively.
+Intuitively, one may think that proposals labeled as non-informative
+should be discarded, but \cite{yu2018rethinking} proved that visual
+features from object detector internal layers convoy important
+information about the portion of the image and may relax the
+upperbound accuracy constraint. We argue that in our weakly supervised
+approach the background label may introduce noise, so as a
+preprocessing step we keep only properly-labeled proposals.
 
-Please note that setting a lower $k$ does not means keeping $k = 100$
-and removing proposals labeled with background class. In the first
-case, we keep a number $k$ of proposals based on the object detector's
-confidence, while in the second case we retrieve $k$ proposal and then
-we remove only the ones with background label.
-
-However, candidates removal may lower box coverage, and hence, maximum
-achievable accuracy. We analyzed this phenomenon and we surprisingly
-noticed that even removing nearly one proposal over two, the
-upperbound accuracy remains comparable to the version without
-background removal. In particular, we obtained a relative loss of
-$4.1$ and $6.6$\% on average and an absolute loss of $3.7$ and $5.8$\%
-on average, respectively for Flickr30k and ReferIt, wrt to upperbound
-accuracy without background removal. Analytics details are reported in
+Since, we decided to remove such boxes, We investigated the problem of
+box coverage, and hence, maximum achievable accuracy. We analyzed this
+phenomenon and we surprisingly noticed that even removing nearly one
+proposal over two, the upperbound accuracy remains comparable to the
+version without background removal. In particular, we obtained an
+absolute loss of $3.7$ and $5.8\%$ accuracy on average, respectively
+for Flickr30k Entities and ReferIt, wrt to upperbound accuracy without
+background removal. Analytics details are reported in
 Tab.~\ref{tab:bb-coverage-no-background}.
-
-Such results allow us to apply the background removal with translates
-in noise removal without any relevant drop in performance.
 
 \begin{table}
     \centering
@@ -529,55 +526,38 @@ distribution. This means that there are few labels with a very large
 population, while many other labels count little number of examples.
 We truncate the plot to top-$100$ labels (among $1600$) with larger
 population and the phenomenon is clearly visible. In
-Tab.~\ref{tab:flickr30k-label-distribution-nobg-top10} we report the
-top-$10$ labels per number of examples. Except to the evident gender
-gap whose implications are out of scope for this work, we show that
-there is a great discrepancy in terms of number of examples for labels
-like man, woman, people and the others (Right). Also, the special
-background class is very popular: we show that removing it preserves
-order between most popular labels (Left).
+Tab.~\ref{tab:flickr30k-label-data-top10} we report the top-$10$
+labels per number of examples. Except to the evident gender gap whose
+implications are out of scope for this work, we show that there is a
+great discrepancy in terms of number of examples for labels like man,
+woman, people and the others.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{figures/number-of-examples-per-label-over-top-100-most-popular-labels.png}
-  \caption[Number of examples per label over top-100 most popular labels on Flicker30k]{Distribution of examples ($y$ axis, log scaled) per label over top-100 most popular labels ($x$ axis) on Flicker30k.}
+  \caption[Number of examples per label over top-100 most popular
+    labels on Flicker30k]{ Distribution of examples ($y$ axis, log
+    scaled) per label over top-100 most popular labels ($x$ axis) on
+    Flicker30k.}
   \label{fig:flickr30k-label-distribution-top10}
 \end{figure}
 
 \begin{table}
-  \begin{subtable}{.5\linewidth}
-    \centering
-    \begin{tabular}{lc}
-      Class                & N       \\\hline
-      man                  & $71120$ \\
-      \textit{background}  & $58014$ \\
-      woman                & $34421$ \\
-      people               & $29121$ \\
-      shirt                & $19129$ \\
-      boy                  & $11182$ \\
-      dog                  & $9427$  \\
-      girl                 & $7292$  \\
-      water                & $7118$  \\
-      wall                 & $6358$  \\
-    \end{tabular}
-  \end{subtable}%
-  \begin{subtable}{.5\linewidth}
-    \centering
-    \begin{tabular}{lc}
-      Class  & N       \\\hline
-      man    & $78250$ \\
-      woman  & $37751$ \\
-      people & $33149$ \\
-      shirt  & $22585$ \\
-      boy    & $12019$ \\
-      dog    & $9989$  \\
-      wall   & $7905$  \\
-      girl   & $7886$  \\
-      water  & $7674$  \\
-      ground & $7547$  \\
-    \end{tabular}
-  \end{subtable} 
-  \caption{Distribution of examples over top-10 labels with larger population with (Left) and without (Right) background class.}
+  \centering
+  \begin{tabular}{lc}
+    Class  & N       \\\hline
+    man    & $78250$ \\
+    woman  & $37751$ \\
+    people & $33149$ \\
+    shirt  & $22585$ \\
+    boy    & $12019$ \\
+    dog    & $9989$  \\
+    wall   & $7905$  \\
+    girl   & $7886$  \\
+    water  & $7674$  \\
+    ground & $7547$  \\
+  \end{tabular}
+  \caption{Distribution of examples over top-10 labels with larger population.}
   \label{tab:flickr30k-label-data-top10}
 \end{table}
 
@@ -732,10 +712,10 @@ this case, our approach shows comparable performance wrt recent works.
     \toprule
     Approach & Acc. (\%) & P. Acc. (\%) \\
     \midrule
-    KAC Net \cite{chen2018knowledge}                         & 15.8 & -    \\
-    Semantic Self-Supervision \cite{javed2018learning}       & -    & 40.0 \\
-    Multi-level Multimodal \cite{akbari2019multi}            & -    & 48.4 \\
-    Grounding By Separation \cite{arbelle2021detector}       & -    & 59.4 \\
+    KAC Net \cite{chen2018knowledge}                         & $15.8$ & -      \\
+    Semantic Self-Supervision \cite{javed2018learning}       & -      & $40.0$ \\
+    Multi-level Multimodal \cite{akbari2019multi}            & -      & $48.4$ \\
+    Grounding By Separation \cite{arbelle2021detector}       & -      & $59.4$ \\
     \midrule
     Ours                                                     & $\bm{37.0}$ & $60.0$ \\
     \bottomrule
@@ -774,8 +754,7 @@ right, while a second, large bounding box encompasses the whole image.
 The model predictions for this two noun phrases fall both on woman in
 right. This is aligned with the strategy of our model where the prior
 enforces to follow the concept in phrase by finding most similar
-proposal. Indeed, our model is missing a strategy to disambiguate
-similar proposals.
+proposal.
 
 The predicted bounding box for dress focuses only on the skirt. This
 is due to the fact that the object detector returns two proposals for
