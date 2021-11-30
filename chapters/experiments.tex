@@ -538,6 +538,7 @@ background class is very popular: we show that removing it preserves
 order between most popular labels (Left).
 
 \begin{figure}
+  \centering
   \includegraphics[width=0.8\textwidth]{figures/number-of-examples-per-label-over-top-100-most-popular-labels.png}
   \caption[Number of examples per label over top-100 most popular labels on Flicker30k]{Distribution of examples ($y$ axis, log scaled) per label over top-100 most popular labels ($x$ axis) on Flicker30k.}
   \label{fig:flickr30k-label-distribution-top10}
@@ -647,11 +648,13 @@ equal to the size of code $c = 1000$ among $\{ 500, 1000, 2053 \}$.
 \section{Results}
 \label{sec:results}
 
+\subsection{Quantitative Results}
+
 The Tab.~\ref{tab:results-flickr30k} reports results on Flickr30K
 Entities dataset with our approach and other State-of-the-Art works,
-sorted in a grossly temporal way. Our comparison metric is accuracy,
-but we report also pointing game accuracy because some works use only
-the latter. 
+sorted in a grossly temporal way. We use standard accuracy as first
+metric, but for comparability purposes we report also pointing game
+accuracy.
 
 \begin{table}
   \centering
@@ -680,41 +683,47 @@ the latter.
 \end{table}
 
 As results highlights, we outperformed all previous works except
-Multimodal Alignment Framework (MAF) \cite{wang2020maf}. MAF is work
-from 2020 which currently overcome new works like
+Multimodal Alignment Framework (MAF) \cite{wang2020maf}. MAF is a work
+from 2020 which currently overcome more recent works like
 \cite{arbelle2021detector}, published in 2021. Their fundamental idea
 is closely related to our idea which, in turn, is inspired by
-\cite{wang2019phrase}: we must leverage the similarity between
-proposal label and the phrase, i.e., the concept similarity. Their
-work (described in Sec.~\ref{sec:related-grounding}), even if
-implements this common idea, shows some important differences. In the
-first place, given an image, they merge visual features with class and
-attributes labels features by a linear combination. Respect to our
-work, this is a key difference: they merge the proposal label
-information directly with visual features, while we treat such
+\cite{wang2019phrase}: the winning key is the similarity between
+proposal class label and the phrase, i.e., the concept similarity.
+Their work (described in Sec.~\ref{sec:related-grounding}), even if
+with our same intentions, shows some important differences wrt our
+work. In the first place, given an image, they merge visual features
+with class and attributes labels features by a linear combination.
+Respect to our work, this is a key difference: they merge the proposal
+label information directly with visual features, while we treat such
 knowledge as a prior (concept similarity,
 Sec.~\ref{subsec:similarity-branch}) and we apply it after model
 predictions. Secondly, they use the dot product as similarity measure
-between modalities leading to values between in $[-\inf, +\inf]$
-instead of cosine similarity with values in $[-1, +1]$. Last but
-not least, they build a modulated representation of phrases using
-visual features, and hence, using information on the proposal class.
-Basically, they represent each noun phrase as an weighted average of
-word embeddings where weights are the best multimodal similarity, i.e.
-similarity between visual features and phrases embeddings, among
-proposals, for each word, for each noun phrase. 
+between modalities leading to values in $[-\inf, +\inf]$ instead of
+cosine similarity with values in $[-1, +1]$. In the third place, they
+build a modulated representation of phrases using visual features, and
+hence, using information on the proposal class. Basically, they
+represent each noun phrase as a weighted average of word embeddings
+that compose the phrase, where weights represents the relevance of a
+word wrt a proposal. Finally, their loss take into account more than
+one negative examples (from batch), i.e., images not described by a
+fixed sentence, while we randomly sample a single negative example
+from dataset, i.e., a sentence that do not describe a fixed image.
+However, the objective is common: we want to maximize the multimodal
+similarity between positive examples and minimize the one between
+negative examples.  
 
 As they show, without training they compute the weights by using only
 proposal label features. Such move allows them to reach $56.0\%$
-accuracy on Flicker30K Entities, thus, showing a better strategy to
-employ concept similarity wrt our work. Training enables the
-introduction of visual features which lead to higher performances as
-their experiments show: $61.4\%$ accuracy on on Flicker30K Entities.
+accuracy on Flickr30K Entities, thus, showing an effective strategy to
+employ concept similarity. Training enables the introduction of visual
+features which lead to higher performances as their experiments show:
+$61.4\%$ accuracy on Flickr30K Entities.
 
-The Tab.~\ref{TODO} shows results on ReferIt dataset. Here, some works
-are missing wrt Tab.~\ref{tab:results-flickr30k}, because ReferIt, as
-mentioned in Sec.~\ref{subsec:referit}, is a challenging dataset
-containing hard sentences, usually involving spacial relations. In
+The Tab.~\ref{tab:results-referit} shows results on ReferIt dataset.
+Here, some works are missing wrt Tab.~\ref{tab:results-flickr30k},
+because, as mentioned in Sec.~\ref{subsec:referit}, ReferIt is a
+challenging dataset containing hard referring expressions, usually
+involving spacial relations and thus may lead to worse results. In
 this case, our approach shows comparable performance wrt recent works.
 
 \begin{table}
@@ -726,10 +735,9 @@ this case, our approach shows comparable performance wrt recent works.
     KAC Net \cite{chen2018knowledge}                         & 15.8 & -    \\
     Semantic Self-Supervision \cite{javed2018learning}       & -    & 40.0 \\
     Multi-level Multimodal \cite{akbari2019multi}            & -    & 48.4 \\
-    Localization w/o Training Examples \cite{wang2019phrase} & 26.5 & -    \\
     Grounding By Separation \cite{arbelle2021detector}       & -    & 59.4 \\
     \midrule
-    Ours                                                     & $\bm{35.2}$ & $59.2$ \\
+    Ours                                                     & $\bm{37.0}$ & $60.0$ \\
     \bottomrule
   \end{tabular}
   \caption[Results on ReferIt test set]{Results on
@@ -739,42 +747,53 @@ this case, our approach shows comparable performance wrt recent works.
   \label{tab:results-referit}
 \end{table}
 
-A noteworthy addendum is the comparison with the unsupervised approach
-in \cite{wang2019phrase}. On Flickr30K Entities we obtain comparable
-performance, while on ReferIt our model shows a significative gain in
-accuracy. This proves what noted in Sec.~\ref{sec:related-grounding},
-i.e. such technique is difficult to scale to new data, thus, there is
-margin of improvement.
+A noteworthy addendum is the analysis of results obtained from the
+unsupervised approach in \cite{wang2019phrase} from which we took
+inspiration. On Flickr30K Entities test set they show a significant
+gain wrt to previous unsupervised works, reaching $50.4\%$ accuracy
+and outperforming also some weakly and fully supervised approaches.
+Here, we got comparable results. Conversely, on ReferIt test set their
+model do now show significant improvements, reaching $26.4\%$ accuracy
+while our model reach $37.0\%$ accuracy. This proves what noted in
+Sec.~\ref{sec:related-grounding}, i.e. such technique is difficult to
+scale to new data and ad-hoc heuristics are capped in performance.
 
-\section{Qualitative Results}
+\subsection{Qualitative Results}
 
 The Fig.~\ref{fig:qualitative-results} shows a model prediction on the
 image in figure given the sentence ``A woman in a dark dress smiles
 while a woman across from her and a child sit in chairs''. The noun
 phrases are ``A woman'', ``a dark dress'', ``a woman'', ``a child'',
 ``chairs''. The example is not a simple one because it involves
-spacial constraints and there are two ambiguous boxes (the two woman)
+spacial constraints and there are two ambiguous boxes (the two women)
 with the same concept. 
 
-As reported in figure, ground truth specially for women is a bit
-confused: there is a first bounding box on the woman in right, while a
-large bounding box encompasses both two women and a lot of background.
-The model predictions for the two woman noun phrases fall on woman in
+As shown in figure, women's ground truth is confused and probably
+questionable: there is a first, correct bounding box on the woman in
+right, while a second, large bounding box encompasses the whole image.
+The model predictions for this two noun phrases fall both on woman in
 right. This is aligned with the strategy of our model where the prior
 enforces to follow the concept in phrase by finding most similar
 proposal. Indeed, our model is missing a strategy to disambiguate
-similar proposals, but the correctness of the second ground truth is
-questionable.
+similar proposals.
 
 The predicted bounding box for dress focuses only on the skirt. This
-is probably due to the fact the dress bounding box is divided into
-two: the upper box whose class is t-shirt, and the lower box with
-class skirt. The similarity between dress and skirt is obviously
-higher that dress and t-shirt, so the second is chosen. Child and
-chairs are correctly localized instead.
+is due to the fact that the object detector returns two proposals for
+dress: the upper proposal encompassing the shirt with namesake class,
+and the lower proposal encompassing the skirt. The similarity between
+dress and skirt is obviously higher that dress and t-shirt, so the
+second is chosen. 
+
+Child and chairs are correctly localized instead.
 
 \begin{figure}
+  \centering
   \includegraphics[width=0.8\textwidth]{figures/similing-woman.png}
-  \caption{TODO}
+  \caption[Model predictions for the image 102851549 from Flickr30k
+    Entities]{ Model predictions for the image 102851549 given the
+    sentence ``A woman in a dark dress smiles while a woman across
+    from her and a child sit in chairs'' from Flickr30k Entities.
+    Right side reports the ground truth bounding box while left side
+    shows predictions.}
   \label{fig:qualitative-results}
 \end{figure}
