@@ -203,6 +203,7 @@
 \def\coadvisorOne#1{\gdef\@coadvisorOne{#1}}
 \def\coadvisorOneUniversity#1{\gdef\@coadvisorOneUniversity{#1}}
 \def\coadvisorTwo#1{\gdef\@coadvisorTwo{#1}}
+\def\coadvisorTwoUniversity#1{\gdef\@coadvisorTwoUniversity{#1}}
 \def\committeeInternal#1{\gdef\@committeeInternal{#1}}
 \def\committeeInternalOne#1{\gdef\@committeeInternalOne{#1}}
 \def\committeeInternalTwo#1{\gdef\@committeeInternalTwo{#1}}
@@ -320,7 +321,11 @@
 	  \vspace{6pt}
 	  \textit{Co-supervisor} \\
 	  \@coadvisorOne \\
-	  \@coadvisorOneUniversity
+	  \@coadvisorOneUniversity \\
+	  \vspace{6pt}
+	  \textit{Tutor} \\
+	  \@coadvisorTwo \\
+	  \@coadvisorTwoUniversity
 	  \vspace{10pt}
 	\end{flushleft}
 	\end{normalsize}
