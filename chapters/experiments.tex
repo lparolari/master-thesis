@@ -373,7 +373,7 @@ default for proposals whose label cannot be predicted with good
 confidence. In our work, we ignore proposals labeled with as
 background because under weak supervision we cannot rely such a noisy
 information. As an example, with $100$ proposals per image, we removed
-$47.6$\% proposals on average on Flickr30k Entities while $51.1$\% on
+$47.6\%$ proposals on average on Flickr30k Entities while $51.1\%$ on
 ReferIt.\footnote{Along with classes information, the object detector
 makes available also attributes information on proposals. On the same
 way of classes, they return a probability distribution on $400 + 1$
@@ -442,9 +442,9 @@ ReferIt.
 What remains to prove is whether we can reach a good upperbound
 accuracy given $100$ proposals wrt the ground truth bounding box. We
 analyzed the data and we discovered that with $k = 100$ bounding box
-the coverage is good enough (nearly $93$\% on Flickr30k Entities and
-$91$\% on ReferIt), while decreasing $k$ resulted in an upperbound
-accuracy drop (nearly $54$\% Flickr30k Entities and $51$\% ReferIt).
+the coverage is good enough (nearly $93\%$ on Flickr30k Entities and
+$91\%$ on ReferIt), while decreasing $k$ resulted in an upperbound
+accuracy drop (nearly $54\%$ Flickr30k Entities and $51\%$ ReferIt).
 The Tab.~\ref{tab:bb-coverage} summarizes the outcome.
 
 \begin{table}
