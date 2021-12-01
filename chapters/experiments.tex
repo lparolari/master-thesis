@@ -6,24 +6,24 @@
 \section{Datasets}
 \label{sec:datasets}
 
-In this section we describe Flickr30K Entities and ReferIt, the two
+In this section we describe Flickr30k Entities and ReferIt, the two
 datasets used for the experimental assessment. For both we discuss how
 they were collected, what are their purposes, some statistics and we
 highlight the data representation.
 
-\subsection{Flickr30K Entities}
+\subsection{Flickr30k Entities}
 \label{subsec:flickr30k}
 
-Flickr30K Entities \cite{plummer2015flickr30k} is a dataset built on
-top of Flickr30K \cite{young2014image}, where the main focus is on the
+Flickr30k Entities \cite{plummer2015flickr30k} is a dataset built on
+top of Flickr30k \cite{young2014image}, where the main focus is on the
 task of grounding textual mentions of entities in image with augmented
 data.
 
-Flickr30K Entities consists in highly structured annotations collected
+Flickr30k Entities consists in highly structured annotations collected
 through crowdsourcing with different number of objects per image, and
 thus, different complexity per example. Annotations are made of
 mentions of the same entities between different captions, and bounding
-boxes that localized those entities in the image. Flickr30K Entities
+boxes that localized those entities in the image. Flickr30k Entities
 is developed under a strict pipeline of simple and atomic tasks to
 tackle the ambiguity in identifying whether two mentions refer to the
 same entity or how many boxes (if any) each entity requires. Moreover,
@@ -79,7 +79,7 @@ annotations with respect to tasks described next.
 \end{figure}
 
 The coreference resolution task is solved by first chunking
-information given in Flickr captions to identify potential entity
+information given in Flickr30k captions to identify potential entity
 mentions. Each chunk, i.e., noun phrase, is a potential entity
 mention. For example, the phrase ``A man in an orange hat'' is chunked
 in two noun phrases, namely ``A man'' and ``an orange hat'', which are
@@ -120,7 +120,7 @@ annotate dataset examples. Also, during the annotation process,
 workers are asked some verification questions (question with known
 answer, written by authors).
 
-In the end, Flicker30K Entities is made up of 32K images, 159K
+In the end, Flickr30k Entities is made up of 32K images, 159K
 sentences, 275K bounding boxes, and 360K noun phrases where each image
 is associated with five sentences with a variable number of noun
 phrases, and each noun phrase is associated with a set of bounding
@@ -129,7 +129,7 @@ boxes ground truth coordinates.
 \subsubsection{Data Representation}
 \label{subsec:flickr30k-data-representation}
 
-Technically speaking, in Flickr30K Entities each example is composed
+Technically speaking, in Flickr30k Entities each example is composed
 by information contained in three different files linked together by
 means of an identifier $id$. Those files represent image, sentence
 annotations and image annotations information. The image file is
@@ -276,7 +276,7 @@ describes the interface we used to represent heterogeneous data.
 
 Given data as specified in
 Sec.~\ref{subsec:flickr30k-data-representation} and
-\ref{subsec:referit-data-representation} for, respectively, Flickr30K
+\ref{subsec:referit-data-representation} for, respectively, Flickr30k
 Entities and ReferIt, we create a single and unified data interface
 which exposes features homogeneously and enables the model to work
 with different datasets transparently. Then, we augment data with
@@ -373,7 +373,7 @@ default for proposals whose label cannot be predicted with good
 confidence. In our work, we ignore proposals labeled with as
 background because under weak supervision we cannot rely such a noisy
 information. As an example, with $100$ proposals per image, we removed
-$47.6$\% proposals on average on Flickr30K Entities while $51.1$\% on
+$47.6$\% proposals on average on Flickr30k Entities while $51.1$\% on
 ReferIt.\footnote{Along with classes information, the object detector
 makes available also attributes information on proposals. On the same
 way of classes, they return a probability distribution on $400 + 1$
@@ -393,7 +393,9 @@ initialize word embeddings with pre-trained Word2Vec
 \cite{pennington2014glove}, but we keep the same settings: embeddings
 are freezed (we do not train them) and out-of-vocabulary words are
 initialized according to Xavier \cite{glorot2010understanding}. The
-size of the embedding is $w = 300$.
+size of the embedding is $w = 300$. In the prediction module we
+instanced $\lambda = 0.5$, equally weighting both model predictions and
+prior scores.
 
 During our work, we trained the model on the training set, while we
 performed model selection onto the validation set. The comparison with
@@ -449,7 +451,7 @@ The Tab.~\ref{tab:bb-coverage} summarizes the outcome.
   \centering
   \begin{tabular}{c|cc}
      & \multicolumn{2}{c}{Upperbound Accuracy (\%)} \\
-    $k$ & Flickr30k & ReferIt \\\hline 
+    $k$ & Flickr30k Entities & ReferIt \\\hline 
     $100$ & $93.4$ & $91.4$ \\ 
      $90$ & $93.1$ & $90.9$ \\  
      $80$ & $92.7$ & $90.3$ \\
@@ -461,7 +463,9 @@ The Tab.~\ref{tab:bb-coverage} summarizes the outcome.
      $20$ & $74.5$ & $70.5$ \\
      $10$ & $53.9$ & $51.0$ \\\hline
   \end{tabular}
-  \caption[Upperbound accuracy per number of proposals on Flickr30K Entities and ReferIt]{Upperbound accuracy per number of proposals on Flickr30K Entities and ReferIt.}
+  \caption[Upperbound accuracy per number of proposals on Flickr30k
+    Entities and ReferIt]{ Upperbound accuracy per number of proposals
+    on Flickr30k Entities and ReferIt.}
   \label{tab:bb-coverage}
 \end{table}
 
@@ -475,7 +479,7 @@ class and it is used to represent the absence of classification.
 
 Proposals tagged with background class are very common. For example,
 by setting $k = 100$, we got $47.6$ and $51.1\%$ background tagged
-proposals on Flickr30K Entities and ReferIt, respectively.
+proposals on Flickr30k Entities and ReferIt, respectively.
 Intuitively, one may think that proposals labeled as non-informative
 should be discarded, but \cite{yu2018rethinking} proved that visual
 features from object detector internal layers convoy important
@@ -510,7 +514,7 @@ Tab.~\ref{tab:bb-coverage-no-background}.
        $20$ & $73.6$ & $10.8$ & $68.9$ & $15.0$ \\
        $10$ & $53.9$ &  $1.2$ & $50.8$ &  $3.8$ \\\hline
     \end{tabular}
-  \caption[Achievable upperbound accuracy by removing background labeled proposals on Flickr30K Entities and ReferIt]{Achievable upperbound accuracy by removing background labeled proposals on Flickr30K Entities and ReferIt.}
+  \caption[Achievable upperbound accuracy by removing background labeled proposals on Flickr30k Entities and ReferIt]{Achievable upperbound accuracy by removing background labeled proposals on Flickr30k Entities and ReferIt.}
   \label{tab:bb-coverage-no-background}
 \end{table}
 
@@ -536,9 +540,9 @@ woman, people and the others.
   \centering
   \includegraphics[width=0.8\textwidth]{figures/number-of-examples-per-label-over-top-100-most-popular-labels.png}
   \caption[Number of examples per label over top-100 most popular
-    labels on Flicker30k]{ Distribution of examples ($y$ axis, log
+    labels on Flickr30k Entities]{ Distribution of examples ($y$ axis, log
     scaled) per label over top-100 most popular labels ($x$ axis) on
-    Flicker30k.}
+    Flickr30k Entities.}
   \label{fig:flickr30k-label-distribution-top10}
 \end{figure}
 
@@ -604,10 +608,10 @@ bounding box.
 
 \section{Model Selection}
 
-The model used in test set for both Flickr30K Entities and ReferIt
+The model used in test set for both Flickr30k Entities and ReferIt
 datasets is chosen on the epoch that better performed in terms of
 accuracy in validation set. We carried out hyper-parameters selection
-only on Flickr30K Entities, while on ReferIt we applied best
+only on Flickr30k Entities, while on ReferIt we applied best
 hyper-parameters selected on the former dataset. We used Adam
 optimizer with gradient clipping.
 
@@ -630,7 +634,7 @@ equal to the size of code $c = 1000$ among $\{ 500, 1000, 2053 \}$.
 
 \subsection{Quantitative Results}
 
-The Tab.~\ref{tab:results-flickr30k} reports results on Flickr30K
+The Tab.~\ref{tab:results-flickr30k} reports results on Flickr30k
 Entities dataset with our approach and other State-of-the-Art works,
 sorted in a grossly temporal way. We use standard accuracy as first
 metric, but for comparability purposes we report also pointing game
@@ -655,8 +659,8 @@ accuracy.
     Ours                                                     & $50.2$ & $82.3$ \\
     \bottomrule
   \end{tabular}
-  \caption[Results on Flickr30K Entities test set]{Results on
-  Flickr30K Entities test set. \textit{Acc.} is the standard accuracy
+  \caption[Results on Flickr30k Entities test set]{Results on
+  Flickr30k Entities test set. \textit{Acc.} is the standard accuracy
   metric in percentage, while \textit{P. Acc.} is the pointing game
   accuracy metric.}
   \label{tab:results-flickr30k}
@@ -694,10 +698,10 @@ negative examples.
 
 As they show, without training they compute the weights by using only
 proposal label features. Such move allows them to reach $56.0\%$
-accuracy on Flickr30K Entities, thus, showing an effective strategy to
+accuracy on Flickr30k Entities, thus, showing an effective strategy to
 employ concept similarity. Training enables the introduction of visual
 features which lead to higher performances as their experiments show:
-$61.4\%$ accuracy on Flickr30K Entities.
+$61.4\%$ accuracy on Flickr30k Entities.
 
 The Tab.~\ref{tab:results-referit} shows results on ReferIt dataset.
 Here, some works are missing wrt Tab.~\ref{tab:results-flickr30k},
@@ -729,7 +733,7 @@ this case, our approach shows comparable performance wrt recent works.
 
 A noteworthy addendum is the analysis of results obtained from the
 unsupervised approach in \cite{wang2019phrase} from which we took
-inspiration. On Flickr30K Entities test set they show a significant
+inspiration. On Flickr30k Entities test set they show a significant
 gain wrt to previous unsupervised works, reaching $50.4\%$ accuracy
 and outperforming also some weakly and fully supervised approaches.
 Here, we got comparable results. Conversely, on ReferIt test set their
