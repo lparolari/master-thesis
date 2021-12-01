@@ -126,11 +126,15 @@ label that best express proposal's content by simply taking the label
 with maximum probability. Such label is just a word (or, in few cases
 a combination of words), that can be naturally embedded in the word
 embeddings space. However, we noticed many misspells and confusion
-among class labels. For example, some labels are made by more than one
-word (``christmas tree'', ``rock wall''), while some other contains
-many different versions of the same word (``microwave, microwave
-oven'', ``tennis racket, tennis racquet''). Thus, following
-\cite{wang2019phrase} we fix misspells by an external spell correction
+among class labels.\footnote{This problem is due to the automatic
+extraction of classes done by object detector we employed (see
+Sec.~\ref{sec:impl-details}). Another object detector with carefully
+selected classes may not suffer this problem.} For example, some
+labels are made by more than one word (``christmas tree'', ``rock
+wall''), while some other contains many different versions of the same
+word (``microwave, microwave oven'', ``tennis racket, tennis
+racquet''). Thus, following \cite{wang2019phrase} we fix misspells by
+an external spell correction
 system,\footnote{\href{https://pypi.org/project/pyspellchecker/}{https://pypi.org/project/pyspellchecker/}}
 while for compound and multi-version words, we first split them by
 punctuation (space, column and dot) and we average over single-word
