@@ -1,4 +1,21 @@
 %!TEX root = ../dissertation.tex
 % the acknowledgments section
 
-\newthought{Lorem ipsum dolor sit amet}, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien. Nam consectetuer. Sed aliquam, nunc eget euismod ullamcorper, lectus nunc ullamcorper orci, fermentum bibendum enim nibh eget ipsum. Donec porttitor ligula eu dolor. Maecenas vitae nulla consequat libero cursus venenatis. Nam magna enim, accumsan eu, blandit sed, blandit a, eros.
+In questo lavoro affrontiamo il problema del phrase grounding, ovvero
+localizzare il contenuto di un'immagine referenziato da una frase,
+usando la supervisione debole. Il phrase grounding è un problema
+difficile perché richiede una conoscenza congiunta e approfondita di
+entrambe le modalità testuali e visuali, ma è di rilevante importanza
+in diversi ambiti di studio e applicazioni, come il visual question
+answering, ovvero rispondere a domande testuali avendo a disposizioni
+anche un'immagine, la ricerca di immagini o la navigazione di robot.
+In questo contesto noi proponiamo un semplice modello che sfrutta la
+similarità di concetto, definita come la similarità tra il concetto di
+una frase e la categoria di una regione dell'immagine. Questa misura
+di similarità è applicata come informazione a priori sulle predizioni
+del modello ottenute in modo tradizionale. Il modello è poi
+ottimizzato per massimizzare la similarità multi-modale tra immagine e
+frase che la descrive, minimizzando invece la similarità multi-modale
+tra immagine e una frase che invece non descrive l'immagine. Gli
+esperimenti svolti mostrano risultati comparabili allo stato
+dell'arte.
