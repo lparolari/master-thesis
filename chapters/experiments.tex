@@ -776,3 +776,36 @@ Child and chairs are correctly localized instead.
     shows predictions.}
   \label{fig:qualitative-results}
 \end{figure}
+
+\subsection{Ablation Study}
+
+To prove the effectiveness of concept similarity we trained the model
+without applying concept similarity as prior. The
+Tab.~\ref{tab:ablation-study} reports results. As we can see, concept
+similarity is extremely helpful on both datasets and gives good
+insight on what box to ground. By removing the prior on Flickr30k
+Entities test set we got a worsening of $9\%$ absolute accuracy, while
+on ReferIt this effect is even more noticeable: the worsening is of
+$XX\%$ absolute accuracy. Indeed, ReferIt contains complex sentences
+from a syntactic point of view: being able to extract information such
+us the concept of the phrase may help the model localizing the related
+proposal.
+
+\begin{table}
+  \centering
+  \begin{tabular}{l|ccc}
+    \toprule
+    Prior & Dataset & Acc. (\%) & P. Acc (\%) \\
+    \midrule
+    no & Flickr30k Entities & $41.2$ & $68.1$ \\
+    mean & Flickr30k Entities & $50.2$ & $82.3$ \\
+    \midrule
+    no & ReferIt & $18.5$ & $37.1$ \\
+    mean & ReferIt & $37.0$ & $60.0$ \\
+    \bottomrule
+  \end{tabular}
+  \caption[Ablation study on prior application for both Flickr30k
+    Entities and ReferIt]{ Ablation study on prior application for
+    both Flickr30k Entities and ReferIt.}
+  \label{tab:ablation-study}
+\end{table}
