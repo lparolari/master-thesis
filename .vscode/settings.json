@@ -174,6 +174,7 @@
     ],
     "cSpell.words": [
         "Akbari",
+        "Arbelle",
         "bioinformatics",
         "CBOW",
         "compositionality",
@@ -186,12 +187,14 @@
         "Deerwester",
         "Devlin",
         "disambiguates",
+        "discriminativeness",
         "downweight",
         "downweighted",
         "elementwise",
         "Fidler",
         "Flickr",
         "Goodfellow",
+        "heatmaps",
         "Interset",
         "Jaccard",
         "Jacobians",
@@ -208,10 +211,12 @@
         "overfitting",
         "perceptron",
         "pretrained",
+        "Ramanishka",
         "Rigoni",
         "Rohrbach",
         "rois",
         "softmax",
+        "spaciotemporal",
         "Standford",
         "SVMs",
         "Taggit",
@@ -227,6 +232,7 @@
         "Xiao",
         "yolo",
         "Yu's",
-        "Zhang"
+        "Zhang",
+        "Zhao"
     ]
 }

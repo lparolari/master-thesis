@@ -16,10 +16,12 @@ Answering (Sec.~\ref{sec:vqa}).
 
 We group phrase grounding works by their type of supervision.
 Particularly, in Sec.~\ref{subsec:related-weak-grounding} we deepen on
-weakly- (and un-) supervised approaches, which are closely related to
-our work. In Sec.~\ref{subsec:related-full-grounding}) we instead
-review methods under fully supervised settings, where all ground truth
-is available.
+approaches that use weak or no supervision, which we are closely
+related to. We remark that under weakly supervised settings,
+localizations are not available at training time, while we know
+image-phrase pairs. In Sec.~\ref{subsec:related-full-grounding}) we
+instead review methods under fully supervised settings, where all
+ground truth is available.
 
 \subsection{Weakly Supervised Works}
 \label{subsec:related-weak-grounding}
@@ -54,21 +56,21 @@ this issue, they proposed a new model that scores proposals from
 object retrieval by integrating information from contextual, spatial
 and global features by means of a recurrent neural network. The advent
 of Flickr30k Entities dataset, collected and processed by B. Plummer
-\etal{} \cite{plummer2015flickr30k} (Sec.~\ref{subsec:flickr30k}),
-boosted the development of morea accurate and general models, and
-allowed to face the problem phrase grounding without constraints.
-Along with the new dataset, they also provided a strong baseline for
-phrase grounding based on Canonical Correlation Analysis (CCA). They
-proposed as a starting point a scoring model which evaluates each
-region-phrase correspondence independently, without taking into
-account neither context nor information from joint inference about the
-global correspondence between regions in the image and phrases in the
-sentence. On the contrary, L. Wang \etal{} in \cite{wang2016learning}
-inspired by metric learning designed a new method for preserving
-structure constraints while learning a joint embedding space for
-visual and textual features. Their model projects features using a
-two-branch multiple layers neural network, followed by nonlinearity.
-In \cite{rohrbach2016grounding}, A. Rohrbach \etal{} developed a model
+\etal{} \cite{plummer2015flickr30k}, boosted the development of more
+accurate and general models, and allowed to face the problem phrase
+grounding without constraints. Along with the new dataset, they also
+provided a strong baseline for phrase grounding based on Canonical
+Correlation Analysis (CCA). They proposed as a starting point a
+scoring model which evaluates each region-phrase correspondence
+independently, without taking into account neither context nor
+information from joint inference about the global correspondence
+between regions in the image and phrases in the sentence. On the
+contrary, L. Wang \etal{} in \cite{wang2016learning} inspired by
+metric learning designed a new method for preserving structure
+constraints while learning a joint embedding space for visual and
+textual features. Their model projects features using a two-branch
+multiple layers neural network, followed by nonlinearity. In
+\cite{rohrbach2016grounding}, A. Rohrbach \etal{} developed a model
 able to reconstruct textual features in an encoder-decoder fashion,
 powered by an attention module which implements localization of
 regions of interest. Here, the attention is used to both ground and
@@ -80,7 +82,15 @@ to ground the phrase in the image. Moreover, their model is able to
 work with no, semi or full supervision. When no ground truth is
 available, the model simply learns to reconstruct the given sentence.
 Otherwise, the correct localization is enforced besides the
-reconstruction.
+reconstruction. On the same period, V. Ramanishka \etal{} in
+\cite{ramanishka2017top} solved the phrase localization problem by
+bringing the concept of visual saliency to the next level. Inspired by
+previous works on visual saliency which proved the effectiveness of
+such mechanism for top-down task-driven visual search, they extended
+this concept transforming visual saliency from classification-based to
+caption-based. The ability to disengage from classification allows
+them to produce spacial (or spaciotemporal, for videos) heatmaps for
+arbitrary query sentences.
 
 As A. Rohrbach \etal{} proved \cite{rohrbach2016grounding}, phrase
 grounding problem can be addressed even with some or no ground truth,
@@ -217,6 +227,21 @@ overview of the model is shown in Fig.~\ref{fig:kac-example}.
   ground by means of both visual and language reconstruction loss. }
   \label{fig:kac-example}
 \end{figure}
+
+In the same year, F. Zhao \etal{} in \cite{zhao2018weakly} proposed a
+model based on spacial transformers \cite{jaderberg2015spatial} which
+is able to compute correlation scores between phrase and image's
+spacial features map. (Spacial transformers are CNN modules able to
+learn a new translation, scale and rotation invariant representation
+of spacial features). Moreover, scores are constrained by regions
+produced by a region proposal (such as Edge Boxes) to lower the
+complexity of the scene and allow the convergence of predictions to
+the correct region. Then, the model firstly learns to reconstruct the
+input phrase while suppressing the reconstruction of different phrases
+for the same image, enforcing discriminativeness for regions.
+Secondly, it learns to predict regions with similar spacial features
+for three different images described by similar phrases wrt to
+randomly sampled regions.
 
 In \cite{liu2019adaptive}, X. Liu \etal{} proposed a reconstruction
 network based on attention map and optimized for the task of REG
@@ -398,20 +423,17 @@ $\calL$ that aims to learn the visual and textual features by
 maximizing the similarity score between paired image-caption elements
 and minimizing the score between the negative samples:
 \begin{equation}
-  \calL = - \log \frac{e^{sim(I, S)}}{ \sum_{I' \in batch} e^sim(I', S) },
+  \calL = - \log \frac{e^{sim(I, S)}}{ \sum_{I' \in batch} e^{sim(I', S)} },
 \end{equation}
 where $sim(I, S)$ is the similarity function between image and query
 sentence defined as:
 \begin{equation}
-  sim(I, S) = \frac{1}{N} \sum_n \max_m A_{n,m},
+  sim(I, S) = \frac{1}{N} \sum^N_n \max_m A_{n,m},
 \end{equation}
-where $A \in \Rset^{N \times M}$ is the phrase-object similarity
-matrix, and its component is computed as:
-\begin{equation}
-  A_{n,m} = \bm{e}^T_n \bm{v}_m.
-\end{equation}
-Particularly, for each caption sentence, they use all the images $I′$
-in the current batch as candidate (negative) examples.
+where $A_{n,m} = \bm{e}^T_n \bm{v}_m$, $A \in \Rset^{N \times M}$ is
+the phrase-object similarity matrix and $N$ the number of noun phrases
+in $S$. Particularly, for each caption sentence, they use all the
+images in the current batch as candidate (negative) examples.
 
 \begin{figure}
   \centering
@@ -429,6 +451,18 @@ in the current batch as candidate (negative) examples.
   matrix.}
   \label{fig:maf-model}
 \end{figure}
+
+In 2021, A. Arbelle \etal{} \cite{arbelle2021detector} proposed an
+innovative framework which solves phrase grounding task leveraging the
+concept of alpha blending. Their architecture is relatively simple:
+first of all, given two image, they generate a new image which is the
+composition of the two based on an randomly generated alpha mask. This
+mixed image is then fed into the encoder-decoder model which receives
+also the two sentences associated with images. The objective of the
+model is to reconstruct the alpha mask that separate the two images
+from the mixed one. At test time, the model interprets the input image
+as a composition of two images, and produces a mask that separate the
+image regions wrt two input queries, thus, localizing regions.
 
 \subsection{Supervised Works}
 \label{subsec:related-full-grounding}
