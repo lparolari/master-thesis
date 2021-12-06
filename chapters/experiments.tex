@@ -3,12 +3,21 @@
 \chapter{Experiment and results}
 \label{ch:experiments}
 
+In this chapter we discuss our experimental assessment, carried out on
+two widely adopted dataset which are discussed in
+Sec.~\ref{sec:datasets}, along with our pre-processing pipeline in
+Sec.~\ref{sec:data-preprocessing} and some analysis in
+Sec.~\ref{sec:data-analysis}. In Sec.~\ref{sec:impl-details} we talk
+about model's implementation details, while in
+Secs.~\ref{sec:model-selection} and \ref{sec:evaluation-metric} we
+show selected parameters and discuss the chosen evaluation metric.
+
 \section{Datasets}
 \label{sec:datasets}
 
-In this section we describe Flickr30k Entities and ReferIt, the two
-datasets used for the experimental assessment. For both we discuss how
-they were collected, what are their purposes, some statistics and we
+This section describes Flickr30k Entities and ReferIt, the two
+datasets on which we developed our model. For both we discuss how they
+were collected, what are their purposes, some statistics and we
 highlight the data representation.
 
 \subsection{Flickr30k Entities}
@@ -250,6 +259,7 @@ depict described structure.
 \end{figure}
 
 \section{Data preprocessing}
+\label{sec:data-preprocessing}
 
 It is well known that data preparation and filtering steps requires a
 considerable amount of effort both for engineer the process and to
@@ -607,6 +617,7 @@ $\alpha$, a certain fraction of area to overlap the ground truth
 bounding box.
 
 \section{Model Selection}
+\label{sec:model-selection}
 
 The model used in test set for both Flickr30k Entities and ReferIt
 datasets is chosen on the epoch that better performed in terms of
@@ -661,8 +672,8 @@ accuracy.
   \end{tabular}
   \caption[Results on Flickr30k Entities test set]{Results on
   Flickr30k Entities test set. \textit{Acc.} is the standard accuracy
-  metric in percentage, while \textit{P. Acc.} is the pointing game
-  accuracy metric.}
+  metric, while \textit{P. Acc.} is the pointing game accuracy metric,
+  both reported in percentage.}
   \label{tab:results-flickr30k}
 \end{table}
 
@@ -725,10 +736,10 @@ this case, our approach shows comparable performance wrt recent works.
     Ours                                                     & $\bm{37.0}$ & $60.0$ \\
     \bottomrule
   \end{tabular}
-  \caption[Results on ReferIt test set]{Results on
-  ReferIt test set. \textit{Acc.} is the standard accuracy
-  metric in percentage, while \textit{P. Acc.} is the pointing game
-  accuracy metric.}
+  \caption[Results on ReferIt test set]{Results on ReferIt test set.
+  \textit{Acc.} is the standard accuracy metric, while \textit{P.
+  Acc.} is the pointing game accuracy metric, both reported in
+  percentage.}
   \label{tab:results-referit}
 \end{table}
 
@@ -765,8 +776,8 @@ The predicted bounding box for dress focuses only on the skirt. This
 is due to the fact that the object detector returns two proposals for
 dress: the upper proposal encompassing the shirt with namesake class,
 and the lower proposal encompassing the skirt. The similarity between
-dress and skirt is obviously higher that dress and t-shirt, so the
-second is chosen. 
+dress and shirt is lower that dress and skirt, hence, the second
+proposal is chosen.
 
 Child and chairs are correctly localized instead.
 
