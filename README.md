@@ -5,7 +5,7 @@ LaTeX) for my MS thesis at University of Padua, Italy.
 
 ## Download
 
-[Read the dissertation 🚀](https://github.com/lparolari/master-thesis/releases/download/v1.0/parolari-luca_master-thesis.pdf)
+[Read the dissertation 🚀](https://github.com/lparolari/master-thesis/releases/latest/download/thesis.pdf)
 
 ## Abstract
 
