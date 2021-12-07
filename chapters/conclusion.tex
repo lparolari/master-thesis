@@ -4,7 +4,7 @@
 
 In this work we focused on the problem of phrase grounding with weak
 supervision. The phrase grounding task is relevant for many other
-import tasks, as outlined in Ch.~\ref{ch:intro}, such us visual
+import tasks, as outlined in Ch.~\ref{ch:intro}, such as visual
 question answering, image retrieval and robotic navigation. The
 complexity of phrase grounding problem with weak supervision is
 partially due to its multimodal nature that involves textual and
@@ -63,17 +63,21 @@ is covered by more than $130$ unit tests and $8$ integration tests.
 
 \section{Future Development}
 
-The multimodal fusion component component we adopted is a simple
-concatenation of features, and there is large margin of improvement.
-For example \cite{datta2019align2ground} considers an encoder-decoder
-architecture for features fusion, other works employ instead an
-attention mechanism. Carefully choosing such tool may lead to better
-performance. On the same way, also for text we work with relatively
-simple and base tools. For word embeddings a good, recent alternative
-wrt what we used (Word2Vec) is BERT. For the encoding of sentences we
-used an RNN with LSTM cells, however, recent transformer architectures
-show promising performance in this task an may be successfully
-integrated also in a grounding system.
+The prediction component we adopted is a simple similarity function
+between vectors where similar vectors obtain higher scores. Thus, in
+the end the model is forced to learn representation of visual features
+that mimic textual features latent space (and vice versa) proportional
+to the similarity score. Such forced features representation may be
+unnatural and could be improved. For example
+\cite{datta2019align2ground} considers an encoder-decoder architecture
+for features fusion, while other works employ an attention mechanism.
+Carefully choosing such tool may lead to better performance. On the
+same way, also for text we work with relatively simple and base tools.
+For word embeddings a good, recent alternative wrt what we used
+(Word2Vec) is BERT. For the encoding of sentences we used an RNN with
+LSTM cells, however, recent transformer architectures show promising
+performance in this task an may be successfully integrated also in a
+grounding system.
 
 There is also a large margin of improvement in our loss. First of all,
 to consider more negative examples as done in \cite{wang2020maf} may

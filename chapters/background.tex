@@ -8,22 +8,22 @@ in Sec.~\ref{sec:visual-grounding}, distinguishing between visual
 grounding and referring expression grounding. In
 Sec.~\ref{sec:two-stage-vs-one-stage} we describe the two main
 architectural approaches to visual grounding: two-stage and one-stage
-methods, providing also a simple comparison. In
-Sec.~\ref{sec:supervision} we distinguish between different training
-protocols by grouping them according to the time of ground truth that
-can benefit on. We then introduce the NLP field of study in
-Sec.~\ref{sec:nlp-pos}, and in particular the Part Of Speech tagging
-(POS tagging) along with some State-of-the-Art tools that allows to
-detect the morphosyntactic category of a word disambiguating it based
-on context. In Sec.~\ref{sec:rnn} we introduce the theoretical
-background of an important component used in our model that allows to
-deal with (long) sequences like sentences. The
+methods, along with some considerations. In Sec.~\ref{sec:supervision}
+we distinguish between different kind of supervisions. We then
+introduce the NLP field of study in Sec.~\ref{sec:nlp-pos}, and in
+particular the Part Of Speech tagging (POS tagging) along with some
+State-of-the-Art tools that allows to detect the morphosyntactic
+category of a word disambiguating it based on context. In
+Sec.~\ref{sec:rnn} we introduce the theoretical background of
+Recurrent Neural Networks, used in our model that allows to deal with
+(long) sequences like sentences. The
 Sec.~\ref{sec:object-detection-recognition} describe the essence of an
 object detection or recognition system and lists different successful
 systems. We discuss the representation of words (word embeddings) in
-Sec.~\ref{sec:word-embeddings}, given a little overview of the main
+Sec.~\ref{sec:word-embeddings}, given a quick overview of the main
 State-of-the-Art tools. In Sec.~\ref{sec:similarity-measures} we
-conclude outlining two crucial similarity measures for our model.
+conclude defining the cosine similarity, used as similarity measure in
+our model and two evaluation metrics.
 
 \newthought{Notation.} For an easier comprehension of the formalisms,
 we define the mathematical notation we will use through the document,
@@ -111,14 +111,14 @@ more accurate models.
 grounding task which relies on the decomposition of the main task in
 two sub-tasks, namely object detection and classification. Given an
 input image, the first step generates candidate regions using an
-object proposal extractor such us Edge Boxes \cite{zitnick2014edge}
+object proposal extractor such as Edge Boxes \cite{zitnick2014edge}
 and Selective Search \cite{uijlings2013selective} or by an object
-detector, such us Faster R-CNN \cite{girshick2014rich}, Single Shot
+detector, such as Faster R-CNN \cite{girshick2014rich}, Single Shot
 multibox Detector (SSD) \cite{liu2016ssd}, or YOLO
 \cite{redmon2016you}. The second step consists in ranking this
 candidate regions, which hopefully capture the semantic context,
-conditioned on a language query about the image. Practically, this
-means that the model predicts, for each proposal bounding box, a score
+conditioned on a language query, about the image. Practically, this
+means that for each proposal bounding box, the model predicts a score
 that represents how much the content of the bounding box is likely to
 be referred by the sentence. Sometimes, models predict also new
 coordinates for the best predicted proposal, in order to better fit
@@ -130,7 +130,7 @@ The two stage method is outlined in Fig.~\ref{fig:two-stage-approach}.
   \includegraphics[width=.8\textwidth]{figures/two-stage-approach.png}
   \caption[Two stage approach]{
     The two stage approach. The grounding system receives a set of
-    proposed extracted by a proposal generation system and, given the
+    proposal extracted by a proposal generation system and, given the
     query, it aligns entities in query with (fixed) set of proposal.
   }
   \label{fig:two-stage-approach}
@@ -151,31 +151,31 @@ extractor/object detector. Consider, for example, the problem of
 hitting the ground truth with at least one bounding box. Given an
 image $\bm{I}$ and $\bm{b}'$ a ground truth bounding box, if we
 employee a very simple (yet extremely inefficient) proposal extractor
-such us the one who generates $\calP^*_{\bm{I}}$ the set of all
+such as the one who generates $\calP^*_{\bm{I}}$ the set of all
 possible bounding boxes in $\bm{I}$, then, by construction we have
 that $\bm{b}' \in \bm{B}$. Hence, the more proposals we consider, the
 better we overlap with $\bm{b}'$. However, this solution is bound by
 time and memory constraints, but fortunately we do not need to
 generate all possible proposals. Indeed, only a small subset of all
 solution are required to hit the ground truth bounding box. Thanks to
-powerful object detection system we can recognize relevant objects in
+powerful object detection systems we can recognize relevant objects in
 image and focus only on those proposals.
 
 Practically, we proved (Sec.~\ref{subsec:num-of-proposals}) that with
 $100$ bounding boxes and Faster-R CNN with Bottom-Up Attention
 \cite{sharma2020understanding} as object detector, we obtain a
-coverage which is greater than 90\% on both Flickr30k Entities and
+coverage which is greater than $90\%$ on both Flickr30k Entities and
 ReferIt, two of the major datasets for visual grounding. In this case,
 a hit is considered successful when the IoU between proposal and
-ground truth is at least 50\%.
+ground truth is at least $50\%$.
 
 The second problem instead is partially solvable because the system,
 in order to perform its classification task, needs to consider all the
-extracted proposals. However, the first stage can be precalculated and
-cached for the second stage, drastically reducing the required
-resources at training time. At inference time, instead, we need to run
+extracted proposals. However, at training time, the first stage can be
+precalculated and cached for the second stage, drastically reducing
+the required resources. At inference time, instead, we need to run
 both the object detector and the model without the possibility to
-reduce computational time.
+reduce required resources.
 
 \newthought{The one stage approach}, outlined in
 Fig.~\ref{fig:one-stage-approach} relies on a single stage for
@@ -207,16 +207,16 @@ computing resources \cite{rigoni2021better}.
 \label{sec:supervision}
 
 Supervised classification and regression are two example of tasks that
-in machine learning have archived great success. This happens because
-machine learning models learn from ground truth annotation, however,
-it is noteworthy that in many other tasks, like visual grounding, it
-is difficult to get strong supervision due to the high cost of the
-data-labeling process \cite{zhou2018brief}.
+in machine learning have archived great success, and this happens
+because machine learning models learn by minimizing errors wrt ground
+truth annotation. However, it is noteworthy that in many other tasks,
+like visual grounding, it is difficult to get strong supervision due
+to the high cost of the data-labeling process \cite{zhou2018brief}.
 
-In visual grounding, large amount of annotations are required. Think
-at the example in Fig.~\ref{fig:dog-playing-with-ball} along with the
-sentence "A collie plays with a white ball in a field of green grass",
-to perform phrase grounding task we need a lot of data: 
+In visual grounding, for example, large amount of annotations are
+required. Think at the example in Fig.~\ref{fig:dog-playing-with-ball}
+along with the sentence "A collie plays with a white ball in a field
+of green grass", to perform phrase grounding task we need to know: 
 \begin{itemize}
   \item The image;
   \item The sentence;
@@ -240,7 +240,7 @@ It's straightforward to see that this approach cannot scale: larger
 sets of annotations are exponentially difficult and expensive to
 build. For this reason, researches usually redefine the phrase
 grounding task under harder settings where less data are involved.
-This is the case of weakly-supervised, or even, unsupervised visual
+This is the case of weakly supervised, or even, unsupervised visual
 grounding. The Fig.~\ref{fig:full-weak-no-supervision} (from
 \cite{wang2019phrase}) shows the differences between the three
 supervised settings. In the first case, a key information is
@@ -294,11 +294,9 @@ just left to itself.
 \begin{figure}[H]
   \centering
   \includegraphics[width=.4\textwidth]{figures/match-shapes-game.jpg}
-  \caption[Match the shape game]{
-    Match the shape game. A kid game useful to learn to recognize
-    shapes. The kid has to fit colored pieces in their respective
-    holes.
-  }
+  \caption[Match the shape game]{ Match the shape game: a kid game
+    useful to learn to recognize shapes where the kid has to fit
+    colored pieces in their respective holes. }
   \label{fig:match-the-shape-game}
 \end{figure}
 
@@ -383,16 +381,16 @@ co-occurrence frequencies for different kinds of linguistic phenomena.
 For the acquisition of statistical data usually is used the n-gram
 model, where the probability of sequence of length $n$ is estimated
 from its occurrences in the training corpus. Usual models involved in
-POS tagging instance $n$ to 2 or 3, i.e., possible sequences of two or
-three consecutive tags (bi-grams or tri-grams). The tagging of new
-examples is done by estimating the tag sequence with high probability
-based on the statistical model. This is roughly the technique followed
-by the widespread Hidden Markov Model taggers. Based on similar idea,
-the Baum-Welch re-estimation algorithm tries to reduce the amount of
-training data needed to estimate the model. Recent works in this
-field, instead of using a single n-gram model, combine different order
-n-grams, morphological information, long-distance n-grams, or
-triggering pairs.
+POS tagging instance $n$ to $2$ or $3$, i.e., possible sequences of
+two or three consecutive tags (bi-grams or tri-grams). The tagging of
+new examples is done by estimating the tag sequence with high
+probability based on the statistical model. This is roughly the
+technique followed by the widespread Hidden Markov Model taggers.
+Based on similar idea, the Baum-Welch re-estimation algorithm tries to
+reduce the amount of training data needed to estimate the model.
+Recent works in this field, instead of using a single n-gram model,
+combine different order n-grams, morphological information,
+long-distance n-grams, or triggering pairs.
 
 According to \cite{marquez2000machine}, machine learning family
 includes models which exploit more complex information than a n-gram
@@ -418,7 +416,7 @@ Fig.~\ref{fig:pos-tags} shows the tags along with their description.
 \end{figure}
 
 During years, many different annotation for standard of POS tagging
-and dependency structure were developed, such us Stanford Dependencies
+and dependency structure were developed, such as Stanford Dependencies
 \cite{de2006generating, de2008stanford, silveira2014gold}, Google
 universal part-of-speech tags \cite{lin2012syntactic} and the Interset
 interlingua \cite{zeman2008reusable} for morphosyntactic tagsets.
@@ -471,7 +469,7 @@ its development are:
   (rather than something of heavier weight, such as XML or UIMA's
   Common Analysis System (CAS) objects).
 \end{itemize}
-It tries to overcome problems of existing systems such us UIMA
+It tries to overcome problems of existing systems such as UIMA
 \cite{ferrucci2004uima} and GATE \cite{cunningham2002gate} by allowing
 the user to get ready in few minutes only knowing a little Java. For
 example, Standford CoreNLP makes available an intuitive command line
@@ -517,7 +515,7 @@ processing toolkit supporting many human languages. Its core features are:
   (UD) treebanks and other multilingual corpora;
   \item State-of-the-art performance. They evaluate Stanza on a total
   of 112 datasets, and find its neural pipeline adapts well to text of
-  different genres, achieving state-of-the-art or competitive
+  different genres, achieving State-of-the-Art or competitive
   performance at each step of the pipeline.
 \end{itemize}
 Additionally, Stanza features a Python interface to the widely used
@@ -588,7 +586,7 @@ information in the input require to be memorized.
 
 Recurrent neural networks can be built in many different ways with
 varying architecture. In literature emerged some successful RNNs
-architecture with a well defined and non-casual structure, such us
+architecture with a well defined and non-casual structure, such as
 Bidirectional RNN (Bi-RNN), Long Short-Term Memory (LSTM) and Gated
 Recurrent Unit (GRU). Each RNN architecture has some pro and cons and
 can be applied successfully to specific tasks.
@@ -688,14 +686,14 @@ forgetting factor and the decision to update the state unit.
 \label{sec:object-detection-recognition}
 
 Object detection (OD) and object recognition (OR) systems are crucial
-in a wide variety of everyday tasks such us face detection, image and
+in a wide variety of everyday tasks such as face detection, image and
 video databases information retrieval, surveillance applications,
 driver assistance, self drive, robotics, automation and, specially in
 vision tasks, it is a fundamental building block used to extract
 information from images.
 
 The primary essence of those systems can be broken down into two
-parts: to locate objects in a scene such us by drawing a bounding box
+parts: to locate objects in a scene such as by drawing a bounding box
 around the object (object detection) and later to classify the objects
 based on the classes it was trained on (object recognition). OD and OR
 are often used together and for this reason the name of two tasks
@@ -709,12 +707,12 @@ Single Shot Detection \cite{liu2016ssd}) and two stage methods (R-CNN
 R-CNN \cite{ren2015faster}). 
 
 In the following sections, we briefly summarize those methods
-discussing their main idea nd highlighting pro and cons.
+discussing their main idea and highlighting pro and cons.
 
 \subsection{YOLO -- \emph{You Only Look Once}}
 \label{subsec:yolo}
 
-YOLO \cite{redmon2016you} is a state-of-the-art, real-time object
+YOLO \cite{redmon2016you} is a State-of-the-Art, real-time object
 detection system which offers extreme levels of speed and accuracy.
 YOLO treats object detection as a regression problem. It predicts
 predicts both bounding boxes and class probabilities from full images
@@ -728,15 +726,15 @@ of its global reasoning on image.
 
 \subsection{SSD -- \emph{Single Shot Detection}}
 
-SSD \cite{liu2016ssd} is another state-of-the-art method for detecting
+SSD \cite{liu2016ssd} is another State-of-the-Art method for detecting
 objects in images using a single deep neural network. SSD divides the
 image using a grid at multiple resolution and scale, then, for each
 grid cell it detects objects in that region of the image. The
 detection is performed by predicting the class and location of an
 object within given cell by means of a convolutional and a
-classification network. SSD obtains comparable results to other state
-of the art detection system, while being able to run in little time as
-its single pass on images. 
+classification network. SSD obtains comparable results to other
+State-of-the-Art detection system, while being able to run in little
+time as its single pass on images.
 
 \subsection{R-CNN -- \emph{Regions with CNN}}
 
@@ -779,7 +777,7 @@ finally used to classify the image.
 
 Being able to model and represent natural language features is a
 relevant machine learning task that belongs to the natural language
-processing field and has many applications, such us information
+processing field and has many applications, such as information
 retrieval \cite{sanderson2010christopher}, document classification
 \cite{sebastiani2002machine}, question answering
 \cite{tellex2003quantitative}, named entity recognition
@@ -803,7 +801,7 @@ formulate the definition for word embedding:
 
 With the years, literature explored different approaches for learning
 good words representation: either using machine learning or
-statistical approaches such us Latent Semantic Analysis. Both families
+statistical approaches such as Latent Semantic Analysis. Both families
 suffer significant drawbacks. LSA methods efficiently exploit
 statistical information, but are unable to capture word analogies,
 indicating a sub-optimal vector space structure. Methods like
@@ -931,15 +929,15 @@ boxes do not overlap at all.
 The pointing game can be considered an human evaluation metric
 \cite{petsiuk2018rise} and was first introduced by J. Zhang \etal{} in
 \cite{zhang2018top}. Given $(\bm{b}_i , \bm{b}_j)$ a pair of bounding
-box, the pointing game metric defines a hit the highest saliency point
+box, the pointing game metric defines a hit when highest saliency point
 of $\bm{b}_i$ lies inside the $\bm{b}_j$, otherwise it is a miss.
 
 The highest saliency point of a bounding box is usually defined
-depending on the task and setting of the problem. For example, in the
+depending on the task and settings of the problem. For example, in the
 phrase localization task, such point is the center of the bounding
 box. In other cases, given an attention mask which localizes an object
-in an image, the highest saliency point is the maximum point on the
-attention mask.
+in an image, the highest saliency point is the maximum value among all
+points on the attention mask.
 
 \subsection{Cosine Similarity}
 

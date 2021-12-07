@@ -103,7 +103,7 @@ number of coreference chains is bounded by a number much smaller than
 $|M|$, on average. Moreover, the bound is lowered by making two extra
 assumption: first, mentions from the same captions cannot or belonging
 to different categories be coreferent. Categories assigned to each
-mention are coarse-grained types, such us: people, body parts,
+mention are coarse-grained types, such as: people, body parts,
 animals, clothing/color, instruments, vehicles, scene, and other.
 
 Bounding box annotation is carried out with a workflow composed by
@@ -343,9 +343,10 @@ In particular our interface includes the following.
 \end{itemize}
 
 The Fig.~\ref{lst:data-interface-dict} shows a real word example
-exposing data through the unified interface.
+exposing data through the unified interface. (For the sake of
+presentation we omitted full data in favor of ellipsis).
 
-\begin{lstlisting}[style=simplepython,caption=Example of our data structure for as interface to row data,label={lst:data-interface-dict}]
+\begin{lstlisting}[style=simplepython,caption=Example of our data structure for as interface to row data.,label={lst:data-interface-dict},captionpos=b]
 {
     id: '3359636318', 
     sentence: 'Two people are talking outside of the video game shop next door to the mobile phone store .', 
@@ -397,19 +398,21 @@ label is the ``background'' attribute. Probably this error is due to
 careless copy-pase from class prediction branch. For this reason, we
 do not include this information in our model.} We use SpaCy
 \cite{honnibal2020spacy} parser in order to extract words vocabulary
-from both datasets. In contrast to \cite{rigoni2021better}, we
-initialize word embeddings with pre-trained Word2Vec
-\cite{mikolov2013efficient} weights instead of GloVe
-\cite{pennington2014glove}, but we keep the same settings: embeddings
-are freezed (we do not train them) and out-of-vocabulary words are
-initialized according to Xavier \cite{glorot2010understanding}. The
-size of the embedding is $w = 300$. In the prediction module we
-instanced $\lambda = 0.5$, equally weighting both model predictions and
-prior scores.
+from both datasets and also to retrieve heads from phrase. In contrast
+to \cite{rigoni2021better}, we initialize word embeddings with
+pre-trained Word2Vec \cite{mikolov2013efficient} weights instead of
+GloVe \cite{pennington2014glove}, but we keep the same settings:
+embeddings are freezed (we do not train them) and out-of-vocabulary
+words are initialized according to Xavier
+\cite{glorot2010understanding}. The size of the embedding is $w =
+300$. In the prediction module we instanced $\lambda = 0.5$, equally
+weighting both model predictions and prior scores.
 
-During our work, we trained the model on the training set, while we
-performed model selection onto the validation set. The comparison with
-other works is done on the test set. 
+During our work, we trained the model on the training set for $30$
+epochs, while we performed model selection onto the validation set.
+The comparison with other works is done on the test set. We found the
+best epoch on Flickr30k Entities to be the $15$-th, while on ReferIt
+the $27$-th. 
 
 \section{Data Analysis}
 \label{sec:data-analysis}
@@ -498,7 +501,7 @@ upperbound accuracy constraint. We argue that in our weakly supervised
 approach the background label may introduce noise, so as a
 preprocessing step we keep only properly-labeled proposals.
 
-Since, we decided to remove such boxes, We investigated the problem of
+Since, we decided to remove such boxes, we investigated the problem of
 box coverage, and hence, maximum achievable accuracy. We analyzed this
 phenomenon and we surprisingly noticed that even removing nearly one
 proposal over two, the upperbound accuracy remains comparable to the
@@ -582,8 +585,8 @@ Aligned with the works in literature, we consider the standard
 accuracy metric. Given a noun phrase, it considers a bounding box
 prediction to be correct if and only if the intersection over union
 (Sec.~\ref{subsec:iou}) value between the predicted bounding box and
-the ground truth bounding box is at least $t$. Formally, given the
-image $\bm{I}$ and sentence $S$, the accuracy between $B^* = \{
+the ground truth bounding box is at least $\alpha$. Formally, given
+the image $\bm{I}$ and sentence $S$, the accuracy between $B^* = \{
 \bm{b}^* \}$ the set of predicted bounding boxes for $\bm{I}$ and $S$,
 with $|B^*| = m$ where $m$ is the number of noun phrases in $S$ and
 $B^{gt}$ the set of ground truth bounding boxes for $\bm{I}$ and $S$
@@ -591,7 +594,7 @@ with $|B^{gt}| = m$, can be defined as
 \[
   acc(B^*, B^{gt}) = \frac{\sum_{i = 1}^{m} \One (\iou (\bm{b}_i^*, \bm{b}_i^{gt}) \geq \alpha)}{m}.
 \]
-Again, following literature we chose $\alpha = 0.5$.
+Following literature we chose $\alpha = 0.5$.
 
 Moreover, we also calculate the pointing game accuracy
 (Sec.~\ref{subsec:pointing-game-metric}) for comparison purposes.
@@ -605,8 +608,8 @@ define pointing game accuracy as
 where $m$ the number of noun phrases in $S$, $c^*_i = (x +
 \frac{w}{2}, y + \frac{h}{2})$ is the center of box $\bm{b}^*_i$ with
 $x, y$ its top-left point coordinates and $w, h$ its width and height.
-Note that $c^*_i \in b^{gt}_i$ is an abuse of notation, we mean true
-when $c^*_i$ falls inside $b^{gt}_i$ boundaries.
+Note that $c^*_i \in \bm{b}^{gt}_i$ is an abuse of notation, we mean true
+when $c^*_i$ falls inside $\bm{b}^{gt}_i$ boundaries.
 
 The pointing game accuracy allows to evaluate the goodness of the
 model in spatially locating objects, but is a very optimistic metric
@@ -804,7 +807,7 @@ Entities test set we got a worsening of $9\%$ absolute accuracy, while
 on ReferIt this effect is even more noticeable: the worsening is of
 $18.5\%$ absolute accuracy. Indeed, ReferIt contains complex sentences
 from a syntactic point of view: being able to extract information such
-us the concept of the phrase may help the model localizing the related
+as the concept of the phrase may help the model localizing the related
 proposal.
 
 \begin{table}

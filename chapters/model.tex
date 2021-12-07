@@ -28,18 +28,21 @@ Sec.~\ref{sec:training-and-inference}.
   \caption[Model architecture overview]{ Our model architecture
     overview. Initially, the image is processed by a pre-trained
     Faster R-CNN object detector in order to extract all the proposals
-    bounding boxes from which the spatial features are generated.
-    Then, the model generates textual features from the input noun
-    phrase by first retrieving each word embedding and then using an
-    LSTM network. Finally, the model fuses together all the visual,
-    spatial, and textual features by the Fusion Operator. Those
-    features are then used by the model in combination with textual
-    feature to predict a score of similarity between the two. The
-    concept branch predict another similarity score between the word
-    embedding of concept the phrase and the class label on proposal.
-    Such score is applied to models predictions as a prior and fed
-    into the loss module that optimizes positive scores to be larger
-    than negative scores. }
+    bounding boxes from which visual and spatial features. The two are
+    concatenated by the fusion operator and project to lower
+    dimensionality by the Projection Network. Then, the model
+    generates textual features from the input noun phrase by first
+    retrieving each word embedding and then using an LSTM network. The
+    model uses generated visual and textual features to predict a
+    score of similarity between the two. The concept branch predict
+    another similarity score between the word embedding of concept the
+    phrase and the class label on proposal. Such score is applied to
+    models predictions as a prior and fed into the loss module that
+    optimizes positive scores to be larger than negative scores. The
+    loss module optimize the model to maximize the multimodal
+    similarity of image and positive phrase while minimizing the one
+    with negative phrase. The negative phrase is a textual description
+    of another image randomly sampled from the dataset.}
   \label{fig:model-architecture}
 \end{figure}
 
@@ -162,7 +165,7 @@ proposal $\bm{p}_i$ as:
 \begin{equation}
   \bm{S}^c_{ji} = \fsim \left( \erqj_j, \ePI_i \right),
 \end{equation}
-where $\fsim$ is a similarity measure (such us the cosine similarity),
+where $\fsim$ is a similarity measure (such as the cosine similarity),
 and $\erqj_j$ is the embedding representing the concept of the noun
 phrase $\qj$. The new embedding $\erqj_j$ can be computed with various
 strategies, and we can group these into two main categories. The first
@@ -191,7 +194,7 @@ built.\footnote{In \cite{wang2019phrase}, they show how the
 Flickr30k Entities it is the second best strategy while in ReferIt it
 doesn't even appear on the
 leaderboard.} More complex strategies,
-instead, take into account additional information, such us the
+instead, take into account additional information, such as the
 similarity wrt proposal class embeddings. Here, a possible strategy
 consists in choosing the phrase representative as the word with
 maximum similarity wrt detected concepts among proposals. Following
@@ -205,7 +208,7 @@ proposal:
 \end{equation}
 where $\quad g(\eqj) = \{ \fsim(\ePI, \eqj) \mid \ePI \in \EPI \}$ and
 $\fsim$ is the similarity measure between vectors. This strategy is
-better explained by means of an example, such us the one in
+better explained by means of an example, such as the one in
 Fig.~\ref{fig:concept-selection-example}. For the sake of
 presentation, we assume to deal with an object detector trained on two
 class labels $Cls = \{ \text{sky}, \text{animal} \}$. We are given an
@@ -224,10 +227,10 @@ proposals.
 \begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{figures/concept-selection-example.png}
-  \caption[How concept selection on phrases works]{How concept
-  selection on phrases works. In the example we are given two
-  proposals along with their labels, i.e., ``sky'' and ``animal'', and
-  the phrase ``the blue elephant''. Both labels and phrase's words are
+  \caption[Concept selection mechanism on phrases]{Concept selection
+  mechanism on phrases. In the example we are given two proposals
+  along with their labels, i.e., ``sky'' and ``animal'', and the
+  phrase ``the blue elephant''. Both labels and phrase's words are
   embedded and, for each word embedding in phrase, we compute its
   similarity with the label embedding. The selected concept in the
   phrase is the word with maximum similarity wrt labels. }
@@ -346,7 +349,7 @@ At training stage, we are given the example $(\bm{I}, \sent)$ where
 $\calP_{\bm{I}} = \{ \bm{p}_i \}^k_{i=1}$ is the set of bounding box
 proposals built on $\bm{I}$ and $\bm{q}_j$ are queries in $\sent$. As
 noted in Sec.~\ref{subsec:visual-branch} we use extra information from
-object detector such us the probability distribution on bounding box
+object detector such as the probability distribution on bounding box
 class labels $Pr_{Cls}(\bm{p}_i)$. Following \cite{chen2018knowledge}
 we fix $k = 100$ proposals. (We studied how $k$ can affect results in
 Sec.~\ref{sec:data-analysis}). We optimize parameter of the LSTM

@@ -6,7 +6,7 @@ In the last years the scientific community made significant progress
 in the development of models for solving computer vision and natural
 language processing tasks. The reasons behind those outstanding
 advancements are manifold. In first place, the constant increase of
-computational resources allows to exploit complex models which can
+computational resources allow to exploit complex models which can
 capture intricate behavior. Secondly, the availability of new data
 speed-up the learning process in terms of how we can benefit from
 available information. However, the joint understanding of both
@@ -14,7 +14,7 @@ modalities is still an hard task, specially if we constraint the
 problem within a deliberately simple and human-like environment.
 
 Both visual and language modalities are required for solving
-interesting, challenging and community worthwhile problems such us
+interesting, challenging and community worthwhile problems such as
 visual question answering \cite{kafle2017visual}, image retrieval
 \cite{gordo2016deep, radenovic2016cnn}, robotic navigation
 \cite{thomason2017guiding} and visual grounding
@@ -57,11 +57,12 @@ With the availability of large datasets
 \cite{plummer2015flickr30k,kazemzadeh2014referitgame}, many different
 solution for the visual grounding task has been proposed in
 literature, but most of them relies on expensive annotations. We argue
-that this technique cannot scale and is becoming a critical bottleneck:
-it is hard and expensive to collect grounding information while very
-simple to collect images with their descriptions. Also, the way humans
-learn phrase localization is by assembling prior knowledge instead of
-memorize a mapping between textual and image examples.
+that this technique cannot scale and is becoming a critical
+bottleneck: it is hard and expensive to collect grounding information
+while very simple to collect images with their descriptions. Also, the
+way humans learn phrase localization is usually by assembling prior
+knowledge instead of memorize a mapping between textual and image
+examples.
 
 This encourages us to investigate the visual grounding task under the
 weakly supervised setting. In weakly supervised scenario, the
@@ -71,33 +72,34 @@ fully supervised setting provide also the information between noun
 phrases and objects in image, while in unsupervised settings no ground
 truth is available.
 
-In this work we propose a simple model that learns from concept
-similarity. The goal is to solve phrase localization problem under
-weakly supervised settings. Given a noun phrase, we define it's
-concept as the most important word in the phrase, while, given a
-bounding box we define it's class as the label, among a dictionary of
-labels, predicted by an object detector for that bounding box. The
-concept similarity is the similarity between the phrase concept and
-bounding box class. Here, the key idea is that the head of the phrase
-should be very similar (semantically speaking) to the content of the
-bounding box and thus, to its class. 
+In this work we focus on the phrase localization task under weakly
+supervised settings, and we propose a simple model that learns from
+concept similarity. Given a noun phrase, we define it's concept as the
+most important word in the phrase, while, given a bounding box we
+define it's class as the label, among a dictionary of labels,
+predicted by an object detector for that bounding box. The concept
+similarity is the similarity between the phrase concept and bounding
+box class. Here, the key idea is that the head of the phrase should be
+very similar (semantically speaking) to the content of the bounding
+box and thus, to its class. 
 
 Our model is straightforward. First of all, we gather image features
 from the object detector and we compute five additional features
 representing bounding box top left and bottom right corners and area
-(spatial features). We then project those features to a subspace,
-performing a dimensionality reduction. Regarding the text, we first
-represent words in phrase by pretrained embeddings and then we encode
-the phrase through a recurrent neural network with LSTM cells. Our
-predictions are the results of the cosine similarity between projected
-image features and the last LSTM hidden neuron. On those prediction we
-apply concept similarity, which empower related proposals to be most
-likely the grounded boxes. Finally, the model is optimized for
-maximizing similarity on sentences that do describe and image, while
-minimizing similarity of sentences that do not describe and image.
+(spatial features). Regarding the text, we first represent words in
+phrase by pretrained embeddings and then we encode the phrase through
+a recurrent neural network with LSTM cells. We then project visual
+features to a subspace whose target size is the same as textual
+features space, performing a dimensionality reduction. Our predictions
+are the results of the cosine similarity between projected image
+features and the last LSTM hidden neuron. On those prediction we apply
+concept similarity, which empower related proposals to be most likely
+the grounded boxes. Finally, the model is optimized for maximizing
+similarity on sentences that do describe the image, while minimizing
+similarity of sentences that do not describe the image.
 
 In this work we show how extra information from object detector, such
-us the probability distribution on proposal classes, can be
+as the probability distribution on proposal classes, can be
 effectively employed in a grounding model although our basic model
 components and simple loss. Results confirm that the strategy is
 effective, performing comparably on both Flickr30k Entities and
