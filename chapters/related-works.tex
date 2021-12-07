@@ -298,15 +298,15 @@ where $S_{Ic}$ is the similarity between image $I$ and caption $c$.
 \begin{figure}
   \centering
   \includegraphics[width=.8\textwidth]{figures/align2ground-model.png}
-  \caption[Align2Ground model overview]{Align2Ground model overview
-  \cite{datta2019align2ground}. The query is parsed into chunks that
-  are matched with image proposals by means of a similarity score
-  computed between chunks and proposals the latent space. Matched
-  regions are then fed into the order-invariant deep encoder which
-  encodes this list of caption conditioned proposals. The global
-  matching module measures the similarity between the global image
-  representation made by caption-conditioned proposals and the input
-  query and align image-caption pairs.}
+  \caption[Align2Ground architecture overview]{Align2Ground
+  architecture overview \cite{datta2019align2ground}. The query is
+  parsed into chunks that are matched with image proposals by means of
+  a similarity score computed between chunks and proposals the latent
+  space. Matched regions are then fed into the order-invariant deep
+  encoder which encodes this list of caption conditioned proposals.
+  The global matching module measures the similarity between the
+  global image representation made by caption-conditioned proposals
+  and the input query and align image-caption pairs.}
   \label{fig:align2ground-model}
 \end{figure}
 
@@ -379,13 +379,14 @@ contains imprecise or erroneous queries.
 \begin{figure}
   \centering
   \includegraphics[width=.8\textwidth]{figures/phraseloc-model.png}
-  \caption[Phrase Localization without Paired Training Examples model
-  overview]{Phrase Localization without Paired Training Examples model
-  overview \cite{wang2019phrase}. The first stage is responsible to
-  retrieve information from proposals (class labels) and from text
-  (concept). The second stage select a concept, among the other, that
-  best matches proposals and query. The third stage localize a
-  bounding box given the detected concept in previous stage.}
+  \caption[Phrase Localization without Paired Training Examples
+  architecture overview]{Phrase Localization without Paired Training
+  Examples architecture overview \cite{wang2019phrase}. The first
+  stage is responsible to retrieve information from proposals (class
+  labels) and from text (concept). The second stage select a concept,
+  among the other, that best matches proposals and query. The third
+  stage localize a bounding box given the detected concept in previous
+  stage.}
   \label{fig:phraseloc-model}
 \end{figure}
 
@@ -438,17 +439,16 @@ images in the current batch as candidate (negative) examples.
 \begin{figure}
   \centering
   \includegraphics[width=.8\textwidth]{figures/maf-model.png}
-  \caption[Multimodal Alignment Framework model overview]{Overview
-  of our proposed Multimodal Alignment Framework (MAF)
+  \caption[Multimodal Alignment Framework architecture
+  overview]{Multimodal Alignment Framework architecture overview
   \cite{wang2020maf}. A dataset of images and their captions is the
-  input to our model. PreDet predicts bounding boxes for objects in
-  the image and their labels, attributes, and features, which are
-  then integrated into visual feature representations. Attention is
-  applied between word embedding and visual representations to
-  compute the visually-aware language representations for phrases.
-  Finally, a multi-modal similarity function is used to measure the
-  caption-image relevance based on the phrase-object similarity
-  matrix.}
+  input to the model. PreDet predicts bounding boxes for objects in
+  the image and their labels, attributes, and features, which are then
+  integrated into visual feature representations. Attention is applied
+  between word embedding and visual representations to compute the
+  visually-aware language representations for phrases. Finally, a
+  multi-modal similarity function is used to measure the caption-image
+  relevance based on the phrase-object similarity matrix.}
   \label{fig:maf-model}
 \end{figure}
 
